@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import { signIn } from "next-auth/react";
+import { toast } from 'react-toastify';
 
 export function GoogleSignInButton() {
     const handleClick = () => {
         signIn('google');
+        toast.success('Signed in with Google');
     }
     return (
         <div className="flex justify-center">
