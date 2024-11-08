@@ -1,7 +1,7 @@
 // app/dashboard/layout.tsx
 "use client";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+import Sidebar from "../components/dashboard/Sidebar";
+import Header from "../components/dashboard/Header";
 import { SessionProvider } from "next-auth/react";
 import "./dashboard.css"; // Optional: Use a CSS file to customize dashboard styling.
 

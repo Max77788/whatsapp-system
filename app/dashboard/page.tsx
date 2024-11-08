@@ -2,15 +2,19 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../lib/auth/helpers";
+import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
+import { authOptions } from "../../lib/auth/serverStuff";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 
 
 export default async function DashboardPage(): Promise<JSX.Element> {
+  await loginIsRequiredServer();
 
   const session = await getServerSession(authOptions);
+
+  await wait(1000);
 
   console.log(`session: ${JSON.stringify(session)}`);
 
@@ -23,7 +27,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
 
   // Render the dashboard content if the user is authenticated
   return (
-    <div>
+    <div className="mt-5">
       <img src={session?.user?.image || '/default-avatar.png'} alt="User Avatar" className="w-10 h-10 rounded-full" />
       <h1>Welcome to your Dashboard, {session?.user?.name}!</h1>
       {/* Dashboard content */}

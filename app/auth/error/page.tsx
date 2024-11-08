@@ -1,14 +1,14 @@
-"use client";
+// app/auth/error/page.tsx
+import React from "react";
 
-// import { signIn } from "next-auth/react";
-
-const ErrorOnSignIn = () => {
-
+const ErrorPage: React.FC = () => {
   return (
-    <div>
-      <h1>Oops! Error in signing in.</h1>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h1>Authentication Error</h1>
+      <p style={{ fontSize: '24px', color: 'red' }}>Something went wrong during authentication. Please try again.</p>
+      <a href="/auth/signin">Go back to Sign In</a>
     </div>
   );
 };
 
-export default ErrorOnSignIn;
+export default ErrorPage;
