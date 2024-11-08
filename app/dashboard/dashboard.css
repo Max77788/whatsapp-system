@@ -1,0 +1,90 @@
+/* app/dashboard/dashboard.css */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .sidebar {
+    background-color: #f7c7d4;
+    width: 200px;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  .sidebar nav ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar nav ul li {
+    margin: 15px 0;
+    text-align: center;
+  }
+  
+  .sidebar nav ul li a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .header {
+    background-color: #f7c7d4;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-info span {
+    margin-right: 10px;
+  }
+  
+  .dashboard-page h1 {
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  .card-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+  }
+  
+  .card {
+    background-color: #ffebd4;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    text-align: center;
+  }
+  
+  .card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #e52e4d;
+  }
+  
