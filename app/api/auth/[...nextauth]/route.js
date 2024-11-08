@@ -69,7 +69,7 @@ export const authOptions = {
       return session; // Return the modified session object
     },
     */
-    async redirect({ url, baseUrl }) {
+    async redirect({ baseUrl }) {
       return `${baseUrl}/dashboard`; // Otherwise, redirect to the base URL
     },
   },

@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import { GoogleSignInButton } from "../../components/signin/authButtons";
 import CredentialsForm from "../../components/signin/credentialsForm";
 
-const SignIn = () => {
+const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -42,10 +42,10 @@ const SignIn = () => {
          <CredentialsForm/>
       </div>
       <div className="flex-flex-col-items-center w-1/3-mt-10-p-10-shadow-md">
-      <p className="mt-5">Don't have an account? <Link href="/auth/signup">Sign up</Link></p>
+      <p className="mt-5">Already have an account? <Link href="/auth/signin">Sign in</Link></p>
       </div>
     </div>
   );
 };
 
-export default SignIn;
+export default SignUp;
