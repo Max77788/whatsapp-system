@@ -1,5 +1,5 @@
-"use client";
 // app/dashboard/layout.tsx
+"use client";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { SessionProvider } from "next-auth/react";

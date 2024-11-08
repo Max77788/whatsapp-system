@@ -48,7 +48,9 @@ export const authOptions = {
     signIn: '/auth/signin', // Custom login page path
     error: '/auth/error', // Custom error page path (optional)
   },
+  
   callbacks: {
+    /*
     async jwt({ token, account, user }) {
       if (account && user) {
         token.id = user.id;
@@ -66,7 +68,7 @@ export const authOptions = {
       session.user.image = token.image;
       return session; // Return the modified session object
     },
-
+    */
     async redirect({ url, baseUrl }) {
       return `${baseUrl}/dashboard`; // Otherwise, redirect to the base URL
     },

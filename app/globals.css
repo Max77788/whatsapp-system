@@ -19,3 +19,15 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* styles/globals.css */
+a {
+  color: #0070f3; /* Customize color */
+  text-decoration: none; /* Remove underline */
+}
+
+a:hover {
+  color: #005bb5; /* Customize hover color */
+  text-decoration: underline; /* Optional hover effect */
+}
+

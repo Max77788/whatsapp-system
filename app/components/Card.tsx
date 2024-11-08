@@ -1,3 +1,5 @@
+"use client";
+
 // components/Card.tsx
 interface CardProps {
     title: string;

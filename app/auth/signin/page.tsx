@@ -1,6 +1,6 @@
 "use client";
-
 import { useState } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { GoogleSignInButton } from "../../components/signin/authButtons";
 import CredentialsForm from "../../components/signin/credentialsForm";
@@ -34,8 +34,15 @@ const SignIn = () => {
 <div className="w-full-flex-flex-col· items-center justify-center min-h-screen py-2"> 
       <div className="flex-flex-col-items-center w-1/3-mt-10-p-10-shadow-md">
         <GoogleSignInButton />
-        <hr className="my-5"></hr>
+        <div className="my-5 flex items-center">
+          <hr className="flex-1"></hr>
+          <span className="mx-4">or</span>
+          <hr className="flex-1"></hr>
+        </div>
          <CredentialsForm/>
+      </div>
+      <div className="flex-flex-col-items-center w-1/3-mt-10-p-10-shadow-md">
+      <p className="mt-5">Don't have an account? <Link href="/auth/signup">Sign up</Link></p>
       </div>
     </div>
   );

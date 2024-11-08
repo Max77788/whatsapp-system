@@ -1,3 +1,5 @@
+"use client";
+
 // components/Header.tsx
 const Header = () => {
     return (
@@ -11,5 +13,5 @@ const Header = () => {
     );
   };
   
-  export default Header;
+export default Header;
   
