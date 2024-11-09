@@ -8,7 +8,7 @@ export default function CredentialsForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
@@ -22,8 +22,8 @@ export default function CredentialsForm() {
     if (signInResponse && !signInResponse.error) {
       router.push('/dashboard');
     } else {
-        console.log("Error:", signInResponse);
-      setError('Invalid email or password');
+        console.log("Error:", signInResponse?.error);
+      setError(`${signInResponse?.error}`);
     }
   }
   return (
@@ -33,8 +33,10 @@ export default function CredentialsForm() {
     >
     
     {error && <span className="mb-1 text-red-500 font-semibold inline-block">{error}</span>}
+    <label htmlFor="email" className="mb-2 text-sm font-medium text-gray-900 dark:text-white self-start">Email</label>
     <input type="email" name="email" placeholder="Email" required className="mb-4 p-2 border border-gray-300 rounded-md w-full text-black"/>
     <div className="relative w-full mb-4">
+      <label htmlFor="password" className="mb-2 text-sm font-medium text-gray-900 dark:text-white self-start">Password</label>
       <input 
         type={showPassword ? "text" : "password"} 
         name="password" 
@@ -44,7 +46,7 @@ export default function CredentialsForm() {
       />
       <button
         type="button"
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+        className="absolute right-2 bottom-2 text-gray-500 hover:text-gray-700"
         onClick={() => setShowPassword(!showPassword)}
       >
         {showPassword ? "🫥" : "👁️"}

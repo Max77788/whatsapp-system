@@ -19,14 +19,12 @@
 .dashboard-greeting {
   font-size: 1.5rem;
   margin-bottom: 20px;
-  margin-top: 15px;
 }
 
 .dashboard-body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  text-align: center;
 }
 
 .dashboard-sections {

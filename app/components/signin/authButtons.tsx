@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 export function GoogleSignInButton() {
     const handleClick = () => {
         signIn('google');
-        toast.success('Signed in with Google');
+        toast.info('Signing in with Google...');
     }
     return (
         <div className="flex justify-center">

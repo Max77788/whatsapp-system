@@ -27,28 +27,14 @@ const SignIn = () => {
       toast.error("You must be signed in to view this page");
     } else if (searchParams.get("notification") === "loggedOut") {
       toast.info("You have been logged out");
+      document.cookie = "loggedOut=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      console.log("loggedOut cookie deleted");
+    } else if (searchParams.get("notification") === "email-verified") {
+      toast.success("Email verified successfully. Please sign in to continue.")
+    } else if (searchParams.get("notification") === "invalid-token") {
+      toast.error("Invalid token")
     }
   }, [searchParams]);
-
-  const handleCredentialsLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Send email and password to the credentials provider
-    const result = await signIn("credentials", {
-      redirect: true,
-      email: email,
-      password: password,
-      callbackUrl: "/dashboard",
-    });
-
-    if (!result?.ok) {
-      console.error("Invalid login attempt");
-    }
-  };
-
-  const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl: "/dashboard" });
-  };
 
   return (
     
