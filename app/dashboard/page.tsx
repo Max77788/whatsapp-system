@@ -66,6 +66,7 @@ export default async function DashboardPage() {
               <h2>Package Details</h2>
               {/* Add content for package details */}
             </div>
+            <button><a href="/settings">Settings</a></button>
           </div>
         </div>
       </div>

@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  phone1:
+    build:
+      context: .
+    environment:
+      - PHONE_NUMBER=phone1
+    ports:
+      - "3001:3000" # Map to an external port for access
+  phone2:
+    build:
+      context: .
+    environment:
+      - PHONE_NUMBER=phone2
+    ports:
+      - "3002:3000"
+  # Add more containers per phone number

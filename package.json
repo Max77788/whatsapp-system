@@ -14,11 +14,16 @@
     "bcryptjs": "^2.4.3",
     "child_process": "^1.0.2",
     "child-process": "^1.0.2",
+    "dockerode": "^4.0.2",
+    "dotenv": "^16.4.5",
+    "jimp": "^1.6.0",
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.1",
     "net": "^1.0.2",
     "next": "15.0.3",
     "next-auth": "^4.24.10",
+    "puppeteer": "latest",
+    "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
     "qrcode.react": "^4.1.0",
     "react": "19.0.0-rc-66855b96-20241106",
@@ -26,7 +31,8 @@
     "react-toastify": "^10.0.6",
     "resend": "^4.0.1-alpha.0",
     "uuid": "^11.0.2",
-    "whatsapp-web.js": "^1.26.0"
+    "whatsapp-web.js": "^1.26.0",
+    "wwebjs-mongo": "^1.1.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

@@ -2,6 +2,7 @@ import  mongoose, { Schema, model } from "mongoose";
 import { ObjectId } from 'mongodb';
 export interface UserDocument {
     _id: ObjectId;
+    unique_id: string;
     email: string;
     password: string;
     email_verified: boolean;
@@ -19,6 +20,11 @@ export interface UserDocument {
       type: Schema.Types.ObjectId,
       default: () => new ObjectId().toString(),
       required: true
+    },
+    unique_id: {
+      type: String,
+      required: true,
+      unique: true,
     },
     email: {
       type: String,

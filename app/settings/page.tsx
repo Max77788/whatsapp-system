@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
 import { authOptions } from "@/lib/auth/serverStuff";
 import { QRCodeCanvas } from 'qrcode.react';
+import { signOut } from "next-auth/react";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
