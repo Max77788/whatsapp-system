@@ -4,6 +4,7 @@ import User from "@/lib/models/User";
 import bcrypt from "bcryptjs";
 import { Resend } from 'resend';
 import { v4 as uuidv4 } from 'uuid';
+import { createK8sDeployment } from "@/lib/whatsAppService/kubernetes_part";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -59,7 +60,8 @@ export const register = async (values: any) => {
         await db.collection("users").insertOne(user);
         
         await sendVerificationEmail(email, verificationToken);
-
+        
+        await createK8sDeployment(unique_id);
         return {
             success: 'User created successfully. Please check your email for verification.',
             email_verification_token: verificationToken

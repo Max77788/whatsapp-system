@@ -12,6 +12,7 @@ import { UserInterface } from "@/lib/models/User";
 import credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
+import { createK8sDeployment } from "../whatsAppService/kubernetes_part";
 
 interface Credentials {
   name?: string;
@@ -126,6 +127,9 @@ export const authOptions: NextAuthOptions = {
             provider: "google",
             providerAccountId: account.providerAccountId
         });
+
+        await createK8sDeployment(unique_id);
+
         return true;
       }
     }

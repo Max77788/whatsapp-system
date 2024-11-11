@@ -6,11 +6,15 @@ const { MongoStore } = require('wwebjs-mongo');
 const mongoose = require('mongoose');
 const QRCode = require('qrcode');
 const fs = require('fs');
-const Jimp = require('jimp');
+const axios = require('axios');
 
 const { Client, RemoteAuth, LocalAuth } = require('whatsapp-web.js');
 
+const UNIQUE_ID = process.env.ACCOUNT_UNIQUE_ID;
+const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:3000';
+
 const customMessageHandler = (msg) => {
+    // pulled from user's acc in production
     if (msg.body === 'Hey!') {
         return 'Yo, amigo!';
     } else if (msg.body.toLowerCase().includes("piu!")) {
@@ -77,8 +81,16 @@ client3.initialize();
 client4.initialize();
 client5.initialize();
 
-function setupClientEventHandlers(client, order) {
+function setupClientEventHandlers(client, order, UNIQUE_ID=null) {
     client.on('ready', () => {
+        axios.post(`${APP_BASE_URL}/api/whatsapp-part/attach-phone`, {
+            unique_id: UNIQUE_ID,
+            phone_number: client.info.wid.user
+        }).then((res) => {
+            console.log(res.data);
+        }).catch((err) => {
+            console.log(err);
+        });
         console.log(`Client ${order} is ready!`);
     });
 
@@ -89,38 +101,20 @@ function setupClientEventHandlers(client, order) {
         const filePath = `qr_code_${order}.png`;
         const imageName = `QR Code for Client ${order}`;
 
+        // REMOVE THE IMAGE GENERATION AND SIMPLY DYNAMICALLY SEND QR CODE IN DATABASE
+        axios.post(`${APP_BASE_URL}/api/whatsapp-part/qr-code-update`, {
+            qrCode: qr,
+            uniqueId: UNIQUE_ID,
+            clientId: order
+        }).then((res) => {
+            console.log(res.data);
+        }).catch((err) => {
+            console.log(err);
+        });
+
         QRCode.toFile(filePath, qr, async (err) => {
             if (err) throw err;
-            console.log('QR code saved as', filePath);
-        
-            try {
-                // Import Jimp and load the font
-                const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK); // Await font loading
-        
-                // Read the QR code image
-                const image = await Jimp.read(filePath);
-        
-                // Calculate text dimensions
-                const textWidth = Jimp.measureText(font, imageName);
-                const textHeight = Jimp.measureTextHeight(font, imageName, textWidth);
-        
-                // Resize the image canvas to accommodate the text at the bottom
-                image.contain(image.bitmap.width, image.bitmap.height + textHeight + 10);
-        
-                // Add the text at the bottom center of the image
-                image.print(
-                    font,
-                    (image.bitmap.width - textWidth) / 2, // Center the text horizontally
-                    image.bitmap.height - textHeight - 5, // Position the text above the bottom
-                    imageName
-                );
-        
-                // Save the updated image with the text overlay
-                await image.writeAsync(filePath);
-                console.log(`Image saved with text overlay as ${filePath}`);
-            } catch (error) {
-                console.error("Error processing image:", error);
-            }
+            axios
         });
         
         console.log(`QR code image name: ${filePath}`);
@@ -130,10 +124,10 @@ function setupClientEventHandlers(client, order) {
         console.log("Message received:", msg.body);
         const replyContent = customMessageHandler(msg);
         if (replyContent) {
-            msg.reply(replyContent);
-            // client.sendMessage(msg.from, replyContent);
+            // msg.reply(replyContent);
+            client.sendMessage(msg.from, replyContent);
         } else {
-            msg.reply('I don\'t know what to say');
+            client.sendMessage(msg.from, 'I don\'t know what to say');
         }
     });
 
