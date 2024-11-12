@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "whatapp-system-app",
+  "private_key_id": "d01af6487c45b46262bff4a57fff15978c08e11d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC41mk/RBoEryjj\nTTPTqv9H5dz8K/FucSog3HZXUIhyhMiTjC2AtxndORAPly76zcI8CbBCHm7Ud8Ef\n8pKB8hOeImtnmPlorb1oJvPLa8rumSvfeSrf47qkd3KdL5kyg+MCTBgamQl1lG1z\nE/xkstGylWN9hmacLQfMNymii6ZucIBEv/bUe4RVYjw7FJt+5Fye2dsHaKbhoCU7\nWgtVBrAZLdFL257zwgmXe/xvJLjMxWCeLAw4/BlHaKHxUBFOxG+vzuRclZm8xaHP\nDUT7LYs4SviZLdLj5QrWMi6G3dRFermMLCJ5nW6aah4PoXApuBUW48L3ZYnQhhej\n53POxFBFAgMBAAECggEAGXsBTkXqmku1RMRvSRYxE+3FrYO3SCTUjGwn6jiBXtwc\nNG7mFPDo4VzM8IFEajG0PYeOY0cDu0l495j+hmhjOPEAwmrNsxcEXdfE0v2cn5DB\nAhEXjn67y5Fl3PJjWZnh0P7BceU37xwTjIIsUItwKgC7EuJUweHZSdcu56f9vQqM\nKwOInS5StDPiCq/VSZjnsuazT2kMBGiW66bWJr1+STIqCQWVZWjawdAwOVP+ZNem\nAoCVUq5+iW20VtBN2swCI1ITzxty9vooUz70XZxm+xAFU5eqEDUXWChPeb9r11jk\n5FxHFfH/9U40FjFklzOvHJd/zyX+GhvSIhO04xicbwKBgQDl7aIFNFAJ4ywwu/rT\noI0TFrxjngU2nZmBxtoesXJbhwYrCvF8hvc6HdpeaBoXegu7QpH0H2QGmXGYPEPY\nNj+aU6jeiozqga3Ao6uGpl4LCODfv6T5FxSfSuziphrTSyWNnMPv3t/crSIiRWWU\nEz+AJnlQNsKtJVz9sLU9hyehpwKBgQDNy+IYT+kP+TqV/GB+VsqFSISo1yMapnnJ\nNKp9iDPx/9gh7yXwhplcFj61xb/m/c0wCxGiPmhOhulQ2AKVhj0zyz9Hy5DoLHuS\nEp9e6JakbX+JSHg2lt9do2Tt+K4ah3d+Yp2cut7zzeiqNs2Y1Hu32u8iMIaapKyA\nfG5bF/OEMwKBgFVJ3o27p+zi/aNeN16E8Y+hIWR6W0i1ERoYnxQ/kkHtRhZ1Srp8\nffxq0nOufe8zcGKYAPfjJQFlrcNgp3HuPY2LdtqF3lummsMYcynRUJUbR/73YcSc\nESQ9cL1qDA1QlK+A9RVnQPbkqgK4Z0OUGDv7CYj9pxz+/Q2FnNUj60mFAoGAE7X0\naMm2k94WG2l5wIAFk7B3bEh2x0WsonXV4oIaH5KWm+Fw69GofKZwyS4wjCpA7doR\njU2W5faMAD9AOBwMXpqX7AN2VJZ2G26HLyrtyr/mGDsFsIzQxgIxV42a91WEP2mo\nmOtZEVbmcu8e0AWB+AETKF4ndkZRc1j3pOftXfsCgYBklP05RgIrNdLVtcZcIWeT\n0hE6CZ6hN1uBYEQysZFW12HyRBVFgGlTsi0yelBUZeCQc5Wk2WFVMfLG1O7i+L8P\nA9ce40s7aq9XGsnizWSzDA2VjfMChjUUK0tO8AKWfNq1WJnC2AoWC/EKjcvI4UU9\nPSs02mfUDs0qnYWDpzCDBA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "my-k8s-sa@whatapp-system-app.iam.gserviceaccount.com",
+  "client_id": "110193963758136307215",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/my-k8s-sa%40whatapp-system-app.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
