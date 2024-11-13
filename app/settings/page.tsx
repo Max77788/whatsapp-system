@@ -10,6 +10,11 @@ import TablePopup from "../components/settings/TablePopup";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+const initialData = [
+  { message: "Hello", options: "includes", manualInput1: "Hi", send: "Hey there!", manualInput2: "", seconds: "10" },
+  { message: "How are you?", options: "starts with", manualInput1: "How", send: "I'm good!", manualInput2: "", seconds: "15" },
+];
+
 export default async function SettingsPage(): Promise<JSX.Element> {
   await loginIsRequiredServer();
 
@@ -32,7 +37,7 @@ export default async function SettingsPage(): Promise<JSX.Element> {
       <img src={session?.user?.image || '/default-avatar.png'} alt="User Avatar" className="w-10 h-10 rounded-full" />
       <h1>Welcome to your Dashboard, {session?.user?.name}!</h1>
       {/* Dashboard content */}
-      <TablePopup />
+      <TablePopup initialRows={initialData} />
     </div>
   );
 };

@@ -1,8 +1,9 @@
 // components/TablePopup.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
+import { useSession } from 'next-auth/react';  // Assuming you're using NextAuth.js
 
 type RowData = {
     message: string;
@@ -11,14 +12,20 @@ type RowData = {
     send: string;
     manualInput2: string;
     seconds: string;
-    x: boolean;
 };
 
-const TablePopup: React.FC = () => {
+type TablePopupProps = {
+    initialRows: RowData[];
+};
+
+const TablePopup: React.FC<TablePopupProps> = ({ initialRows }) => {
+    const { data: session } = useSession();  // Get the session data from NextAuth.js
     const [isOpen, setIsOpen] = useState(false);
-    const [rows, setRows] = useState<RowData[]>([
-        { message: "", options: "", manualInput1: "", send: "", manualInput2: "", seconds: "", x: false },
-    ]);
+    const [rows, setRows] = useState<RowData[]>([]);
+
+    useEffect(() => {
+        setRows(initialRows);
+    }, [initialRows]);
 
     const togglePopup = () => setIsOpen(!isOpen);
 
@@ -29,7 +36,7 @@ const TablePopup: React.FC = () => {
     };
 
     const addRow = () => {
-        setRows([...rows, { message: "", options: "", manualInput1: "", send: "", manualInput2: "", seconds: "", x: false }]);
+        setRows([...rows, { message: "", options: "", manualInput1: "", send: "", manualInput2: "", seconds: "" }]);
     };
 
     const removeRow = (index: number) => {
@@ -37,17 +44,30 @@ const TablePopup: React.FC = () => {
     };
 
     const saveData = async () => {
+        // Get the user's email from the session
+        const userEmail = session?.user?.email;
+        if (!userEmail) {
+            alert("User email not found.");
+            return;
+        }
+
         try {
-            const response = await fetch('/api/saveTableData', {
+            // Send the data to the API route with user's email and table data
+            const response = await fetch('/api/whatsapp-part/save-message-logic', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ rows }),
+                body: JSON.stringify({
+                    userEmail: userEmail,
+                    messageLogicList: rows,
+                }),
             });
+
             if (response.ok) {
                 alert("Data saved successfully!");
             } else {
+                console.log(response);
                 alert("Failed to save data.");
             }
         } catch (error) {
@@ -58,18 +78,12 @@ const TablePopup: React.FC = () => {
 
     return (
         <div>
-            {/* Button to open the popup */}
-            <button
-                onClick={togglePopup}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
+            <button onClick={togglePopup} className="px-4 py-2 bg-blue-500 text-white rounded">
                 Modify Bot Logic
             </button>
 
-            {/* Modal Popup */}
             <Dialog open={isOpen} onClose={togglePopup} className="fixed inset-0 z-10 overflow-y-auto">
                 <div className="min-h-screen px-4 text-center">
-                    {/* Background Overlay */}
                     <div className="fixed inset-0 bg-black opacity-30" onClick={togglePopup} />
 
                     <span className="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
@@ -79,32 +93,20 @@ const TablePopup: React.FC = () => {
                             Message Configuration Table
                         </Dialog.Title>
 
-                        {/* Table Structure */}
                         <div className="overflow-x-auto mt-4">
                             <table className="w-full border border-gray-300">
                                 <thead>
                                     <tr className="bg-blue-700">
-                                        <th className="border border-gray-300 p-2 text-white">Message</th>
-                                        <th className="border border-gray-300 p-2 text-white">Options</th>
-                                        <th className="border border-gray-300 p-2 text-white">Manual Input 1</th>
-                                        <th className="border border-gray-300 p-2 text-white">Send</th>
-                                        <th className="border border-gray-300 p-2 text-white">Manual Input 2</th>
-                                        <th className="border border-gray-300 p-2 text-white">Seconds</th>
-                                        <th className="border border-gray-300 p-2 text-white">X</th>
-                                        <th className="border border-gray-300 p-2">Actions</th>
+                                        <th className="border border-gray-300 p-2 text-white">If received message</th>
+                                        <th className="border border-gray-300 p-2 text-white">Custom Match</th>
+                                        <th className="border border-gray-300 p-2 text-white">Send this message</th>
+                                        <th className="border border-gray-300 p-2 text-white">In X seconds (min 10)</th>
+                                        <th className="border border-gray-300 p-2 text-white">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {rows.map((row, index) => (
                                         <tr key={index} className="text-center text-black">
-                                            <td className="border border-gray-300 p-2">
-                                                <input
-                                                    type="text"
-                                                    value={row.message}
-                                                    onChange={(e) => handleInputChange(index, 'message', e.target.value)}
-                                                    className="w-full"
-                                                />
-                                            </td>
                                             <td className="border border-gray-300 p-2">
                                                 <select
                                                     value={row.options}
@@ -117,27 +119,19 @@ const TablePopup: React.FC = () => {
                                                 </select>
                                             </td>
                                             <td className="border border-gray-300 p-2">
-                                                <input
-                                                    type="text"
+                                                <textarea
                                                     value={row.manualInput1}
                                                     onChange={(e) => handleInputChange(index, 'manualInput1', e.target.value)}
                                                     className="w-full"
+                                                    placeholder="Custom text match"
                                                 />
                                             </td>
                                             <td className="border border-gray-300 p-2">
-                                                <input
-                                                    type="text"
+                                                <textarea
                                                     value={row.send}
                                                     onChange={(e) => handleInputChange(index, 'send', e.target.value)}
                                                     className="w-full"
-                                                />
-                                            </td>
-                                            <td className="border border-gray-300 p-2">
-                                                <input
-                                                    type="text"
-                                                    value={row.manualInput2}
-                                                    onChange={(e) => handleInputChange(index, 'manualInput2', e.target.value)}
-                                                    className="w-full"
+                                                    placeholder="Message to send"
                                                 />
                                             </td>
                                             <td className="border border-gray-300 p-2">
@@ -147,13 +141,6 @@ const TablePopup: React.FC = () => {
                                                     onChange={(e) => handleInputChange(index, 'seconds', e.target.value)}
                                                     className="w-full"
                                                     placeholder="Seconds"
-                                                />
-                                            </td>
-                                            <td className="border border-gray-300 p-2">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={row.x}
-                                                    onChange={(e) => handleInputChange(index, 'x', e.target.checked)}
                                                 />
                                             </td>
                                             <td className="border border-gray-300 p-2">
@@ -170,24 +157,14 @@ const TablePopup: React.FC = () => {
                             </table>
                         </div>
 
-                        {/* Add Row and Save Buttons */}
                         <div className="mt-4">
-                            <button
-                                onClick={addRow}
-                                className="px-4 py-2 bg-green-500 text-white rounded"
-                            >
+                            <button onClick={addRow} className="px-4 py-2 bg-green-500 text-white rounded">
                                 Add Row
                             </button>
-                            <button
-                                onClick={saveData}
-                                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
-                            >
+                            <button onClick={saveData} className="ml-4 px-4 py-2 bg-blue-500 text-white rounded">
                                 Save
                             </button>
-                            <button
-                                onClick={togglePopup}
-                                className="ml-4 px-4 py-2 bg-red-500 text-white rounded"
-                            >
+                            <button onClick={togglePopup} className="ml-4 px-4 py-2 bg-red-500 text-white rounded">
                                 Close
                             </button>
                         </div>

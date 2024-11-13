@@ -4,7 +4,7 @@ import User from "@/lib/models/User";
 import bcrypt from "bcryptjs";
 import { Resend } from 'resend';
 import { v4 as uuidv4 } from 'uuid';
-import { createK8sDeployment } from "@/lib/whatsAppService/kubernetes_part";
+import { createK8sDeployment } from "@/lib/whatsAppService/kubernetes_part.mjs";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
