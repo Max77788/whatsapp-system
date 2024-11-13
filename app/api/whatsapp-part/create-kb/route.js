@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
+// import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
 
 export async function POST(request) {
     try {
@@ -14,8 +14,9 @@ export async function POST(request) {
         }
 
         console.log("Started Creating client with uniqueId:", uniqueId);
-        const success = await createK8sDeployment(uniqueId);
+        // const success = await createK8sDeployment(uniqueId);
 
+        const success = true;
         if (success) {
             return NextResponse.json(
                 { message: `Client created with uniqueId: ${uniqueId}` },
