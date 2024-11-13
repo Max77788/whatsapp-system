@@ -2,8 +2,9 @@ import { clientPromiseDb } from '@/lib/mongodb';
 
 
 export const update_user = async (filter: any, stuff_to_update: any) => {
-    const db = await clientPromiseDb;
-    const userFound = await db.collection("users").findOne(filter);
+    try {
+        const db = await clientPromiseDb;
+        const userFound = await db.collection("users").findOne(filter);
 
     if (userFound) {
         // Update or insert message logic for the user
@@ -13,8 +14,12 @@ export const update_user = async (filter: any, stuff_to_update: any) => {
             { upsert: true }
         );
         return true;
+        }
+        return false;
+    } catch (error) {
+        console.error(`Error updating user: ${error}`);
+        throw error;
     }
-    return false;
 }
 
 export const find_user = async (filter: any) => {
