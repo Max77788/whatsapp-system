@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { clientPromiseDb } from '@/lib/mongodb';
 
-export default async function POST(req, res) {
-    const { qrCode, uniqueId, clientId } = req.body;
+export async function POST(req) {
+    const { qrCode, uniqueId, clientId } = await req.json();
 
     const db = await clientPromiseDb;
     const userFound = await db.collection("users").findOne({ uniqueId: uniqueId });
@@ -11,8 +11,8 @@ export default async function POST(req, res) {
     }
 
     console.log(qrCode, uniqueId, clientId);
-    return new Response(JSON.stringify({ message: `QR code ${clientId} updated successfully` }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-    });
+    return NextResponse.json(
+        { message: `QR code ${clientId} updated successfully` },
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
 }

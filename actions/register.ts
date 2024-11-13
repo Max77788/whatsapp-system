@@ -45,7 +45,7 @@ export const register = async (values: any) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const verificationToken = uuidv4().slice(-5);
-        const unique_id = name.replace(' ', '_').toLowerCase() + "_" + uuidv4();
+        const unique_id = name.replace(' ', '-').toLowerCase() + "-" + uuidv4();
 
         const user = new User({
           unique_id: unique_id,

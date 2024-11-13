@@ -7,12 +7,15 @@ const Sidebar = () => {
   return (
     <div className="dashboard-sidebar">
       <div className="flex items-center mb-8">
+        
         <svg className="w-8 h-8 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M2 17L12 22L22 17" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M2 12L12 17L22 12" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        <h2 className="text-xl text-black font-bold">WhatsLeads</h2>
+        <a href="/dashboard" className="no-underline">
+          <h2 className="text-xl text-black font-bold">WhatsLeads</h2>
+        </a>
       </div>
       <nav>
         <ul className="space-y-4">

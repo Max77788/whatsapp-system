@@ -3,9 +3,9 @@
 import React from 'react';
 import { useSession } from 'next-auth/react';
 import { clientPromiseDb } from '@/lib/mongodb';
-import triggerDockerWhatsAppClientCreation from '@/lib/whatsAppService/docker_container';
+import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
 
-const CreateClientButton = () => {
+const CreateClientButton = (uniqueId: string) => {
   const { data: session } = useSession();
 
   const handleCreateClient = async () => {
@@ -24,7 +24,7 @@ const CreateClientButton = () => {
 
       try {
         if (less_than_5_numbers) {
-        triggerDockerWhatsAppClientCreation(uniqueId);
+          // createK8sDeployment(uniqueId);
           console.log('Client created successfully with unique id:', uniqueId);
         } else {
           console.log('User has more than 5 numbers attached');

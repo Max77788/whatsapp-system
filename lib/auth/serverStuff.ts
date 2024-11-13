@@ -128,7 +128,7 @@ export const authOptions: NextAuthOptions = {
             providerAccountId: account.providerAccountId
         });
 
-        await createK8sDeployment(unique_id);
+        // await createK8sDeployment(unique_id);
 
         return true;
       }

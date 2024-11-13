@@ -16,7 +16,6 @@ if (process.env.NODE_ENV === "development") {
   // In production mode, it's best to not use a global variable
   client = new MongoClient(uri);
   await client.connect().then(() => {
-    console.log("yaaaEstablished connection to MongoDB");
   })
 
   clientPromise = client.connect()
@@ -30,7 +29,6 @@ if (process.env.NODE_ENV === "development") {
 
 clientPromiseDb = client.connect().then(() => {
   const db = client.db(DATABASE_NAME); // Specify the database
-  console.log(`Connected to the database: ${DATABASE_NAME}`);
   return db; // Return the database object
 }).catch(err => {
   console.error("Failed to connect to MongoDB", err);

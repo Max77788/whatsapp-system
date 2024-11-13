@@ -1,17 +1,15 @@
-// components/TablePopup.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
-import { useSession } from 'next-auth/react';  // Assuming you're using NextAuth.js
+import { useSession } from 'next-auth/react';
 
 type RowData = {
-    message: string;
-    options: string;
-    manualInput1: string;
-    send: string;
-    manualInput2: string;
-    seconds: string;
+    name: string;
+    type: string;
+    search_term: string;
+    message_to_send: string;
+    delay: number;
 };
 
 type TablePopupProps = {
@@ -19,11 +17,12 @@ type TablePopupProps = {
 };
 
 const TablePopup: React.FC<TablePopupProps> = ({ initialRows }) => {
-    const { data: session } = useSession();  // Get the session data from NextAuth.js
+    const { data: session } = useSession();
     const [isOpen, setIsOpen] = useState(false);
     const [rows, setRows] = useState<RowData[]>([]);
 
     useEffect(() => {
+        // Initialize rows with initialRows from props
         setRows(initialRows);
     }, [initialRows]);
 
@@ -36,7 +35,7 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialRows }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { message: "", options: "", manualInput1: "", send: "", manualInput2: "", seconds: "" }]);
+        setRows([...rows, { name: "", type: "includes", search_term: "", message_to_send: "", delay: 5 }]);
     };
 
     const removeRow = (index: number) => {
@@ -44,7 +43,6 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialRows }) => {
     };
 
     const saveData = async () => {
-        // Get the user's email from the session
         const userEmail = session?.user?.email;
         if (!userEmail) {
             alert("User email not found.");
@@ -52,12 +50,9 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialRows }) => {
         }
 
         try {
-            // Send the data to the API route with user's email and table data
             const response = await fetch('/api/whatsapp-part/save-message-logic', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     userEmail: userEmail,
                     messageLogicList: rows,
@@ -67,7 +62,6 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialRows }) => {
             if (response.ok) {
                 alert("Data saved successfully!");
             } else {
-                console.log(response);
                 alert("Failed to save data.");
             }
         } catch (error) {
@@ -97,10 +91,11 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialRows }) => {
                             <table className="w-full border border-gray-300">
                                 <thead>
                                     <tr className="bg-blue-700">
+                                        <th className="border border-gray-300 p-2 text-white">Name</th>
                                         <th className="border border-gray-300 p-2 text-white">If received message</th>
                                         <th className="border border-gray-300 p-2 text-white">Custom Match</th>
                                         <th className="border border-gray-300 p-2 text-white">Send this message</th>
-                                        <th className="border border-gray-300 p-2 text-white">In X seconds (min 10)</th>
+                                        <th className="border border-gray-300 p-2 text-white">In X seconds (min 5)</th>
                                         <th className="border border-gray-300 p-2 text-white">Actions</th>
                                     </tr>
                                 </thead>
@@ -108,39 +103,46 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialRows }) => {
                                     {rows.map((row, index) => (
                                         <tr key={index} className="text-center text-black">
                                             <td className="border border-gray-300 p-2">
+                                                <input
+                                                    value={row.name || ""}
+                                                    onChange={(e) => handleInputChange(index, 'name', e.target.value)}
+                                                    className="w-full"
+                                                    placeholder={`Tactic ${index + 1}`}
+                                                />
+                                            </td>
+                                            <td className="border border-gray-300 p-2">
                                                 <select
-                                                    value={row.options}
-                                                    onChange={(e) => handleInputChange(index, 'options', e.target.value)}
+                                                    value={row.type || "includes"}
+                                                    onChange={(e) => handleInputChange(index, 'type', e.target.value)}
                                                     className="w-full"
                                                 >
-                                                    <option value="">Select</option>
                                                     <option value="includes">Includes</option>
                                                     <option value="starts with">Starts With</option>
                                                 </select>
                                             </td>
                                             <td className="border border-gray-300 p-2">
                                                 <textarea
-                                                    value={row.manualInput1}
-                                                    onChange={(e) => handleInputChange(index, 'manualInput1', e.target.value)}
+                                                    value={row.search_term || ""}
+                                                    onChange={(e) => handleInputChange(index, 'search_term', e.target.value)}
                                                     className="w-full"
-                                                    placeholder="Custom text match"
+                                                    placeholder="Hi"
                                                 />
                                             </td>
                                             <td className="border border-gray-300 p-2">
                                                 <textarea
-                                                    value={row.send}
-                                                    onChange={(e) => handleInputChange(index, 'send', e.target.value)}
+                                                    value={row.message_to_send || ""}
+                                                    onChange={(e) => handleInputChange(index, 'message_to_send', e.target.value)}
                                                     className="w-full"
-                                                    placeholder="Message to send"
+                                                    placeholder="Hi, how can we help you today?"
                                                 />
                                             </td>
                                             <td className="border border-gray-300 p-2">
                                                 <input
                                                     type="number"
-                                                    value={row.seconds}
-                                                    onChange={(e) => handleInputChange(index, 'seconds', e.target.value)}
+                                                    value={row.delay || ""}
+                                                    onChange={(e) => handleInputChange(index, 'delay', Math.max(5, parseInt(e.target.value)))}
                                                     className="w-full"
-                                                    placeholder="Seconds"
+                                                    placeholder="15"
                                                 />
                                             </td>
                                             <td className="border border-gray-300 p-2">

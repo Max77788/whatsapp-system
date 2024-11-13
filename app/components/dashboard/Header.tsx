@@ -19,7 +19,6 @@ const Header: React.FC<HeaderProps> = ({ userName }) => {
     <header className="flex justify-between items-center p-4 bg-white shadow-md">
       <h1 className="text-2xl font-bold text-gray-800">{userName}</h1>
       <div className="flex items-center gap-4">
-        <span className="text-gray-600">Welcome, {userName}!</span>
         <button 
           onClick={onLogout}
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"

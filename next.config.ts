@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     // Add the alias for "@/..."
     config.resolve.alias['@'] = path.resolve(__dirname);
     return config;
-  },
+  }
   /* other config options here */
 };
 

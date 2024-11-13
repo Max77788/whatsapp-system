@@ -1,43 +1,26 @@
-// app/dashboard/page.tsx
 "use server";
 
 import { getServerSession } from "next-auth";
 import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
 import { authOptions } from "@/lib/auth/serverStuff";
-import { QRCodeCanvas } from 'qrcode.react';
-import { signOut } from "next-auth/react";
 import TablePopup from "../components/settings/TablePopup";
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-const initialData = [
-  { message: "Hello", options: "includes", manualInput1: "Hi", send: "Hey there!", manualInput2: "", seconds: "10" },
-  { message: "How are you?", options: "starts with", manualInput1: "How", send: "I'm good!", manualInput2: "", seconds: "15" },
-];
+import { clientPromiseDb } from '@/lib/mongodb';
+import { find_user } from '@/lib/utils';
 
 export default async function SettingsPage(): Promise<JSX.Element> {
-  await loginIsRequiredServer();
+    await loginIsRequiredServer();
+    
+    const session = await getServerSession(authOptions);
+    const userEmail = session?.user?.email;
+    
+    const user = await find_user({ email: userEmail });
+    const initialData = (user?.messageLogic && user.messageLogic.length > 0) ? user.messageLogic : [
+      { type: "includes", search_term: "", message_to_send: "", delay: 5 },
+    ];
 
-  const session = await getServerSession(authOptions);
-
-  await wait(1000);
-
-  console.log(`session: ${JSON.stringify(session)}`);
-
-  /*
-  // Check if the session is loading or if there is no session
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-  */
-
-  // Render the dashboard content if the user is authenticated
-  return (
-    <div className="mt-5">
-      <img src={session?.user?.image || '/default-avatar.png'} alt="User Avatar" className="w-10 h-10 rounded-full" />
-      <h1>Welcome to your Dashboard, {session?.user?.name}!</h1>
-      {/* Dashboard content */}
-      <TablePopup initialRows={initialData} />
-    </div>
-  );
+    return (
+        <div className="mt-5">
+            <TablePopup initialRows={initialData} />
+        </div>
+    );
 };
