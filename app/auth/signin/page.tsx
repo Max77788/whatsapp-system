@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -37,8 +37,9 @@ const SignIn = () => {
   }, [searchParams]);
 
   return (
-    
+    <Suspense fallback={<div>Loading...</div>}>
 <div className="w-full-flex-flex-col· items-center justify-center min-h-screen py-2"> 
+      
       <div className="flex-flex-col-items-center w-1/3-mt-10-p-10-shadow-md">
         <GoogleSignInButton />
         <div className="my-4 flex items-center">
@@ -53,6 +54,7 @@ const SignIn = () => {
       <p className="mt-5">Don't have an account? <Link href="/auth/signup">Sign up</Link></p>
       </div>
     </div>
+    </Suspense> 
   );
 };
 
