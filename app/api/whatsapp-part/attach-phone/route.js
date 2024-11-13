@@ -2,8 +2,8 @@
 import { update_user } from '@/lib/utils';
 import { NextResponse } from 'next/server';
 
-export async function POST(req, res) {
-    const { unique_id, phone_number } = req.body;
+export async function POST(req) {
+    const { unique_id, phone_number } = await req.json();
 
     success = await update_user({unique_id: unique_id}, { qrCode: { qrString: qrCode, clientId: clientId, phoneNumber: phone_number } });
 
