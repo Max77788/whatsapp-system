@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import createK8sDeployment from '@/lib/whatsAppService/kubernetes_part.mjs';
+import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
 
 
 export async function POST(request) {
