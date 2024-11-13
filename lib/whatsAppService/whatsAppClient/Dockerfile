@@ -7,16 +7,19 @@ WORKDIR /app
 # Set environment variable to skip downloading Chromium for Puppeteer
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies and Chromium
+# Install necessary system dependencies for Puppeteer and MongoDB
 RUN apk add --no-cache \
     chromium \
     harfbuzz \
     freetype \
-    ttf-freefont && \
-    npm install --force
+    ttf-freefont \
+    git
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies required for MongoDB and Puppeteer compatibility
+RUN npm install dotenv whatsapp-web.js wwebjs-mongo mongoose qrcode axios fs
 
 # Copy the rest of the application code
 COPY . .
@@ -28,4 +31,4 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 EXPOSE 5000
 
 # Run the server script
-CMD ["node", "./lib/whatsAppService/whatsAppClient.js"]
+CMD ["node", "whatsAppClient.js"]

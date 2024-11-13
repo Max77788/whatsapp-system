@@ -6,6 +6,7 @@ import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
 import { authOptions } from "@/lib/auth/serverStuff";
 import { QRCodeCanvas } from 'qrcode.react';
 import { signOut } from "next-auth/react";
+import TablePopup from "../components/settings/TablePopup";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -31,6 +32,7 @@ export default async function SettingsPage(): Promise<JSX.Element> {
       <img src={session?.user?.image || '/default-avatar.png'} alt="User Avatar" className="w-10 h-10 rounded-full" />
       <h1>Welcome to your Dashboard, {session?.user?.name}!</h1>
       {/* Dashboard content */}
+      <TablePopup />
     </div>
   );
 };
