@@ -9,15 +9,12 @@ import { signIn } from "next-auth/react";
 import { GoogleSignInButton } from "../../components/signin/authButtons";
 import CredentialsForm from "../../components/signin/credentialsForm";
 
-const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const SearchParamsHandler = (router: any) => {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   useEffect(() => {
     if (searchParams.toString()) {
-      router.replace('/auth/signin');
+      router.replace("/auth/signin");
     }
   }, [router, searchParams]);
 
@@ -30,14 +27,23 @@ const SignIn = () => {
       document.cookie = "loggedOut=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       console.log("loggedOut cookie deleted");
     } else if (notification === "email-verified") {
-      toast.success("Email verified successfully. Please sign in to continue.")
+      toast.success("Email verified successfully. Please sign in to continue.");
     } else if (notification === "invalid-token") {
       toast.error("Invalid token");
     }
   }, [searchParams]);
 
+  return null;
+};
+
+const SignIn = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+
   return (
     <Suspense fallback={<p>Loading...</p>}>
+      <SearchParamsHandler router={router} />
       <div className="w-full flex flex-col items-center justify-center min-h-screen py-2"> 
         <div className="flex flex-col items-center w-1/3 mt-10 p-10 shadow-md">
           <GoogleSignInButton />
