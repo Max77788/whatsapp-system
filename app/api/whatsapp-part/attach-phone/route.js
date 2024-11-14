@@ -19,9 +19,11 @@ export async function POST(req) {
 
     const qrCode = user[keyThing].qrString;
     
-    const success = await update_user({ unique_id: uniqueId }, { [keyThing]: { qrString: qrCode, phoneNumber: phone_number } });
+    const success = await update_user({ unique_id: unique_id }, { [keyThing]: { qrString: qrCode, phoneNumber: phone_number } });
 
-    if (success) {
+    const success2 = await update_user({ unique_id: unique_id }, {ever_attached_numbers: phone_number }, "$addToSet");
+
+    if (success && success2) {
         return NextResponse.json(
             { message: `Phone number ${phone_number} successfully attached to ${unique_id}` },
             { status: 200, headers: { 'Content-Type': 'application/json' } }

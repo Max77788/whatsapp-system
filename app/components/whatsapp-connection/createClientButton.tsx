@@ -1,50 +1,103 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useSession } from 'next-auth/react';
-import { clientPromiseDb } from '@/lib/mongodb';
-import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { Dialog } from "@headlessui/react";
 
-const CreateClientButton = (uniqueId: string) => {
+import { useRef } from "react";
+
+export default function CreateClientButton() {
   const { data: session } = useSession();
+  const [qrCode, setQrCode] = useState(null);
+  const [numberOfPhonesConnected, setNumberOfPhonesConnected] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false); // For smooth transition effect
+  const intervalIdRef = useRef<NodeJS.Timeout | null>(null); // Create a ref for the interval ID
 
-  const handleCreateClient = async () => {
-    if (session) {
-      const email = session?.user?.email; // Assuming the uniqueId is stored in session.user.id
-      const db = await clientPromiseDb;
-      const collection = db.collection('users');
-      const user = await collection.findOne({ email: email });
-      const uniqueId = user?.unique_id;
+  const togglePopup = () => setIsOpen(!isOpen);
 
-      let less_than_5_numbers;
+  const fetchQRCode = async () => {
+    try {
+      const response = await fetch("/api/whatsapp-part/generate-qr");
+      const data = await response.json();
 
-      // add checking whether the user has more than 5 numbers attached
-
-      less_than_5_numbers = true;
-
-      try {
-        if (less_than_5_numbers) {
-          // createK8sDeployment(uniqueId);
-          console.log('Client created successfully with unique id:', uniqueId);
-        } else {
-          console.log('User has more than 5 numbers attached');
-        }
-      } catch (error) {
-        console.error('Error creating client:', error);
+      if (response.ok) {
+        // Smooth fade effect before updating QR code
+        setFadeOut(true);
+        setTimeout(() => {
+          setQrCode(data.qrCodeString);
+          setNumberOfPhonesConnected(data.numberOfPhonesConnected);
+          setFadeOut(false);
+        }, 300); // Duration of the fade-out
+      } else {
+        console.error(`Error on generate QR code endpoint: ${data.error}`);
       }
-    } else {
-      console.error('No active session found');
+    } catch (error) {
+      console.error("Failed to fetch QR code:", error);
     }
   };
 
-  return (
-    <button
-      onClick={handleCreateClient}
-      className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 gap-2"
-    >
-      Create WhatsApp Client
-    </button>
-  );
-};
+  const handleGenerateQRCode = async () => {
+    if (!session) {
+      alert("You need to be logged in to generate a QR code");
+      return;
+    }
+    await fetchQRCode();
+    togglePopup();
 
-export default CreateClientButton;
+    // Start polling every 7 seconds to refresh the QR code
+    intervalIdRef.current = setInterval(fetchQRCode, 7000);
+
+    // Clear interval on close
+    return () => clearInterval(intervalIdRef.current!);
+  };
+
+  useEffect(() => {
+    // Clear interval if dialog is closed
+    if (!isOpen && intervalIdRef.current) clearInterval(intervalIdRef.current);
+  }, [isOpen]);
+
+  return (
+    <div>
+      <button onClick={handleGenerateQRCode} className="px-4 py-2 bg-blue-500 text-white rounded">
+        Connect a New Phone
+      </button>
+
+      <Dialog open={isOpen} onClose={togglePopup} className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="min-h-screen px-4 text-center">
+          <div className="fixed inset-0 bg-black opacity-30" onClick={togglePopup} />
+          
+          <span className="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
+
+          <div className="inline-block w-full max-w-sm p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded">
+            <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 text-center">
+              Scan this QR code to connect your phone
+              You have {numberOfPhonesConnected} out of 5 phones connected
+            </Dialog.Title>
+
+            <div className="mt-4 flex justify-center">
+              {qrCode ? (
+                <img
+                  src={qrCode}
+                  alt="QR Code"
+                  className={`w-full h-auto transition-opacity duration-300 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
+                />
+              ) : (
+                <p>Generating QR code...</p>
+              )}
+            </div>
+
+            <div className="mt-4">
+              <button onClick={togglePopup} className="px-4 py-2 bg-red-500 text-white rounded">
+                Close
+              </button>
+            </div>
+            
+          </div>
+          
+        </div>
+        
+      </Dialog>
+    </div>
+  );
+}
