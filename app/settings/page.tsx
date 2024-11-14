@@ -24,7 +24,8 @@ export default async function SettingsPage(): Promise<JSX.Element> {
 
     return (
         <div className="mt-5 flex flex-col items-center gap-5">
-            <TablePopup initialRows={initialData} />
+            {/* <TablePopup initialRows={initialData} /> */}
+            <TablePopup />
             <CreateClientButton />
             <PhoneNumberTacticsTable />
         </div>
