@@ -7,6 +7,7 @@ import Link from "next/link";
 import { GoogleSignInButton } from "../../components/signin/authButtons";
 import CredentialsForm from "../../components/signin/credentialsForm";
 
+// Component to handle search parameters and show notifications
 const SearchParamsHandler = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -43,28 +44,40 @@ const SearchParamsHandler = () => {
 const SignIn = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
+      {/* SearchParamsHandler to manage URL params and notifications */}
       <SearchParamsHandler />
-      <div className="flex flex-col items-center justify-center min-h-screen py-2">
-        <div className="flex flex-col items-center w-1/3 mt-10 p-10 shadow-md">
-          <GoogleSignInButton />
-          <div className="my-4 flex items-center">
-            <hr className="flex-1"></hr>
-            <span className="mx-4">or</span>
-            <hr className="flex-1"></hr>
+
+      {/* Main Sign-In Page */}
+        <div className="w-full max-w-md p-8 space-y-6 rounded-lg shadow-lg">
+  
+
+          <div className="space-y-4">
+            <GoogleSignInButton />
+
+            <div className="flex items-center space-x-2">
+              <hr className="flex-1 border-gray-600" />
+              <span className="text-gray-400">or</span>
+              <hr className="flex-1 border-gray-600" />
+            </div>
+
+            <CredentialsForm />
+
+            <p className="text-sm text-gray-400">
+              Admin credentials:
+              <br />
+              <span className="text-gray-300">admin@admin.com, admin123</span>
+            </p>
           </div>
-          <CredentialsForm />
-          <p className="mt-5">
-            Admin credentials:
-            <br />
-            admin@admin.com, admin123
-          </p>
+
+          <div className="text-center">
+            <p className="text-gray-400">
+              Don&apos;t have an account?{" "}
+              <Link href="/auth/signup" className="text-blue-500 hover:underline">
+                Sign up
+              </Link>
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col items-center w-1/3 mt-10 p-10 shadow-md">
-          <p className="mt-5">
-            Don't have an account? <Link href="/auth/signup">Sign up</Link>
-          </p>
-        </div>
-      </div>
     </Suspense>
   );
 };
