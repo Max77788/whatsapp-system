@@ -9,7 +9,7 @@ export async function POST(req) {
 
         console.log(`userEmail: ${userEmail}, messageLogicList: ${JSON.stringify(messageLogicList)}`);
 
-        const success = await update_user({ email: userEmail }, { messageLogic: messageLogicList });
+        const success = await update_user({ email: userEmail }, { messageLogicList: messageLogicList });
         
         if (success) {
         return NextResponse.json(

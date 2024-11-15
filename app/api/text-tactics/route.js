@@ -24,7 +24,7 @@ export async function GET(req) {
    let text_tactics_names_list = [];
    let text_tactics_list = [];
 
-  for (let objectt of user.messageLogic) {
+  for (let objectt of user.messageLogicList) {
       text_tactics_names_list.push(objectt.name);
       text_tactics_list.push(objectt);
   }

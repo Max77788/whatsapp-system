@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from 'react';
-import { Dialog } from '@headlessui/react';
-import { useSession } from 'next-auth/react';
+import { useEffect, useState } from "react";
+import { Dialog } from "@headlessui/react";
+import { useSession } from "next-auth/react";
 
 type RowData = {
     type: string;
     search_term: string;
     message_to_send: string;
     delay: number;
+    platforms: string[]; // Change to array
 };
 
 type InstructionSet = {
@@ -16,10 +17,37 @@ type InstructionSet = {
     rows: RowData[];
 };
 
-const TablePopup: React.FC = () => {
+type TablePopupProps = {
+    initialTactics?: InstructionSet[];
+};
+
+const TablePopup: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
     const { data: session } = useSession();
     const [isOpen, setIsOpen] = useState(false);
-    const [instructionSets, setInstructionSets] = useState<InstructionSet[]>([{ name: "Set 1", rows: [] }]);
+    const [instructionSets, setInstructionSets] = useState<InstructionSet[]>([]);
+
+    useEffect(() => {
+        const initializedTactics = initialTactics.map((set) => ({
+            ...set,
+            rows: set.rows.map((row) => ({
+                ...row,
+                platforms: Array.isArray(row.platforms) ? row.platforms : ["whatsapp"], // Ensure it's always an array
+            })),
+        }));
+    
+        if (initializedTactics.length > 0) {
+            setInstructionSets(initializedTactics);
+        } else {
+            setInstructionSets([
+                {
+                    name: "Custom Set Name 1",
+                    rows: [
+                        { type: "includes", search_term: "", message_to_send: "", delay: 5, platforms: ["whatsapp"] }
+                    ]
+                }
+            ]);
+        }
+    }, [initialTactics]);
 
     const togglePopup = () => setIsOpen(!isOpen);
 
@@ -32,8 +60,13 @@ const TablePopup: React.FC = () => {
     const addSet = () => {
         setInstructionSets([
             ...instructionSets,
-            { name: `Set ${instructionSets.length + 1}`, rows: [{ type: "includes", search_term: "", message_to_send: "", delay: 5 }] }
+            { name: `Set ${instructionSets.length + 1}`, rows: [{ type: "includes", search_term: "", message_to_send: "", delay: 5, platforms: ["whatsapp"] }] }
         ]);
+    };
+
+    const deleteSet = (index: number) => {
+        const updatedSets = instructionSets.filter((_, i) => i !== index);
+        setInstructionSets(updatedSets);
     };
 
     const handleInputChange = <T extends keyof RowData>(setIndex: number, rowIndex: number, field: T, value: RowData[T]) => {
@@ -42,9 +75,31 @@ const TablePopup: React.FC = () => {
         setInstructionSets(updatedSets);
     };
 
+    const handlePlatformChange = (setIndex: number, rowIndex: number, platform: string) => {
+        const updatedSets = [...instructionSets];
+        const row = updatedSets[setIndex].rows[rowIndex];
+    
+        // Ensure platforms is always an array
+        if (!Array.isArray(row.platforms)) {
+            row.platforms = ["whatsapp"];
+        }
+    
+        if (!row.platforms.includes(platform)) {
+            row.platforms.push(platform);
+        } else if (row.platforms.length > 1) {
+            row.platforms = row.platforms.filter((p) => p !== platform);
+        } else {
+            alert("At least one platform must be selected.");
+            return;
+        }
+    
+        setInstructionSets(updatedSets);
+    };
+    
+
     const addRow = (setIndex: number) => {
         const updatedSets = [...instructionSets];
-        updatedSets[setIndex].rows.push({ type: "includes", search_term: "", message_to_send: "", delay: 5 });
+        updatedSets[setIndex].rows.push({ type: "includes", search_term: "", message_to_send: "", delay: 5, platforms: ["whatsapp"] });
         setInstructionSets(updatedSets);
     };
 
@@ -62,17 +117,18 @@ const TablePopup: React.FC = () => {
         }
 
         try {
-            const response = await fetch('/api/whatsapp-part/save-message-logic', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch("/api/whatsapp-part/save-message-logic", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    userEmail: userEmail,
-                    instructionSets,
+                    userEmail,
+                    messageLogicList: instructionSets,
                 }),
             });
 
             if (response.ok) {
                 alert("Data saved successfully!");
+                location.reload();
             } else {
                 alert("Failed to save data.");
             }
@@ -92,7 +148,9 @@ const TablePopup: React.FC = () => {
                 <div className="min-h-screen px-4 text-center">
                     <div className="fixed inset-0 bg-black opacity-30" onClick={togglePopup} />
 
-                    <span className="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
+                    <span className="inline-block h-screen align-middle" aria-hidden="true">
+                        &#8203;
+                    </span>
 
                     <div className="inline-block w-full max-w-3xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded overflow-y-auto max-h-[80vh]">
                         <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
@@ -106,11 +164,17 @@ const TablePopup: React.FC = () => {
                                         <input
                                             value={set.name}
                                             onChange={(e) => handleSetNameChange(setIndex, e.target.value)}
-                                            className="text-lg font-medium mb-2 w-full"
-                                            placeholder={`Set ${setIndex + 1}`}
+                                            className="text-lg font-medium mb-2 w-full text-black"
+                                            placeholder={`Custom Set Name ${setIndex + 1}`}
                                         />
+                                        <button
+                                            onClick={() => deleteSet(setIndex)}
+                                            className="ml-2 px-4 py-2 bg-red-500 text-white rounded mr-2 mb-2 whitespace-nowrap"
+                                        >
+                                            Delete Set
+                                        </button>
                                     </div>
-                                    
+
                                     <table className="w-full border border-gray-300 mb-2">
                                         <thead>
                                             <tr className="bg-blue-700">
@@ -118,7 +182,8 @@ const TablePopup: React.FC = () => {
                                                 <th className="border border-gray-300 p-2 text-white">Custom Match</th>
                                                 <th className="border border-gray-300 p-2 text-white">Send this message</th>
                                                 <th className="border border-gray-300 p-2 text-white">In X seconds (min 5)</th>
-                                                <th className="border border-gray-300 p-2 text-white">Actions</th>
+                                                <th className="border border-gray-300 p-2 text-white">Platforms</th>
+                                                <th className="border border-gray-300 p-2 text-white"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -127,7 +192,7 @@ const TablePopup: React.FC = () => {
                                                     <td className="border border-gray-300 p-2">
                                                         <select
                                                             value={row.type}
-                                                            onChange={(e) => handleInputChange(setIndex, rowIndex, 'type', e.target.value)}
+                                                            onChange={(e) => handleInputChange(setIndex, rowIndex, "type", e.target.value)}
                                                             className="w-full"
                                                         >
                                                             <option value="includes">Includes</option>
@@ -137,7 +202,7 @@ const TablePopup: React.FC = () => {
                                                     <td className="border border-gray-300 p-2">
                                                         <textarea
                                                             value={row.search_term}
-                                                            onChange={(e) => handleInputChange(setIndex, rowIndex, 'search_term', e.target.value)}
+                                                            onChange={(e) => handleInputChange(setIndex, rowIndex, "search_term", e.target.value)}
                                                             className="w-full"
                                                             placeholder="Hi"
                                                         />
@@ -145,7 +210,7 @@ const TablePopup: React.FC = () => {
                                                     <td className="border border-gray-300 p-2">
                                                         <textarea
                                                             value={row.message_to_send}
-                                                            onChange={(e) => handleInputChange(setIndex, rowIndex, 'message_to_send', e.target.value)}
+                                                            onChange={(e) => handleInputChange(setIndex, rowIndex, "message_to_send", e.target.value)}
                                                             className="w-full"
                                                             placeholder="Hi, how can we help you today?"
                                                         />
@@ -154,11 +219,37 @@ const TablePopup: React.FC = () => {
                                                         <input
                                                             type="number"
                                                             value={row.delay}
-                                                            onChange={(e) => handleInputChange(setIndex, rowIndex, 'delay', Math.max(5, parseInt(e.target.value)))}
+                                                            onChange={(e) => handleInputChange(setIndex, rowIndex, "delay", Math.max(5, parseInt(e.target.value)))}
                                                             className="w-full"
                                                             placeholder="15"
                                                         />
                                                     </td>
+                                                    
+                                                    <td className="border border-gray-300 p-2">
+                                                        <div className="flex flex-col">
+                                                            {["whatsapp", "facebook"].map((platform) => {
+                                                                // Ensure platforms is a valid array
+                                                                if (!Array.isArray(row.platforms) || row.platforms.length === 0) {
+                                                                    row.platforms = ["whatsapp"]; // Fallback to default
+                                                                }
+
+                                                                console.log(`row.platforms: ${JSON.stringify(row.platforms)}`);
+
+                                                                return (
+                                                                    <label key={platform} className="flex items-center">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className="mr-2"
+                                                                            checked={row.platforms.includes(platform)}
+                                                                            onChange={() => handlePlatformChange(setIndex, rowIndex, platform)}
+                                                                        />
+                                                                        {platform}
+                                                                    </label>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </td>
+
                                                     <td className="border border-gray-300 p-2">
                                                         <button
                                                             onClick={() => removeRow(setIndex, rowIndex)}

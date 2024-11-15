@@ -18,14 +18,14 @@ export default async function SettingsPage(): Promise<JSX.Element> {
     const user = await find_user({ email: userEmail });
     const uniqueId = user?.unique_id;
 
-    const initialData = (user?.messageLogic && user.messageLogic.length > 0) ? user.messageLogic : [
+    const initialData = (user?.messageLogicList && user.messageLogicList.length > 0) ? user.messageLogicList : [
       { type: "includes", search_term: "", message_to_send: "", delay: 5 },
     ];
 
     return (
         <div className="mt-5 flex flex-col items-center gap-5">
             {/* <TablePopup initialRows={initialData} /> */}
-            <TablePopup />
+            <TablePopup initialTactics={initialData} />
             <CreateClientButton />
             <PhoneNumberTacticsTable />
         </div>
