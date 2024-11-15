@@ -20,6 +20,8 @@ interface Credentials {
   password: string;
 }
 
+const DATABASE_NAME = process.env.DATABASE_NAME || "whatsappSystem";
+
 const unique_id_aydi_part = uuidv4().slice(-4);
 
 // Define authOptions separately
@@ -32,7 +34,9 @@ export const authOptions: NextAuthOptions = {
           password: { label: "Password", type: "password" },
         },
         async authorize(credentials: Record<string, string> | undefined): Promise<UserInterface | null> {
-          const db = await clientPromiseDb;
+          const client = await clientPromise;
+          
+          const db = client.db(DATABASE_NAME);
           const userFound = await db.collection("users").findOne({ email: credentials?.email,
             $or: [
               { email_verified: true },            // Case where email_verified is true
@@ -40,6 +44,7 @@ export const authOptions: NextAuthOptions = {
             ] }) as UserInterface | null;
 
           if (!userFound) {
+            await client.close();
             throw new Error("User with this email not found") // Return null instead of an error object
           }
 
@@ -50,7 +55,11 @@ export const authOptions: NextAuthOptions = {
             userFound.password
           );
 
-          if (!passwordMatch) throw new Error("Wrong Password"); // Return null for wrong password
+          if (!passwordMatch) {
+            await client.close();
+            throw new Error("Wrong Password"); // Return null for wrong password
+          }
+          await client.close();
           return userFound; // Use typeof to reference the value
         }
       }),
@@ -82,6 +91,7 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
       async signIn({ user, account, profile }) {
+        let client;
         // Check if the provider is Google
         if (account && account.provider === "google") {
           console.log(`Entered Google sign-in`);
@@ -95,7 +105,9 @@ export const authOptions: NextAuthOptions = {
       // Modify the user object by merging with custom attributes
       const modifiedUser = { ...user, ...customAttributes };
 
-      const db = await clientPromiseDb;
+      client = await clientPromise;
+          
+      const db = client.db(DATABASE_NAME);
       const existingUser = await db.collection("users").findOne({ email: profile?.email });
 
       if (existingUser) {
@@ -114,8 +126,11 @@ export const authOptions: NextAuthOptions = {
         { $set: { provider: "google", providerAccountId: existingUser.id } },
         { upsert: true } // Create if doesn't exist
       );
+
+      await client.close();
       return true;
     } else{
+      await client.close();
       console.log(`No user id found for existing user`);
     }
         
@@ -128,10 +143,16 @@ export const authOptions: NextAuthOptions = {
             providerAccountId: account.providerAccountId
         });
 
+        await client.close();
+
         // await createK8sDeployment(unique_id);
 
         return true;
       }
+    }
+    
+    if (client) {
+      await client.close();
     }
 
     return true; // Always return true to allow sign-in

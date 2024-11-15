@@ -65,7 +65,7 @@ const SignIn = () => {
             <p className="text-sm text-gray-400">
               Admin credentials:
               <br />
-              <span className="text-gray-300">admin@admin.com, admin123</span>
+              <span className="text-gray-300">admin@demo.com, admin123</span>
             </p>
           </div>
 
