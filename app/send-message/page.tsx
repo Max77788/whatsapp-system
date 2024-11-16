@@ -1,0 +1,50 @@
+"use server";
+
+import { getServerSession } from "next-auth";
+import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
+import { authOptions } from "@/lib/auth/serverStuff";
+import TablePopup from "../components/settings/TablePopup";
+import { clientPromiseDb } from '@/lib/mongodb';
+import { find_user } from '@/lib/utils';
+import CreateClientButton from "../components/whatsapp-connection/createClientButton";
+import PhoneNumberTacticsTable from "../components/settings/PhoneNumberTacticsTable";
+import SendMessageForm from "../components/send-message/sendMessageForm";
+
+const session = await getServerSession(authOptions);
+const userEmail = session?.user?.email;
+    
+const user = await find_user({ email: userEmail });
+
+user
+
+export default async function SendMessagePage(): Promise<JSX.Element> {
+    await loginIsRequiredServer();
+    
+    const session = await getServerSession(authOptions);
+    const userEmail = session?.user?.email;
+    
+    const user = await find_user({ email: userEmail });
+    const uniqueId = user?.unique_id;
+
+    let fromPhones = [];
+
+    const leads = user?.leads;
+    
+    let toPhones = [];
+    toPhones = leads.map((lead: any) => lead.phone_number);
+
+    for (let i = 1; i < 6; i++) {
+        if (user?.[`qrCode${i}`].phoneNumber) {
+            fromPhones.push(user?.[`qrCode${i}`].phoneNumber);
+        }
+    }
+
+    console.log(fromPhones);
+    console.log(toPhones);
+
+    return (
+        <div className="mt-5 flex flex-col items-center gap-5">
+            <SendMessageForm fromPhones={fromPhones} toPhones={toPhones} />
+        </div>
+    );
+};

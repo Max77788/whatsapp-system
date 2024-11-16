@@ -42,7 +42,7 @@ export const update_user = async (filter: any, stuff_to_update: any, action: str
     } finally {
         if (client) {
             await client.close(); // Ensure the client connection is closed after the operation
-            // console.log("Connection to MongoDB closed");
+            console.log("Connection to MongoDB closed");
         }
     }
 }

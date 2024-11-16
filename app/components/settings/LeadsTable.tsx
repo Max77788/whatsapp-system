@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Papa from "papaparse";
+import { useSession } from "next-auth/react";
+
+
 
 interface Lead {
   name: string;
@@ -16,6 +20,16 @@ interface Props {
 const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
   const [leadData, setLeadData] = useState<Lead[]>(leads);
   const [loading, setLoading] = useState(leads.length === 0);
+  const [newLead, setNewLead] = useState<Lead>({
+    name: "",
+    phone_number: "",
+    source: "",
+    sent_messages: 0,
+  });
+
+  const { data: session } = useSession();
+
+  
 
   useEffect(() => {
     if (leads.length === 0) {
@@ -35,34 +49,95 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
     }
   }, [leads]);
 
-  const updateSentMessages = (phone_number: string, increment: number) => {
-    setLeadData((prevData) =>
-      prevData.map((lead) =>
-        lead.phone_number === phone_number
-          ? { ...lead, sent_messages: (lead.sent_messages || 0) + increment }
-          : lead
-      )
-    );
+  const handleAddLead = () => {
+    if (!newLead.name || !newLead.phone_number || !newLead.source) {
+      alert("Please fill in all fields before adding a lead.");
+      return;
+    }
+
+    setLeadData((prevData) => [...prevData, newLead]);
+    setNewLead({ name: "", phone_number: "", source: "", sent_messages: 0 });
+  };
+
+  const handleImportLeads = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    const extension = file.name.split(".").pop()?.toLowerCase();
+  
+    if (extension === "json") {
+      // Handle JSON files
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const importedLeads: Lead[] = JSON.parse(reader.result as string);
+          const formattedLeads = importedLeads.map((lead) => ({
+            ...lead,
+            sent_messages: lead.sent_messages || 0, // Ensure `sent_messages` defaults to 0
+          }));
+          setLeadData((prevData) => [...prevData, ...formattedLeads]);
+        } catch (error) {
+          console.error("Error parsing JSON file:", error);
+          alert("Failed to import leads. Please check the file format.");
+        }
+      };
+      reader.readAsText(file);
+    } else if (extension === "csv") {
+      // Handle CSV files using Papaparse
+      Papa.parse(file, {
+        header: true, // Treat the first row as headers
+        skipEmptyLines: true,
+        complete: (results) => {
+          const importedLeads = results.data as Lead[];
+          const formattedLeads = importedLeads.map((lead) => ({
+            ...lead,
+            sent_messages: lead.sent_messages || 0, // Ensure `sent_messages` defaults to 0
+          }));
+          setLeadData((prevData) => [...prevData, ...formattedLeads]);
+        },
+        error: (error) => {
+          console.error("Error parsing CSV file:", error);
+          alert("Failed to import leads from CSV file. Please check the file format.");
+        },
+      });
+    } else {
+      alert("Unsupported file type. Please upload a JSON or CSV file.");
+    }
   };
 
   const saveData = async () => {
     try {
-      const response = await fetch("/api/save-leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(leadData),
-      });
+        const userEmail = session?.user?.email;
+        if (!userEmail) {
+            alert("User email not found.");
+            return;
+        }
+      
+        const leadsToSave = leadData.map(({ name, phone_number, source, sent_messages }) => ({
+            name,
+            phone_number,
+            source
+        }));
 
-      if (response.ok) {
-        alert("Leads data saved successfully!");
-      } else {
-        alert("Failed to save leads data.");
-      }
+        const response = await fetch("/api/leads/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userEmail,
+              leadsList: leadsToSave,
+          })
+        });
+
+        if (response.ok) {
+            alert("Leads data saved successfully!");
+        } else {
+            alert("Failed to save leads data.");
+        }
     } catch (error) {
-      console.error("Error saving leads data:", error);
-      alert("An error occurred while saving leads data.");
+        console.error("Error saving leads data:", error);
+        alert("An error occurred while saving leads data.");
     }
-  };
+};
 
   if (loading) {
     return <p>Loading...</p>;
@@ -81,8 +156,6 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
                 <th className="border border-gray-300 p-2 text-left">Name</th>
                 <th className="border border-gray-300 p-2 text-left">Phone Number</th>
                 <th className="border border-gray-300 p-2 text-left">Source</th>
-                <th className="border border-gray-300 p-2 text-left">Sent Messages</th>
-                <th className="border border-gray-300 p-2 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -91,15 +164,6 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
                   <td className="border border-gray-300 p-2">{lead.name}</td>
                   <td className="border border-gray-300 p-2">{lead.phone_number}</td>
                   <td className="border border-gray-300 p-2">{lead.source}</td>
-                  <td className="border border-gray-300 p-2">{lead.sent_messages || 0}</td>
-                  <td className="border border-gray-300 p-2">
-                    <button
-                      onClick={() => updateSentMessages(lead.phone_number, 1)}
-                      className="px-2 py-1 bg-green-500 text-white rounded"
-                    >
-                      Send Message
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -112,7 +176,69 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
           </button>
         </>
       )}
-    </div>
+
+      {/* Add New Lead */}
+      <div className="mt-6 p-4 border border-gray-300 rounded">
+        <h2 className="text-xl font-semibold mb-4">Add New Lead</h2>
+        <div className="grid grid-cols-3 gap-4">
+          <input
+            type="text"
+            value={newLead.name}
+            onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
+            placeholder="Name"
+            className="border text-black border-gray-300 p-2 rounded"
+          />
+          <input
+            type="text"
+            value={newLead.phone_number}
+            onChange={(e) =>
+              setNewLead({ ...newLead, phone_number: e.target.value })
+            }
+            placeholder="Phone Number"
+            className="border text-black border-gray-300 p-2 rounded"
+          />
+          <input
+            type="text"
+            value={newLead.source}
+            onChange={(e) => setNewLead({ ...newLead, source: e.target.value })}
+            placeholder="Source"
+            className="border text-black border-gray-300 p-2 rounded"
+          />
+        </div>
+        <button
+          onClick={handleAddLead}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Add Lead
+        </button>
+      </div>
+
+      {/* Import Leads */}
+      <div className="mt-6 p-4 border border-gray-300 rounded">
+      <h2 className="text-xl font-semibold mb-4">Import Leads</h2>
+      <input
+        type="file"
+        accept=".json,.csv"
+        onChange={handleImportLeads}
+        className="block"
+      />
+      <p className="text-gray-400 mt-2">
+        Upload a JSON or CSV file with an array of leads. Example formats:
+      </p>
+      <pre className="bg-gray-100 p-2 rounded">
+        JSON:
+        {JSON.stringify(
+          [{ name: "John Doe", phone_number: "1234567890", source: "Website" }],
+          null,
+          2
+        )}
+      </pre>
+      <pre className="bg-gray-100 p-2 rounded mt-2">
+        CSV:
+        {"name,phone_number,source\nJohn Doe,1234567890,Website"}
+      </pre>
+          </div>
+        </div>
   );
 };
 

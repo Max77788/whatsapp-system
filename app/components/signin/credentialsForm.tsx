@@ -34,13 +34,14 @@ export default function CredentialsForm() {
     
     {error && <span className="mb-1 text-red-500 font-semibold inline-block">{error}</span>}
     <label htmlFor="email" className="mb-2 text-sm font-medium text-gray-900 dark:text-white self-start">Email</label>
-    <input type="email" name="email" placeholder="Email" required className="mb-4 p-2 border border-gray-300 rounded-md w-full text-black"/>
+    <input type="email" name="email" value={"admin@demo.com"} placeholder="Email" required className="mb-4 p-2 border border-gray-300 rounded-md w-full text-black"/>
     <div className="relative w-full mb-4">
       <label htmlFor="password" className="mb-2 text-sm font-medium text-gray-900 dark:text-white self-start">Password</label>
       <input 
         type={showPassword ? "text" : "password"} 
         name="password" 
         placeholder="Password" 
+        value={"admin123"}
         required 
         className="p-2 border border-gray-300 rounded-md w-full text-black"
       />
