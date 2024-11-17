@@ -23,6 +23,10 @@ export default async function SettingsPage(): Promise<JSX.Element> {
       { type: "includes", search_term: "", message_to_send: "", delay: 5 },
     ];
 
+    const initialTactics = (user?.phoneNumberTactics && user.phoneNumberTactics.length > 0) ? user.phoneNumberTactics : [
+        { phoneNumber: "", tactics: [] }
+    ];
+
     const leadsData = (user?.leads && user.leads.length > 0) ? user.leads : [
         {"name": "Name", "email": "example@example.com", "phone_number": "1234567890", "source": "unknown"}
     ];
@@ -32,7 +36,7 @@ export default async function SettingsPage(): Promise<JSX.Element> {
             {/* <TablePopup initialRows={initialData} /> */}
             <TablePopup initialTactics={initialData} />
             <CreateClientButton />
-            <PhoneNumberTacticsTable />
+            <PhoneNumberTacticsTable initialTactics={initialTactics} />
             <LeadsTable leads={leadsData}/>
             <h1>Webhook URLs</h1>
             <div className="flex flex-col items-center gap-5">

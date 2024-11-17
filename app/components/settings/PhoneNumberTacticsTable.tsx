@@ -7,29 +7,48 @@ interface PhoneNumber {
   active: boolean;
 }
 
-const PhoneNumberTacticsTable: React.FC = () => {
+interface TacticAssignment {
+  phoneNumber: string;
+  tactics: string[];
+}
+
+interface PhoneNumberTacticsTableProps {
+  initialTactics?: TacticAssignment[];
+}
+
+const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initialTactics = [] }) => {
   const [phoneNumbers, setPhoneNumbers] = useState<PhoneNumber[]>([]);
   const [tactics, setTactics] = useState<string[]>([]);
-  const [selectedTactics, setSelectedTactics] = useState<Record<string, Set<string>>>({});
+  const [selectedTactics, setSelectedTactics] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const phoneNumbersResponse = await fetch("/api/phone-numbers");
-        const tacticsResponse = await fetch("/api/text-tactics"); // Adjust this endpoint if needed
+        const tacticsResponse = await fetch("/api/text-tactics");
+
+        if (!phoneNumbersResponse.ok || !tacticsResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
 
         const phoneNumbersData: PhoneNumber[] = await phoneNumbersResponse.json();
         const { text_tactics_names_list } = await tacticsResponse.json();
 
         setPhoneNumbers(phoneNumbersData);
         setTactics(["Do Nothing", ...text_tactics_names_list]);
-        setSelectedTactics(
-          phoneNumbersData.reduce((acc, phone) => {
-            acc[phone.phoneNumber] = new Set();
+
+        // Initialize selectedTactics with initial props or default "Do Nothing"
+        const initialTacticsMap: Record<string, string[]> = phoneNumbersData.reduce(
+          (acc, phone) => {
+            const assignedTactics =
+              initialTactics.find((tactic) => tactic.phoneNumber === phone.phoneNumber)?.tactics || ["Do Nothing"];
+            acc[phone.phoneNumber] = assignedTactics;
             return acc;
-          }, {} as Record<string, Set<string>>)
+          },
+          {} as Record<string, string[]>
         );
+        setSelectedTactics(initialTacticsMap);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       } finally {
@@ -38,46 +57,67 @@ const PhoneNumberTacticsTable: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [initialTactics]);
 
   const handleTacticChange = (phoneNumber: string, tactic: string) => {
     setSelectedTactics((prev) => {
-      const currentSelection = new Set(prev[phoneNumber] || []);
+      const currentSelection = prev[phoneNumber] || [];
 
       if (tactic === "Do Nothing") {
-        // If "Do Nothing" is selected, clear all other tactics
         return {
           ...prev,
-          [phoneNumber]: currentSelection.has(tactic) ? new Set() : new Set(["Do Nothing"]),
+          [phoneNumber]: ["Do Nothing"],
         };
       }
 
-      // If any other tactic is selected, ensure "Do Nothing" is removed
-      if (currentSelection.has("Do Nothing")) {
-        currentSelection.delete("Do Nothing");
-      }
-
-      if (currentSelection.has(tactic)) {
-        currentSelection.delete(tactic);
-      } else {
-        currentSelection.add(tactic);
-      }
+      const updatedSelection = currentSelection.includes(tactic)
+        ? currentSelection.filter((t) => t !== tactic)
+        : [...currentSelection.filter((t) => t !== "Do Nothing"), tactic];
 
       return {
         ...prev,
-        [phoneNumber]: currentSelection,
+        [phoneNumber]: updatedSelection,
       };
     });
   };
 
+  const handleDelete = async (phoneNumber: string) => {
+    try {
+      const response = await fetch(`/api/whatsapp-part/disconnect-phone`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber }),
+      });
+
+      if (response.ok) {
+        alert("Phone number disconnected successfully!");
+        setPhoneNumbers((prev) => prev.filter((phone) => phone.phoneNumber !== phoneNumber));
+        setSelectedTactics((prev) => {
+          const newTactics = { ...prev };
+          delete newTactics[phoneNumber];
+          return newTactics;
+        });
+      } else {
+        alert("Failed to disconnect phone number.");
+      }
+    } catch (error) {
+      console.error("Error disconnecting phone number:", error);
+      alert("An error occurred while disconnecting the phone number.");
+    }
+  };
+
   const saveData = async () => {
+    console.log(`selectedTactics: ${JSON.stringify(selectedTactics)}`);
+
     const dataToSave = phoneNumbers.map((phone) => ({
       phoneNumber: phone.phoneNumber,
-      tactics: Array.from(selectedTactics[phone.phoneNumber] || []),
+      tactics: selectedTactics[phone.phoneNumber] || [],
     }));
 
+    console.log(`dataToSave: ${JSON.stringify(dataToSave)}`);
+
     try {
-      const response = await fetch("/api/save-tactics", {
+      const response = await fetch("/api/text-tactics/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSave),
@@ -111,13 +151,16 @@ const PhoneNumberTacticsTable: React.FC = () => {
                 <th className="border border-gray-300 p-2 text-left">Phone Number</th>
                 <th className="border border-gray-300 p-2 text-left">Active</th>
                 <th className="border border-gray-300 p-2 text-left">Tactics</th>
+                <th className="border border-gray-300 p-2 text-left"></th>
               </tr>
             </thead>
             <tbody>
               {phoneNumbers.map((phoneNumber) => (
                 <tr key={phoneNumber.phoneNumber}>
                   <td className="border border-gray-300 p-2">{phoneNumber.phoneNumber}</td>
-                  <td className="border border-gray-300 p-2">{phoneNumber.active ? "Active🟢" : "Inactive🔴"}</td>
+                  <td className="border border-gray-300 p-2">
+                    {phoneNumber.active ? "Active🟢" : "Inactive🔴"}
+                  </td>
                   <td className="border border-gray-300 p-2">
                     <div className="flex flex-wrap gap-2">
                       {tactics.map((tactic) => (
@@ -125,7 +168,7 @@ const PhoneNumberTacticsTable: React.FC = () => {
                           <input
                             type="checkbox"
                             className="mr-2"
-                            checked={selectedTactics[phoneNumber.phoneNumber]?.has(tactic) || false}
+                            checked={selectedTactics[phoneNumber.phoneNumber]?.includes(tactic) || false}
                             onChange={() => handleTacticChange(phoneNumber.phoneNumber, tactic)}
                           />
                           {tactic}
@@ -133,12 +176,22 @@ const PhoneNumberTacticsTable: React.FC = () => {
                       ))}
                     </div>
                   </td>
+                  <td className="border border-gray-300 p-2">
+                    {phoneNumber.active && (
+                      <button
+                        onClick={() => handleDelete(phoneNumber.phoneNumber)}
+                        className="px-4 py-2 bg-red-500 text-white rounded"
+                      >
+                        Disconnect
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
           <button
-            onClick={saveData}
+            onClick={() => saveData()}
             className="px-4 py-2 bg-green-500 text-white rounded"
           >
             Save Tactics

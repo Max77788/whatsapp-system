@@ -1,80 +1,92 @@
-import { clientPromise, clientPromiseDb } from '@/lib/mongodb';
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db } from "mongodb";
 
+// Database configuration
 const DATABASE_NAME = process.env.DATABASE_NAME || "whatsappSystem";
+const uri = process.env.MONGODB_URI;
 
-const uri = process.env.MONGODB_URI || "";
+if (!uri) {
+    throw new Error("Missing MONGODB_URI environment variable");
+}
 
+let clientPromise: Promise<MongoClient> | null = null;
+let dbPromise: Promise<Db> | null = null;
 
-export const update_user = async (filter: any, stuff_to_update: any, action: string = "$set") => {
-    let client;
-    try { 
-        client = new MongoClient(uri)
-        let db: Db;
+/**
+ * Initialize MongoClient and Database once
+ */
+const initializeMongo = (): { getClient: () => Promise<MongoClient>; getDb: () => Promise<Db> } => {
+    if (!clientPromise) {
+        clientPromise = MongoClient.connect(uri, { maxPoolSize: 75 });
+    }
 
-        // Connect to MongoDB
-        await client.connect();
-        
-        db = client.db(DATABASE_NAME);
-        
+    if (!dbPromise) {
+        dbPromise = clientPromise.then((client) => client.db(DATABASE_NAME));
+    }
+
+    const getClient = () => clientPromise!;
+    const getDb = () => dbPromise!;
+
+    return { getClient, getDb };
+};
+
+const { getClient, getDb } = initializeMongo();
+
+/**
+ * Update User Utility
+ */
+export const update_user = async (
+    filter: any,
+    stuff_to_update: any,
+    action: string = "$set"
+): Promise<boolean> => {
+    try {
+        const db = await getDb();
         const userFound = await db.collection("users").findOne(filter);
 
         if (userFound) {
-            // Update or insert message logic for the user
-            if (action === "$set" || action === "$push" || action === "$addToSet") {
-                await db.collection("users").updateOne(
-                    filter,
-                    { [action]: stuff_to_update },
-                    { upsert: true }
-                );
-            } else {
-                await db.collection("users").updateOne(
-                    filter,
-                    { [action]: stuff_to_update }
-                );
-            }
+            const updateAction = { [action]: stuff_to_update };
+            const options =
+                action === "$set" || action === "$push" || action === "$addToSet"
+                    ? { upsert: true }
+                    : undefined;
+
+            await db.collection("users").updateOne(filter, updateAction, options);
             return true;
         }
+
         return false;
     } catch (error) {
         console.error(`Error updating user: ${error}`);
         throw error;
-    } finally {
-        if (client) {
-            await client.close(); // Ensure the client connection is closed after the operation
-            console.log("Connection to MongoDB closed");
-        }
     }
-}
+};
 
-
-export const find_user = async (filter: any) => {
-    let client;
+/**
+ * Find User Utility
+ */
+export const find_user = async (filter: any): Promise<any> => {
     try {
-        // Create a new MongoClient instance
-        client = new MongoClient(uri);
-
-        // Connect to MongoDB
-        await client.connect();
-
-        // Get the database instance
-        const db: Db = client.db(DATABASE_NAME);
-
-        // Find the user
-        const userFound = await db.collection("users").findOne(filter);
-
-        if (userFound) {
-            return userFound;
-        } else {
-            throw new Error("User not found");
-        }
+        const db = await getDb();
+        return await db.collection("users").findOne(filter);
     } catch (error) {
         console.error(`Error finding user: ${error}`);
         throw error;
-    } finally {
-        if (client) {
-            await client.close(); // Ensure the client connection is closed after the operation
-            //console.log("Connection to MongoDB closed");
+    }
+};
+
+/**
+ * Find QR ID by Phone Utility
+ */
+export const find_qr_id_by_phone = (user: any, phone_number: string) => {
+    let clientId;
+    let keyThing;
+    for (let i = 1; i <= 5; i++) {
+        const attr = `qrCode${i}`;
+        if (user[attr] && user[attr].phoneNumber === phone_number) {
+            keyThing = attr;
+            clientId = i;
+            return { clientId, keyThing };
         }
     }
+    return { clientId: null, keyThing: null };
 };

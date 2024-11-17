@@ -156,6 +156,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
                 <th className="border border-gray-300 p-2 text-left">Name</th>
                 <th className="border border-gray-300 p-2 text-left">Phone Number</th>
                 <th className="border border-gray-300 p-2 text-left">Source</th>
+                <th className="border border-gray-300 p-2 text-left">Sent Messages</th>
               </tr>
             </thead>
             <tbody>
@@ -164,6 +165,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
                   <td className="border border-gray-300 p-2">{lead.name}</td>
                   <td className="border border-gray-300 p-2">{lead.phone_number}</td>
                   <td className="border border-gray-300 p-2">{lead.source}</td>
+                  <td className="border border-gray-300 p-2">{lead.sent_messages || 0}</td>
                 </tr>
               ))}
             </tbody>
