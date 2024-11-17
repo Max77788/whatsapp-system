@@ -90,3 +90,8 @@ export const find_qr_id_by_phone = (user: any, phone_number: string) => {
     }
     return { clientId: null, keyThing: null };
 };
+
+export const getAllUsersFromDatabase = async () => {
+    const db = await getDb();
+    return await db.collection("users").find().toArray();
+};

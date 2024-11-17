@@ -31,7 +31,6 @@ export default function ProfileLayout({
           <Header userName={userName} />
           <div className="dashboard-body">{children}</div>
           <div className="flex justify-center">
-          <QRCodeCanvas value={horrible_qr_code || ''} />
           </div>
         </div>
         

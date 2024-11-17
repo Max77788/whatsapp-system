@@ -9,23 +9,29 @@ import { find_user } from '@/lib/utils';
 import CreateClientButton from "../components/whatsapp-connection/createClientButton";
 import PhoneNumberTacticsTable from "../components/settings/PhoneNumberTacticsTable";
 import SendMessageForm from "../components/send-message/sendMessageForm";
+import ScheduledMessagesListTable from "../components/send-message/scheduledMessagesTable";
+import { useState } from "react";
 
 const session = await getServerSession(authOptions);
 const userEmail = session?.user?.email;
     
 const user = await find_user({ email: userEmail });
 
-user
+const handleDelete = (index: number) => {
+    const updatedMessages = [...user.scheduledMessages];
+    updatedMessages.splice(index, 1); // Remove the selected message
+    user.scheduledMessages = updatedMessages; // Update state
+  };
 
 export default async function SendMessagePage(): Promise<JSX.Element> {
     await loginIsRequiredServer();
-    
+
     const session = await getServerSession(authOptions);
     const userEmail = session?.user?.email;
     
     const user = await find_user({ email: userEmail });
     const uniqueId = user?.unique_id;
-
+    
     let fromPhones = [];
 
     const leads = user?.leads;
@@ -45,6 +51,7 @@ export default async function SendMessagePage(): Promise<JSX.Element> {
     return (
         <div className="mt-5 flex flex-col items-center gap-5">
             <SendMessageForm fromPhones={fromPhones} toPhones={toPhones} />
+            <ScheduledMessagesListTable />
         </div>
     );
 };

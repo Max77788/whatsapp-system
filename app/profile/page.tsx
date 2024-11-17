@@ -29,7 +29,7 @@ export default async function ProfilePage(): Promise<JSX.Element> {
     <div className="flex flex-col items-center p-8">
       <div className="profile-header mb-8 text-center">
         <img 
-          src={session?.user?.image || '/default-avatar.png'} 
+          src={session?.user?.image || '/static/default-icon.jpeg'} 
           alt="User Avatar" 
           className="w-32 h-32 rounded-full mb-4 border-4 border-gray-200 shadow-lg"
         />
@@ -37,7 +37,7 @@ export default async function ProfilePage(): Promise<JSX.Element> {
         <p className="text-black">{session?.user?.email}</p>
       </div>
 
-      <div className="profile-details w-full max-w-2xl bg-white rounded-lg shadow-md p-6">
+      <div className="profile-details text-center w-full max-w-2xl bg-white rounded-lg shadow-md p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="profile-section">
             <h2 className="text-xl font-semibold mb-4 text-black">Personal Information</h2>
@@ -53,6 +53,7 @@ export default async function ProfilePage(): Promise<JSX.Element> {
             </div>
           </div>
           
+          {/*
           <div className="profile-section">
             <h2 className="text-xl font-semibold mb-4 text-black">Account Settings</h2>
             <div className="space-y-3">
@@ -64,6 +65,7 @@ export default async function ProfilePage(): Promise<JSX.Element> {
               </button>
             </div>
           </div>
+          */}
         </div>
       </div>
     </div>

@@ -3,6 +3,8 @@
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { loadAllYaml } from "@kubernetes/client-node";
 
 interface Props {
   fromPhones: string[]; // List of available phone numbers for "from" field
@@ -20,6 +22,9 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   const [templates, setTemplates] = useState<{ template_name: string; message: string }[]>(
     []
   );
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [scheduleTime, setScheduleTime] = useState("");
+  const [timeZone, setTimeZone] = useState("");
 
   const handleSaveMessage = async () => {
     try {
@@ -54,6 +59,36 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
     }
   };
 
+  const handleScheduleMessage = async () => {
+    if (fromNumber && toNumbers.length > 0 && message && scheduleTime && timeZone) {
+      try {
+        const response = await fetch("/api/whatsapp-part/schedule-message", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fromNumber,
+            toNumbers,
+            message,
+            scheduleTime,
+            timeZone,
+          }),
+        });
+  
+        if (response.ok) {
+          toast.success("Message scheduled successfully!");
+          setIsScheduleModalOpen(false); // Close the modal
+          location.reload();
+        } else {
+          toast.error("Failed to schedule message.");
+        }
+      } catch (error) {
+        console.error("Error scheduling message:", error);
+        toast.error("An error occurred while scheduling the message.");
+      }
+    } else {
+      toast.error("Please fill in all fields.");
+    }
+  };
   const handleSendMessage = async () => {
     if (fromNumber && toNumbers.length > 0 && message) {
       
@@ -68,14 +103,60 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
       });
 
       if (response.ok) {
-        alert("Message sent!");
+        toast.success("Message sent!");
+        location.reload();
       } else {
-        alert("Failed to send message.");
+        toast.error("Failed to send message.");
       }
     } else {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all fields.");
     }
   };
+
+  const advancedSetIsSaveModalOpen = () => {
+    if (message.length > 0) {
+      setIsSaveModalOpen(true);
+    } else {
+      toast.error("Please enter a message.");
+    }
+  };
+
+  const advancedSetIsScheduleModalOpen = () => {
+    if (fromNumber && toNumbers.length > 0 && message) {
+      setIsScheduleModalOpen(true);
+    } else {
+      toast.error("Please fill in all fields.");
+    }
+  };
+
+  const timeZones = [
+    "GMT-12:00",
+    "GMT-11:00",
+    "GMT-10:00",
+    "GMT-09:00",
+    "GMT-08:00",
+    "GMT-07:00",
+    "GMT-06:00",
+    "GMT-05:00",
+    "GMT-04:00",
+    "GMT-03:00",
+    "GMT-02:00",
+    "GMT-01:00",
+    "GMT+00:00",
+    "GMT+01:00",
+    "GMT+02:00",
+    "GMT+03:00",
+    "GMT+04:00",
+    "GMT+05:00",
+    "GMT+06:00",
+    "GMT+07:00",
+    "GMT+08:00",
+    "GMT+09:00",
+    "GMT+10:00",
+    "GMT+11:00",
+    "GMT+12:00",
+  ];
+
 
   const handleLoadMessageFromTemplate = async () => {
     try {
@@ -169,7 +250,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
 
       <div className="flex justify-between gap-4">
         <button
-          onClick={() => setIsSaveModalOpen(true)}
+          onClick={advancedSetIsSaveModalOpen}
           className="px-2 py-1 bg-blue-500 text-white rounded"
         >
           Save Message
@@ -187,7 +268,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
           Load Message from a Template
         </button>
         <button
-          onClick={() => alert("Message scheduled!")}
+          onClick={advancedSetIsScheduleModalOpen}
           className="px-4 py-2 bg-purple-500 text-white rounded"
         >
           Schedule Message
@@ -223,6 +304,48 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
           </div>
         </div>
       )}
+      {/* Schedule Modal */}
+      {isScheduleModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h3 className="text-lg text-black font-bold mb-4">Schedule Message</h3>
+            <label className="block mb-2 font-semibold text-black">Schedule Time</label>
+            <input
+              type="datetime-local"
+              value={scheduleTime}
+              onChange={(e) => setScheduleTime(e.target.value)}
+              className="w-full text-black mb-4 p-2 border border-gray-300 rounded"
+            />
+            <label className="block mb-2 font-semibold text-black">Time Zone</label>
+            <select
+              value={timeZone}
+              onChange={(e) => setTimeZone(e.target.value)}
+              className="w-full text-black mb-4 p-2 border border-gray-300 rounded"
+            >
+              <option value="" disabled>Select Time Zone</option>
+              {timeZones.map((zone) => (
+    <option key={zone} value={zone}>
+                  {zone}
+                </option>
+              ))}
+            </select>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setIsScheduleModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 text-black rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleScheduleMessage}
+                className="px-4 py-2 bg-purple-500 text-white rounded"
+              >
+                Schedule
+              </button>
+            </div>
+          </div>
+              </div>
+            )}
 
       {/* Load Template Modal */}
       {isLoadModalOpen && (
