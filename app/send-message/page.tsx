@@ -3,14 +3,9 @@
 import { getServerSession } from "next-auth";
 import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
 import { authOptions } from "@/lib/auth/serverStuff";
-import TablePopup from "../components/settings/TablePopup";
-import { clientPromiseDb } from '@/lib/mongodb';
 import { find_user } from '@/lib/utils';
-import CreateClientButton from "../components/whatsapp-connection/createClientButton";
-import PhoneNumberTacticsTable from "../components/settings/PhoneNumberTacticsTable";
 import SendMessageForm from "../components/send-message/sendMessageForm";
 import ScheduledMessagesListTable from "../components/send-message/scheduledMessagesTable";
-import { useState } from "react";
 
 const session = await getServerSession(authOptions);
 const userEmail = session?.user?.email;
