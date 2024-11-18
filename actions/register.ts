@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { Resend } from 'resend';
 import { v4 as uuidv4 } from 'uuid';
 import { createK8sDeployment } from "@/lib/whatsAppService/kubernetes_part.mjs";
+import { obtainGoogleCloudRunURL } from "@/lib/whatsAppService/gcloud_run_thing.mjs";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -47,13 +48,16 @@ export const register = async (values: any) => {
         const verificationToken = uuidv4().slice(-5);
         const unique_id = name.replace(' ', '-').toLowerCase() + "-" + uuidv4();
 
+        const waAppBaseUrl = await obtainGoogleCloudRunURL(unique_id);
+
         const user = new User({
           unique_id: unique_id,
           name: name,
           email: email,
           password: hashedPassword,
           email_verified: false,
-          email_verification_token: verificationToken
+          email_verification_token: verificationToken,
+          waAppBaseUrl: waAppBaseUrl
         });
         console.log(`user: ${JSON.stringify(user)}`);
         
@@ -61,7 +65,7 @@ export const register = async (values: any) => {
         
         await sendVerificationEmail(email, verificationToken);
         
-        await createK8sDeployment(unique_id);
+        // await createK8sDeployment(unique_id);
         return {
             success: 'User created successfully. Please check your email for verification.',
             email_verification_token: verificationToken

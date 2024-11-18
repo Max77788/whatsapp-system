@@ -52,6 +52,17 @@ const Sidebar = () => {
               Send Message
             </Link>
           </li>
+
+          {/*         
+          <li>
+            <Link href="/send-message" className="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.5 19.5L21 12 2.5 4.5 2.5 10.5 17 12 2.5 13.5z"/>
+              </svg>
+              Video Tutorials
+            </Link>
+          </li>
+          */}
         </ul>
       </nav>
     </div>

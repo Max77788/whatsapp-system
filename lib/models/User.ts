@@ -63,6 +63,7 @@ export interface UserInterface {
   password: string;
   email_verified: boolean;
   email_verification_token: string;
+  waAppBaseUrl?: string
 }
 
 // mongoose.models.User = model<UserDocument>('User', UserSchema);
