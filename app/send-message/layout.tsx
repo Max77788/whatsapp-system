@@ -1,4 +1,3 @@
-// app/dashboard/layout.tsx
 "use client";
 import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";

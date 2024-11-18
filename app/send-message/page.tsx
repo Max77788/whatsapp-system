@@ -7,16 +7,19 @@ import { find_user } from '@/lib/utils';
 import SendMessageForm from "../components/send-message/sendMessageForm";
 import ScheduledMessagesListTable from "../components/send-message/scheduledMessagesTable";
 
+/*
 const session = await getServerSession(authOptions);
 const userEmail = session?.user?.email;
     
 const user = await find_user({ email: userEmail });
+
 
 const handleDelete = (index: number) => {
     const updatedMessages = [...user.scheduledMessages];
     updatedMessages.splice(index, 1); // Remove the selected message
     user.scheduledMessages = updatedMessages; // Update state
   };
+*/
 
 export default async function SendMessagePage(): Promise<JSX.Element> {
     await loginIsRequiredServer();
