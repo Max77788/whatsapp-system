@@ -46,7 +46,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
       });
 
       if (response.ok) {
-        alert("Template saved successfully!");
+        toast.success("Template saved successfully!");
         setIsSaveModalOpen(false); // Close modal
         setTemplateName(""); // Reset template name
         location.reload();

@@ -21,12 +21,11 @@ export async function POST(req) {
 
         console.log(`clientId: ${clientId}`);
 
-        /*
         // That's how we usually get kb base app url
         const kbBaseAppUrl = user?.kbBaseAppUrl;
-        */
+        console.log(`kbBaseAppUrl: ${kbBaseAppUrl}`);
 
-        const kbBaseAppUrl = 'http://localhost:4000';
+        // const kbBaseAppUrl = 'http://localhost:4000';
 
         const response = await fetch(`${kbBaseAppUrl}/send-message`, {
                 method: 'POST', 

@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
-import { startCronJob } from "@/lib/cron";
+// import { startCronJob } from "@/lib/cron";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,7 +26,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  startCronJob();
+  // startCronJob();
   return (
     <html lang="en">
       <body
