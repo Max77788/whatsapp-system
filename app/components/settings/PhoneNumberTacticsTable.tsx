@@ -91,12 +91,13 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
 
       if (response.ok) {
         alert("Phone number disconnected successfully!");
-        setPhoneNumbers((prev) => prev.filter((phone) => phone.phoneNumber !== phoneNumber));
-        setSelectedTactics((prev) => {
-          const newTactics = { ...prev };
-          delete newTactics[phoneNumber];
-          return newTactics;
-        });
+          // setPhoneNumbers((prev) => prev.filter((phone) => phone.phoneNumber !== phoneNumber));
+          // setSelectedTactics((prev) => {
+          // const newTactics = { ...prev };
+          // delete newTactics[phoneNumber];
+          // return newTactics;
+        // });
+        location.reload();
       } else {
         alert("Failed to disconnect phone number.");
       }
