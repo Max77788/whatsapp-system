@@ -39,7 +39,7 @@ export default async function SettingsPage(): Promise<JSX.Element> {
             <PhoneNumberTacticsTable initialTactics={initialTactics} />
             <LeadsTable leads={leadsData}/>
             <h1>Webhook URLs</h1>
-            <div className="flex flex-col items-center gap-5">
+            <div className="flex flex-col items-center gap-5 bg-gray-100 rounded-lg p-5">
                 <p>Facebook: <code>{`https://mom-ai-restaurant.lat/api/leads/register?unique_id=${uniqueId}&source=facebook`}</code></p>
             </div>
         </div>

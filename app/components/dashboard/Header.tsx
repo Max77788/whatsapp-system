@@ -16,8 +16,8 @@ const Header: React.FC<HeaderProps> = ({ userName }) => {
   };
 
   return (
-    <header className="flex justify-between items-center p-4 bg-white shadow-md">
-      <h1 className="text-2xl font-bold text-gray-800">{userName}</h1>
+    <header className="flex justify-between items-center p-4 bg-black rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-white">{userName}</h1>
       <div className="flex items-center gap-4">
         <button 
           onClick={onLogout}

@@ -237,7 +237,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
       </pre>
       <pre className="bg-gray-100 p-2 rounded mt-2">
         CSV:
-        {"name,phone_number,source\nJohn Doe,1234567890,Website"}
+        {"name,phone_number,source\nJohn Doe,1234567890,facebook/wpforms/other"}
       </pre>
           </div>
         </div>

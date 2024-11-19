@@ -50,11 +50,17 @@ export async function POST(req) {
     text_tactics_list = text_tactics_list.flatMap((tactic) => tactic.rows);
     console.log("Text tactics list after flattening:", text_tactics_list);
 
+    const lead_platform = user?.leads?.find((lead) => lead.phoneNumber === user_phone_number)?.platform || "other";
+
     let reply, delay;
     text_tactics_list.forEach((tactic) => {
-        console.log(`Evaluating tactic row: ${JSON.stringify(tactic)}`);
         if (tactic.type === "includes") {
             if (message.trim().toLowerCase().includes(tactic.search_term.trim().toLowerCase())) {
+                if (!tactic.platforms.includes(lead_platform)) {
+                    return;
+                }
+
+                
                 reply = tactic.message_to_send;
                 delay = tactic.delay;
                 console.log(`Match found with 'includes': reply=${reply}, delay=${delay}`);

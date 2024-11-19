@@ -26,8 +26,8 @@ export default async function ProfilePage(): Promise<JSX.Element> {
 
   // Render the dashboard content if the user is authenticated
   return (
-    <div className="flex flex-col items-center p-8">
-      <div className="profile-header mb-8 text-center">
+    <div className="flex flex-col items-center justify-center p-8">
+      <div className="profile-header bg-white p-8 border-b-2 border-gray-200 mb-8 text-center rounded-lg">
         <img 
           src={session?.user?.image || '/static/default-icon.jpeg'} 
           alt="User Avatar" 
@@ -38,19 +38,17 @@ export default async function ProfilePage(): Promise<JSX.Element> {
       </div>
 
       <div className="profile-details text-center w-full max-w-2xl bg-white rounded-lg shadow-md p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="profile-section">
             <h2 className="text-xl font-semibold mb-4 text-black">Personal Information</h2>
             <div className="space-y-3">
-              <div className="flex flex-col">
+              <div className="flex flex-col items-center">
                 <span className="text-black">Name</span>
                 <span className="font-medium text-black">{session?.user?.name}</span>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col items-center">
                 <span className="text-black">Email</span>
                 <span className="font-medium text-black">{session?.user?.email}</span>
               </div>
-            </div>
           </div>
           
           {/*
