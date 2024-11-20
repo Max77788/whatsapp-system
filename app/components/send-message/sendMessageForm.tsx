@@ -25,6 +25,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleTime, setScheduleTime] = useState("");
   const [timeZone, setTimeZone] = useState("");
+  const [mediaAttachment, setMediaAttachment] = useState<File | null>(null); // New state for media attachment
 
   const handleSaveMessage = async () => {
     try {
@@ -61,17 +62,21 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
 
   const handleScheduleMessage = async () => {
     if (fromNumber && toNumbers.length > 0 && message && scheduleTime && timeZone) {
+      const formData = new FormData();
+      formData.append("fromNumber", fromNumber);
+      formData.append("toNumbers", JSON.stringify(toNumbers));
+      formData.append("message", message);
+      formData.append("scheduleTime", scheduleTime);
+      formData.append("timeZone", timeZone);
+      
+      if (mediaAttachment) {
+        formData.append("media", mediaAttachment);
+      }
+  
       try {
         const response = await fetch("/api/whatsapp-part/schedule-message", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fromNumber,
-            toNumbers,
-            message,
-            scheduleTime,
-            timeZone,
-          }),
+          body: formData,
         });
   
         if (response.ok) {
@@ -89,30 +94,42 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
       toast.error("Please fill in all fields.");
     }
   };
+  
+
+
+
   const handleSendMessage = async () => {
     if (fromNumber && toNumbers.length > 0 && message) {
+      const formData = new FormData();
+      formData.append("fromNumber", fromNumber);
+      formData.append("toNumbers", JSON.stringify(toNumbers));
+      formData.append("message", message);
       
-      const response = await fetch("/api/whatsapp-part/send-message", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fromNumber,
-          toNumbers,
-          message
-        }),
-      });
-
-      if (response.ok) {
-        toast.success("Message sent!");
-        location.reload();
-      } else {
-        toast.error("Failed to send message.");
+      if (mediaAttachment) {
+        formData.append("media", mediaAttachment); // Append the media attachment if it exists
+      }
+  
+      try {
+        const response = await fetch("/api/whatsapp-part/send-message", {
+          method: "POST",
+          body: formData, // Use FormData for file uploads
+        });
+  
+        if (response.ok) {
+          toast.success("Message sent!");
+          location.reload();
+        } else {
+          toast.error("Failed to send message.");
+        }
+      } catch (error) {
+        console.error("Error sending message:", error);
+        toast.error("An error occurred while sending the message.");
       }
     } else {
       toast.error("Please fill in all fields.");
     }
   };
-
+  
   const advancedSetIsSaveModalOpen = () => {
     if (message.length > 0) {
       setIsSaveModalOpen(true);
@@ -208,34 +225,43 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
             ))}
           </select>
         </div>
+        
         <div className="flex-1 ml-2">
-          <label className="block mb-2 font-semibold">To</label>
-          <select
-            multiple
-            size={toPhones.length || 5}
-            value={toNumbers}
-            onChange={(e) => {
-              setToNumbers(
-                Array.from(e.target.selectedOptions, (option) => option.value)
-              )
-            }}
-            className="w-full text-black border border-gray-300 p-2 rounded"
-          >
-            {toPhones.length ? (
-              toPhones.map((phone) => (
-                <option key={phone} value={phone}>
-                  {phone}
-                </option>
-              ))
-            ) : (
-              <option disabled>No phones</option>
-            )}
-          </select>
-          <div className="mt-1 text-gray-400 italic">{toNumbersDisplay}</div>
-          <div className="mt-1 text-gray-400 italic">
-            <b>Shift + click</b> to select multiple numbers
-          </div>
-        </div>
+  <label className="block mb-2 font-semibold">To</label>
+  <select
+    multiple
+    size={toPhones.length || 5}
+    value={toNumbers}
+    onChange={(e) => {
+      const values = Array.from(e.target.selectedOptions, (option) => option.value);
+      if (values.includes('ALL')) {
+        // If "Choose All" is selected, toggle selection of all options
+        setToNumbers(toNumbers.length === toPhones.length ? [] : [...toPhones]);
+      } else {
+        setToNumbers(values);
+      }
+    }}
+    className="w-full text-black border border-gray-300 p-2 rounded"
+  >
+    <option value="ALL" disabled={!toPhones.length}>
+      Choose All
+    </option>
+    {toPhones.length ? (
+      toPhones.map((phone) => (
+        <option key={phone} value={phone}>
+          {phone}
+        </option>
+      ))
+    ) : (
+      <option disabled>No phones</option>
+    )}
+  </select>
+  <div className="mt-1 text-gray-400 italic">{toNumbersDisplay}</div>
+  <div className="mt-1 text-gray-400 italic">
+    <b>Shift + click</b> to select multiple numbers
+  </div>
+</div>
+
       </div>
 
       <div className="mb-4">
@@ -247,6 +273,17 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
           placeholder="Enter your message here..."
         />
       </div>
+
+      {/* Media Attachment Input */}
+    <div className="mb-4">
+      <label className="block mb-2 font-semibold">Media Attachment (optional)</label>
+      <input
+        type="file"
+        accept="image/*,video/*,audio/*,.pdf" // Accept various types of media
+        onChange={(e) => setMediaAttachment(e.target.files?.[0] || null)}
+        className="w-full text-black border border-gray-300 p-2 rounded"
+      />
+    </div>
 
       <div className="flex justify-between gap-4">
         <button

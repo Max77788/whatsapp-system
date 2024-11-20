@@ -26,6 +26,8 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
     source: "",
     sent_messages: 0,
   });
+  const [bulkPhoneNumbers, setBulkPhoneNumbers] = useState<string>("");
+
 
   const { data: session } = useSession();
 
@@ -58,6 +60,35 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
     setLeadData((prevData) => [...prevData, newLead]);
     setNewLead({ name: "", phone_number: "", source: "", sent_messages: 0 });
   };
+
+  const handleBulkAdd = () => {
+    if (!bulkPhoneNumbers.trim()) {
+      alert("Please paste some phone numbers.");
+      return;
+    }
+  
+    const phoneNumbers = bulkPhoneNumbers
+      .split(/[\n,]+/) // Split by new lines or commas
+      .map((number) => number.trim()) // Remove whitespace
+      .filter((number) => number); // Remove empty entries
+  
+    if (phoneNumbers.length === 0) {
+      alert("No valid phone numbers found.");
+      return;
+    }
+  
+    const newLeads = phoneNumbers.map((phone_number) => ({
+      name: "", // Default name
+      phone_number,
+      source: "", // Default source
+      sent_messages: 0, // Default sent messages
+    }));
+  
+    setLeadData((prevData) => [...prevData, ...newLeads]);
+    setBulkPhoneNumbers(""); // Clear the text area
+    alert(`${newLeads.length} phone numbers added successfully!`);
+  };
+  
 
   const handleImportLeads = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -105,6 +136,16 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
     }
   };
 
+  const handleDeleteLead = (index: number) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete the lead: ${leadData[index].name}?`
+    );
+    if (confirmed) {
+      setLeadData((prevData) => prevData.filter((_, i) => i !== index));
+    }
+  };
+  
+
   const saveData = async () => {
     try {
         const userEmail = session?.user?.email;
@@ -116,7 +157,8 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
         const leadsToSave = leadData.map(({ name, phone_number, source, sent_messages }) => ({
             name,
             phone_number,
-            source
+            source,
+            sent_messages
         }));
 
         const response = await fetch("/api/leads/save", {
@@ -130,6 +172,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
 
         if (response.ok) {
             alert("Leads data saved successfully!");
+            location.reload();
         } else {
             alert("Failed to save leads data.");
         }
@@ -160,15 +203,68 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
               </tr>
             </thead>
             <tbody>
-              {leadData.map((lead) => (
-                <tr key={lead.phone_number}>
-                  <td className="border border-gray-300 p-2">{lead.name}</td>
-                  <td className="border border-gray-300 p-2">{lead.phone_number}</td>
-                  <td className="border border-gray-300 p-2">{lead.source}</td>
-                  <td className="border border-gray-300 p-2">{lead.sent_messages || 0}</td>
-                </tr>
-              ))}
-            </tbody>
+                {leadData.map((lead, index) => (
+                  <tr key={lead.phone_number}>
+                    <td
+                      className="border border-gray-300 p-2"
+                      contentEditable={true}
+                      suppressContentEditableWarning={true}
+                      onBlur={(e) => {
+                        const updatedName = e.currentTarget.textContent || "";
+                        setLeadData((prevData) =>
+                          prevData.map((item, i) =>
+                            i === index ? { ...item, name: updatedName } : item
+                          )
+                        );
+                      }}
+                    >
+                      {lead.name}
+                    </td>
+                    <td
+                      className="border border-gray-300 p-2"
+                      contentEditable={true}
+                      suppressContentEditableWarning={true}
+                      onBlur={(e) => {
+                        const updatedPhoneNumber = e.currentTarget.textContent || "";
+                        setLeadData((prevData) =>
+                          prevData.map((item, i) =>
+                            i === index ? { ...item, phone_number: updatedPhoneNumber } : item
+                          )
+                        );
+                      }}
+                    >
+                      {lead.phone_number}
+                    </td>
+                    <td
+                      className="border border-gray-300 p-2"
+                      contentEditable={true}
+                      suppressContentEditableWarning={true}
+                      onBlur={(e) => {
+                        const updatedSource = e.currentTarget.textContent || "";
+                        setLeadData((prevData) =>
+                          prevData.map((item, i) =>
+                            i === index ? { ...item, source: updatedSource } : item
+                          )
+                        );
+                      }}
+                    >
+                      {lead.source}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {lead.sent_messages || 0}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <button
+                        onClick={() => handleDeleteLead(index)}
+                        className="px-4 py-2 bg-red-500 text-white rounded"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+    
           </table>
           <button
             onClick={saveData}
@@ -214,6 +310,25 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
           Add Lead
         </button>
       </div>
+
+      {/* Paste Phone Numbers */}
+      <div className="mt-6 p-4 border border-gray-300 rounded">
+  <h2 className="text-xl font-semibold mb-4">Bulk Add Phone Numbers</h2>
+  <textarea
+    rows={5}
+    placeholder="Paste phone numbers here, separated by commas or new lines"
+    onChange={(e) => setBulkPhoneNumbers(e.target.value)}
+    value={bulkPhoneNumbers}
+    className="border text-black border-gray-300 p-2 w-full rounded"
+  ></textarea>
+  <button
+            onClick={handleBulkAdd}
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Add Phone Numbers
+        </button>
+      </div>
+
 
       {/* Import Leads */}
       <div className="mt-6 p-4 border border-gray-300 rounded">

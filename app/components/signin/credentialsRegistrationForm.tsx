@@ -38,7 +38,7 @@ return(
     return; // Ensure it returns void
   }}
   >
-  {error && <span className="mb-1 text-red-500 font-semibold inline-block">{error}</span>}
+  {error && !error.includes('client') && <span className="mb-1 text-red-500 font-semibold inline-block">{error}</span>}
   <label htmlFor="email" className="mb-2 text-sm font-medium text-gray-900 dark:text-white self-start">Full Name</label>
   <input type="text" name="name" placeholder="Full Name" required className="mb-4 p-2 border border-gray-300 rounded-md w-full text-black"/>
 

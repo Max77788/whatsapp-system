@@ -1,0 +1,45 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.dashboard-greeting {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.dashboard-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard-sections {
+  display: flex;
+  gap: 20px;
+}
+
+.notifications-section,
+.subscription-section {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.package-details {
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+  

@@ -3,14 +3,14 @@
 import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
 import { SessionProvider } from "next-auth/react";
-import "./profile.css"; // Optional: Use a CSS file to customize dashboard styling.
+import "./settings.css"; // Optional: Use a CSS file to customize dashboard styling.
 
-export default function ProfileLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const userName = "Profile"; // Replace with dynamic username from session or auth context
+  const userName = "Settings"; // Replace with dynamic username from session or auth context
 
   return (
     <SessionProvider>
@@ -20,10 +20,7 @@ export default function ProfileLayout({
         <div className="main-content">
           <Header userName={userName} />
           <div className="dashboard-body">{children}</div>
-          <div className="flex justify-center">
-          </div>
         </div>
-        
       </div>
     </SessionProvider>
   );

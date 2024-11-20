@@ -1,0 +1,573 @@
+{
+    "name": "Integration Facebook Lead Ads",
+    "flow": [
+        {
+            "id": 1,
+            "module": "facebook-lead-ads:NewLeadMultiple",
+            "version": 2,
+            "parameters": {
+                "__IMTHOOK__": 1217432,
+                "v": "2",
+                "fields": [
+                    "id",
+                    "ad_id",
+                    "ad_name",
+                    "adset_id",
+                    "adset_name",
+                    "campaign_id",
+                    "campaign_name",
+                    "created_time",
+                    "custom_disclaimer_responses",
+                    "field_data",
+                    "form_id",
+                    "home_listing",
+                    "is_organic",
+                    "partner_name",
+                    "platform",
+                    "retailer_item_id",
+                    "vehicle"
+                ]
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": -167,
+                    "y": 5
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTHOOK__": {
+                            "label": "My New Lead webhook",
+                            "data": {
+                                "editable": "false"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTHOOK__",
+                        "type": "hook:facebook-lead-ads-new-event",
+                        "label": "Webhook",
+                        "required": true
+                    },
+                    {
+                        "name": "v",
+                        "type": "hidden"
+                    },
+                    {
+                        "name": "fields",
+                        "type": "select",
+                        "label": "Fields",
+                        "multiple": true,
+                        "validate": {
+                            "enum": [
+                                "id",
+                                "ad_id",
+                                "ad_name",
+                                "adset_id",
+                                "adset_name",
+                                "campaign_id",
+                                "campaign_name",
+                                "created_time",
+                                "custom_disclaimer_responses",
+                                "field_data",
+                                "form_id",
+                                "home_listing",
+                                "is_organic",
+                                "partner_name",
+                                "platform",
+                                "retailer_item_id",
+                                "vehicle"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "leadgenId",
+                        "label": "Lead ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "formId",
+                        "label": "Form ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "dateCreated",
+                        "label": "Date created",
+                        "type": "date"
+                    },
+                    {
+                        "name": "adId",
+                        "label": "Ad ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "pageId",
+                        "label": "Page ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "adgroupId",
+                        "label": "Ad group ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "data",
+                        "label": "Field data",
+                        "type": "collection",
+                        "spec": [
+                            {
+                                "name": "how_many_orders_does_your_restaurant_receive_per_day?",
+                                "label": "How many orders does your restaurant receive per day?",
+                                "type": "array"
+                            },
+                            {
+                                "name": "provide_the_link_to_your_restaurant's_website_or_social_media_profile",
+                                "label": "Provide the Link to Your Restaurant's Website or Social Media Profile",
+                                "type": "text"
+                            },
+                            {
+                                "name": "are_you_serious_about_improving_and_revolutionizing_your_restaurant's_operations_and_earnings?",
+                                "label": "Are you serious about improving and revolutionizing your restaurant's operations and earnings?",
+                                "type": "text"
+                            },
+                            {
+                                "name": "email",
+                                "label": "Email",
+                                "type": "text"
+                            },
+                            {
+                                "name": "full_name",
+                                "label": "Full name",
+                                "type": "text"
+                            },
+                            {
+                                "name": "job_title",
+                                "label": "Job title",
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "isOrganic",
+                        "label": "Is organic",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "adName",
+                        "label": "Ad name",
+                        "type": "text"
+                    },
+                    {
+                        "name": "adsetId",
+                        "label": "Ad set ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "adsetName",
+                        "label": "Adset name",
+                        "type": "text"
+                    },
+                    {
+                        "name": "campaignId",
+                        "label": "Campaign ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "campaignName",
+                        "label": "Campaign name",
+                        "type": "text"
+                    },
+                    {
+                        "name": "customDisclaimerResponses",
+                        "label": "Custom disclaimer responses",
+                        "type": "collection"
+                    },
+                    {
+                        "name": "homeListing",
+                        "label": "Home listing",
+                        "type": "collection"
+                    },
+                    {
+                        "name": "partnerName",
+                        "label": "Partner name",
+                        "type": "text"
+                    },
+                    {
+                        "name": "platform",
+                        "label": "Platform",
+                        "type": "text"
+                    },
+                    {
+                        "name": "retailerItemId",
+                        "label": "Retailer item ID",
+                        "type": "text"
+                    },
+                    {
+                        "name": "vehicle",
+                        "label": "Vehicle",
+                        "type": "collection"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "util:SetVariables",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "scope": "roundtrip",
+                "variables": [
+                    {
+                        "name": "webhook_url",
+                        "value": ""
+                    },
+                    {
+                        "name": "user_name",
+                        "value": ""
+                    },
+                    {
+                        "name": "phone_number",
+                        "value": ""
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 98,
+                    "y": -4
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        },
+                        "variables": {
+                            "items": [
+                                null,
+                                null,
+                                null
+                            ]
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "variables",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Variable name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "any",
+                                "label": "Variable value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Variables"
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "webhook_url",
+                        "type": "any",
+                        "label": "webhook_url"
+                    },
+                    {
+                        "name": "user_name",
+                        "type": "any",
+                        "label": "user_name"
+                    },
+                    {
+                        "name": "phone_number",
+                        "type": "any",
+                        "label": "phone_number"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "http:ActionSendDataBasicAuth",
+            "version": 3,
+            "parameters": {
+                "key": 43335,
+                "handleErrors": false
+            },
+            "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "{{3.webhook_url}}",
+                "data": "{\"name\": \"{{3.user_name}}\",\n\"phone_number\": \"{{3.phone_number}}\"}",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                    {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 365,
+                    "y": 2
+                },
+                "restore": {
+                    "expect": {
+                        "qs": {
+                            "mode": "chose"
+                        },
+                        "method": {
+                            "mode": "chose",
+                            "label": "POST"
+                        },
+                        "headers": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        },
+                        "bodyType": {
+                            "label": "Raw"
+                        },
+                        "contentType": {
+                            "label": "JSON (application/json)"
+                        }
+                    },
+                    "parameters": {
+                        "key": {
+                            "label": "whatsLeads"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "key",
+                        "type": "keychain:basicauth",
+                        "label": "Credentials",
+                        "required": true
+                    },
+                    {
+                        "name": "handleErrors",
+                        "type": "boolean",
+                        "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "serializeUrl",
+                        "type": "boolean",
+                        "label": "Serialize URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "get",
+                                "head",
+                                "post",
+                                "put",
+                                "patch",
+                                "delete",
+                                "options"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "qs",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name",
+                                "required": true
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Query String"
+                    },
+                    {
+                        "name": "bodyType",
+                        "type": "select",
+                        "label": "Body type",
+                        "validate": {
+                            "enum": [
+                                "raw",
+                                "x_www_form_urlencoded",
+                                "multipart_form_data"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "parseResponse",
+                        "type": "boolean",
+                        "label": "Parse response",
+                        "required": true
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "uinteger",
+                        "label": "Timeout",
+                        "validate": {
+                            "max": 300,
+                            "min": 1
+                        }
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    },
+                    {
+                        "name": "ca",
+                        "type": "cert",
+                        "label": "Self-signed certificate"
+                    },
+                    {
+                        "name": "rejectUnauthorized",
+                        "type": "boolean",
+                        "label": "Reject connections that are using unverified (self-signed) certificates",
+                        "required": true
+                    },
+                    {
+                        "name": "followRedirect",
+                        "type": "boolean",
+                        "label": "Follow redirect",
+                        "required": true
+                    },
+                    {
+                        "name": "useQuerystring",
+                        "type": "boolean",
+                        "label": "Disable serialization of multiple same query string keys as arrays",
+                        "required": true
+                    },
+                    {
+                        "name": "gzip",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    },
+                    {
+                        "name": "useMtls",
+                        "type": "boolean",
+                        "label": "Use Mutual TLS",
+                        "required": true
+                    },
+                    {
+                        "name": "contentType",
+                        "type": "select",
+                        "label": "Content type",
+                        "validate": {
+                            "enum": [
+                                "text/plain",
+                                "application/json",
+                                "application/xml",
+                                "text/xml",
+                                "text/html",
+                                "custom"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "data",
+                        "type": "buffer",
+                        "label": "Request content"
+                    },
+                    {
+                        "name": "followAllRedirects",
+                        "type": "boolean",
+                        "label": "Follow all redirect",
+                        "required": true
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu2.make.com"
+    }
+}

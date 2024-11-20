@@ -82,6 +82,13 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
   };
 
   const handleDelete = async (phoneNumber: string) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to disconnect the phone number: ${phoneNumber}?`
+    );
+    if (!confirmed) {
+      return;
+    }
+
     try {
       const response = await fetch(`/api/whatsapp-part/disconnect-phone`, {
         method: "POST",

@@ -62,15 +62,17 @@ const SignIn = () => {
 
             <CredentialsForm />
 
+            {/*
             <p className="text-sm text-gray-400">
               Admin credentials:
               <br />
               <span className="text-gray-300">admin@demo.com, admin123</span>
             </p>
+            */}
           </div>
 
           <div className="text-center">
-            <p className="text-gray-400">
+            <p className="text-black">
               Don&apos;t have an account?{" "}
               <Link href="/auth/signup" className="text-blue-500 hover:underline">
                 Sign up

@@ -92,70 +92,60 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
       async signIn({ user, account, profile }) {
         let client;
-        // Check if the provider is Google
-        if (account && account.provider === "google") {
-          console.log(`Entered Google sign-in`);
-          // Custom attributes to add to the user document for Google sign-in
-          const unique_id = user.name?.replace(' ', '_').toLowerCase() + "_" + unique_id_aydi_part;
-          
-          const customAttributes = {
-            unique_id: unique_id,
-          };
-
-      // Modify the user object by merging with custom attributes
-      const modifiedUser = { ...user, ...customAttributes };
-
-      client = await clientPromise;
-          
-      const db = client.db(DATABASE_NAME);
-      const existingUser = await db.collection("users").findOne({ email: profile?.email });
-
-      if (existingUser) {
-        // If user already exists, update the user's document with new attributes
-        /*
-        await db.collection("users").updateOne(
-          { email: user.email },
-          { $set: modifiedUser }
-        );
-        */
-       // Link the OAuth account to the existing user
-       
-       if (existingUser.id) {
-       await db.collection("accounts").updateOne(
-        { userId: existingUser._id },
-        { $set: { provider: "google", providerAccountId: existingUser.id } },
-        { upsert: true } // Create if doesn't exist
-      );
-
-      await client.close();
-      return true;
-    } else{
-      await client.close();
-      console.log(`No user id found for existing user`);
-    }
-        
-      } else {
-        // If the user does not exist, create a new user document and link the OAuth account
-        const result = await db.collection("users").insertOne(modifiedUser);
-        await db.collection("accounts").insertOne({
-            userId: result.insertedId,
-            provider: "google",
-            providerAccountId: account.providerAccountId
-        });
-
-        await client.close();
-
-        // await createK8sDeployment(unique_id);
-
-        return true;
-      }
-    }
-    
-    if (client) {
-      await client.close();
-    }
-
-    return true; // Always return true to allow sign-in
+        try {
+          // Check if the provider is Google
+          if (account && account.provider === "google") {
+            console.log(`Entered Google sign-in`);
+      
+            // Create unique_id for the user
+            const unique_id = user.name?.replace(' ', '_').toLowerCase() + "_" + unique_id_aydi_part;
+      
+            // Custom attributes to add to the user document
+            const customAttributes = { unique_id };
+            const modifiedUser = { ...user, ...customAttributes };
+      
+            // Ensure the database client is connected
+            client = await clientPromise;
+            const db = client.db(DATABASE_NAME);
+      
+            // Check if the user already exists
+            const existingUser = await db.collection("users").findOne({ email: profile?.email });
+      
+            if (existingUser) {
+              // Update the user's OAuth account if they already exist
+              if (existingUser._id) {
+                await db.collection("accounts").updateOne(
+                  { userId: existingUser._id },
+                  { $set: { provider: "google", providerAccountId: account.providerAccountId } },
+                  { upsert: true } // Create if doesn't exist
+                );
+              } else {
+                console.log(`No user ID found for existing user.`);
+              }
+            } else {
+              // Create a new user document and link the OAuth account
+              const result = await db.collection("users").insertOne(modifiedUser);
+              await db.collection("accounts").insertOne({
+                userId: result.insertedId,
+                provider: "google",
+                providerAccountId: account.providerAccountId,
+              });
+      
+              // Optionally, trigger additional actions like Kubernetes deployment
+              // await createK8sDeployment(unique_id);
+            }
+          }
+      
+          return true; // Allow sign-in
+        } catch (error) {
+          console.error("Error during sign-in:", error);
+          throw new Error("Sign-in failed. Please try again.");
+        } finally {
+          // Ensure the client connection is closed only once
+          if (client) {
+            await client.close();
+          }
+        }
       },
       async redirect({ baseUrl }) {
         return `${baseUrl}/dashboard`; // Otherwise, redirect to the base URL

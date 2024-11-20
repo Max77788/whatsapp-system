@@ -8,7 +8,9 @@ export default function CredentialsForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  
+  const [email, setEmail] = useState("admin@demo.com");
+  const [password, setPassword] = useState("admin123");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
@@ -34,14 +36,21 @@ export default function CredentialsForm() {
     
     {error && <span className="mb-1 text-red-500 font-semibold inline-block">{error}</span>}
     <label htmlFor="email" className="mb-2 text-sm font-medium text-gray-900 dark:text-white self-start">Email</label>
-    <input type="email" name="email" value={"admin@demo.com"} placeholder="Email" required className="mb-4 p-2 border border-gray-300 rounded-md w-full text-black"/>
+    <input type="email" 
+    name="email" 
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    placeholder="Email" 
+    required 
+    className="mb-4 p-2 border border-gray-300 rounded-md w-full text-black"/>
     <div className="relative w-full mb-4">
       <label htmlFor="password" className="mb-2 text-sm font-medium text-gray-900 dark:text-white self-start">Password</label>
       <input 
         type={showPassword ? "text" : "password"} 
         name="password" 
         placeholder="Password" 
-        value={"admin123"}
+        value={password}
+          onChange={(e) => setPassword(e.target.value)}
         required 
         className="p-2 border border-gray-300 rounded-md w-full text-black"
       />
