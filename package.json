@@ -19,6 +19,7 @@
     "child-process": "^1.0.2",
     "dockerode": "^4.0.2",
     "dotenv": "^16.4.5",
+    "formidable": "^3.5.2",
     "headlessui": "^0.0.0",
     "jimp": "^1.6.0",
     "kubernetes": "^1.0.0",

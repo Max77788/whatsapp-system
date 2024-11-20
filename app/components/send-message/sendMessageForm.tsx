@@ -25,7 +25,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleTime, setScheduleTime] = useState("");
   const [timeZone, setTimeZone] = useState("");
-  const [mediaAttachment, setMediaAttachment] = useState<File | null>(null); // New state for media attachment
+  const [mediaAttachment, setMediaAttachment] = useState<File | null>(null);
 
   const handleSaveMessage = async () => {
     try {
@@ -105,8 +105,9 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
       formData.append("toNumbers", JSON.stringify(toNumbers));
       formData.append("message", message);
       
+    
       if (mediaAttachment) {
-        formData.append("media", mediaAttachment); // Append the media attachment if it exists
+        formData.append("media", mediaAttachment);
       }
   
       try {
