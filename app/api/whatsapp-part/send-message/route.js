@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { find_user, find_qr_id_by_phone, update_user } from '@/lib/utils';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/serverStuff';
+import { uploadFile, deleteFile } from '@/lib/google_storage/google_storage';
 import axios from 'axios';
 import fs from 'fs';
 
@@ -23,9 +24,6 @@ export async function POST(req) {
     const toNumbers = formData.get('toNumbers'); // Get the 'toNumbers' field
     const message = formData.get('message'); // Get the 'message' field
     const media = formData.get('media') || null; // Get the 'media' file or null if not present
-
-    const buffer = Buffer.from(await media.arrayBuffer()); // Get the binary buffer
-    const base64Content = buffer.toString('base64'); // Convert the buffer to Base64
     
     console.log(`fromNumber: ${fromNumber}, toNumbers: ${toNumbers}, message: ${message}`);
     if (media) {
@@ -40,9 +38,7 @@ export async function POST(req) {
     const { clientId, keyThing } = find_qr_id_by_phone(user, fromNumber);
     console.log(`clientId: ${clientId}`);
 
-    
-    // const kbBaseAppUrl = "http://localhost:4000";
-    const kbBaseAppUrl = user?.kbBaseAppUrl ;
+    const kbBaseAppUrl = user?.kbBaseAppUrl || "http://localhost:4000";
     console.log(`kbBaseAppUrl: ${kbBaseAppUrl}`);
 
     const parsedToNumbers = JSON.parse(toNumbers || '[]');
@@ -53,9 +49,16 @@ export async function POST(req) {
       message,
     };
 
-    if (media) {
-      payload.mediaBase64 = base64Content; // Path to the file
-      payload.mediaType = media.mimetype;
+    
+    console.log(`\n\n\n\nMedia: ${media}\n\n\n\n`);
+    
+    if (media !== null) {
+      const buffer = Buffer.from(await media.arrayBuffer()); // Get the binary buffer
+      const base64Content = buffer.toString('base64'); // Convert the buffer to Base64
+      const fileName = `${Date.now()}-${media.originalFilename}`;
+      const fileUrl = await uploadFile(base64Content, fileName, media.type);
+      console.log(`\n\n\nUploaded file to ${fileUrl}\n\n\n`);
+      payload.mediaURL = fileUrl;
     }
 
     console.log(`\n\n\n\nFinal payload: ${JSON.stringify(payload)}\n\n\n\n`);
@@ -77,6 +80,10 @@ export async function POST(req) {
           isUpdated = true;
         }
       });
+
+      if (payload.mediaURL) {
+        await deleteFile(payload.mediaURL);
+      }
 
       if (!isUpdated) {
         console.log(`No matching phoneNumber found in userLeads for ${parsedToNumbers}`);

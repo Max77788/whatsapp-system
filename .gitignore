@@ -48,3 +48,5 @@ next-env.d.ts
 
 
 .wwebjs_auth
+
+credentials.json
