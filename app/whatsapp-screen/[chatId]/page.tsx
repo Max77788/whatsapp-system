@@ -6,7 +6,7 @@ const fetchData = async () => {
   return data;
 };
 
-export default async function ChatRoomPage({ params }: { params: { chatId: string } }) {
+export default async function ChatRoomPage({ params }: { params: any }) {
   // Decode and extract chatId from params
   const chatId = decodeURIComponent(params.chatId);
 
