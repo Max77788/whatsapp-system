@@ -28,11 +28,13 @@ export default async function ProfilePage(): Promise<JSX.Element> {
   return (
     <div className="flex flex-col items-center justify-center p-8">
       <div className="profile-header bg-white p-8 border-b-2 border-gray-200 mb-8 text-center rounded-lg">
-        <img 
-          src={session?.user?.image || '/static/default-icon.jpeg'} 
-          alt="User Avatar" 
-          className="w-32 h-32 rounded-full mb-4 border-4 border-gray-200 shadow-lg"
-        />
+        <div className="flex justify-center">
+          <img 
+            src={session?.user?.image || '/static/default-icon.jpeg'} 
+            alt="User Avatar" 
+            className="w-32 h-32 rounded-full mb-4 border-4 border-gray-200 shadow-lg"
+          />
+        </div>
         <h1 className="text-3xl font-bold mb-2 text-black">{session?.user?.name}</h1>
         <p className="text-black">{session?.user?.email}</p>
       </div>

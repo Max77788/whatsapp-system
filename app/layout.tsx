@@ -7,36 +7,37 @@ import path from 'path';
 import fs from 'fs';
 // import { startCronJob } from "@/lib/cron";
 
+import { google } from 'googleapis'; // Import Google Cloud SDK libraries
+
 // Ensure BASE64_GOOGLE_CREDENTIALS is set in the environment variables
 if (!process.env.BASE64_GOOGLE_CREDENTIALS) {
   console.error('Error: BASE64_GOOGLE_CREDENTIALS environment variable is not set.');
   process.exit(1);
 }
 
-const base64Credentials = process.env.BASE64_GOOGLE_CREDENTIALS;
-const tempFilePath = path.join(__dirname, 'temp-google-credentials.json');
-
 try {
-  // Decode the Base64 credentials and write to a temporary file
-  const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
-  fs.writeFileSync(tempFilePath, credentials);
+  // Decode the Base64 credentials
+  const credentials = Buffer.from(process.env.BASE64_GOOGLE_CREDENTIALS, 'base64').toString('utf-8');
 
-  // Set the environment variable for Google Cloud
-  process.env.GOOGLE_APPLICATION_CREDENTIALS = tempFilePath;
+  // Parse the credentials to an object
+  const credentialsObj = JSON.parse(credentials);
 
-  console.log('Google Cloud credentials set up.');
+  // Configure the Google Cloud SDK client using the credentials object
+  const auth = new google.auth.GoogleAuth({
+    credentials: credentialsObj,
+    scopes: ['https://www.googleapis.com/auth/cloud-platform'], // Adjust scopes as needed
+  });
 
-  // Your code that uses the credentials goes here
-  // Example: console.log('Running operations with Google Cloud...');
+  // Set the authentication globally (optional, depending on your use case)
+  google.options({ auth });
+
+  // console.log('Google Cloud credentials set up.');
+
+  // Your code using Google Cloud services can go here
+  // Example: const storage = google.storage('v1');
 } catch (error) {
   console.error('Error setting up Google Cloud credentials:', error);
   process.exit(1);
-} finally {
-  // Cleanup: delete the temporary credentials file
-  if (fs.existsSync(tempFilePath)) {
-    // fs.unlinkSync(tempFilePath);
-    // console.log('Temporary Google Cloud credentials file deleted.');
-  }
 }
 
 const geistSans = localFont({

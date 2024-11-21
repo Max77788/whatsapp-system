@@ -1,9 +1,16 @@
 import { Storage } from '@google-cloud/storage';
 import path from 'path';
 import fs from 'fs';
+import dotenv from 'dotenv';
 
+dotenv.config();
+
+const BASE64_GOOGLE_CREDENTIALS = process.env.BASE64_GOOGLE_CREDENTIALS;
 // Initialize Google Cloud Storage
-const storage = new Storage();
+const storage = new Storage({
+  projectId: 'whatapp-system-app',
+  credentials: JSON.parse(Buffer.from(BASE64_GOOGLE_CREDENTIALS!, 'base64').toString('utf-8')),
+});
 const bucketName = 'user-attachments-523'; // Replace with your GCS bucket name
 
 /**
