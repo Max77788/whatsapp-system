@@ -1,20 +1,21 @@
-// Import the data and ChatWindow component
-import { data } from '../components/mockdata';
+'use client';
+
+import { useChatStore } from '@/lib/store/chatStore';
 import ChatWindow from '../components/ChatWindow';
+import { ChatStore } from '@/lib/store/chatStore';
 
-const fetchData = async () => {
-  return data;
-};
+export default function ChatRoomPage({ params }: { params: any }) {
+  console.log("Params on wa/chatId:", params);
+  
+  const { chats } = useChatStore() as ChatStore;
+  
+  console.log("Chats on wa/chatId:", chats);
 
-export default async function ChatRoomPage({ params }: { params: any }) {
-  // Decode and extract chatId from params
   const chatId = decodeURIComponent(params.chatId);
 
-  // Find the chat by chatId
-  const chat = data.find((c) => c.chatId === chatId);
+  const chat = chats.find((c) => c.chatId === chatId);
 
   if (!chat) {
-    // Handle case where chat is not found
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
         <h2 style={{ color: '#ff5e57' }}>Chat Not Found</h2>
@@ -23,6 +24,5 @@ export default async function ChatRoomPage({ params }: { params: any }) {
     );
   }
 
-  // If chat is found, render the ChatWindow
   return <ChatWindow chat={chat} />;
 }

@@ -83,7 +83,6 @@ export default function ChatWindow({ chat }: { chat: any }) {
         ))}
       </div>
 
-      {/* Input Box */}
       <div
         style={{
           display: 'flex',
@@ -93,31 +92,6 @@ export default function ChatWindow({ chat }: { chat: any }) {
           borderTop: '1px solid #ddd',
         }}
       >
-        <input
-          type="text"
-          placeholder="Type a message"
-          style={{
-            flex: 1,
-            padding: '10px',
-            fontSize: '14px',
-            borderRadius: '20px',
-            border: '1px solid #ddd',
-            outline: 'none',
-          }}
-        />
-        <button
-          style={{
-            marginLeft: '10px',
-            backgroundColor: '#075e54',
-            color: 'white',
-            border: 'none',
-            borderRadius: '20px',
-            padding: '10px 15px',
-            cursor: 'pointer',
-          }}
-        >
-          Send
-        </button>
       </div>
     </div>
   );
