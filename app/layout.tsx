@@ -5,40 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
 import path from 'path';
 import fs from 'fs';
-// import { startCronJob } from "@/lib/cron";
-
-import { google } from 'googleapis'; // Import Google Cloud SDK libraries
-
-// Ensure BASE64_GOOGLE_CREDENTIALS is set in the environment variables
-if (!process.env.BASE64_GOOGLE_CREDENTIALS) {
-  console.error('Error: BASE64_GOOGLE_CREDENTIALS environment variable is not set.');
-  process.exit(1);
-}
-
-try {
-  // Decode the Base64 credentials
-  const credentials = Buffer.from(process.env.BASE64_GOOGLE_CREDENTIALS, 'base64').toString('utf-8');
-
-  // Parse the credentials to an object
-  const credentialsObj = JSON.parse(credentials);
-
-  // Configure the Google Cloud SDK client using the credentials object
-  const auth = new google.auth.GoogleAuth({
-    credentials: credentialsObj,
-    scopes: ['https://www.googleapis.com/auth/cloud-platform'], // Adjust scopes as needed
-  });
-
-  // Set the authentication globally (optional, depending on your use case)
-  google.options({ auth });
-
-  // console.log('Google Cloud credentials set up.');
-
-  // Your code using Google Cloud services can go here
-  // Example: const storage = google.storage('v1');
-} catch (error) {
-  console.error('Error setting up Google Cloud credentials:', error);
-  process.exit(1);
-}
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -61,7 +27,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // startCronJob();
   return (
     <html lang="en">
       <body

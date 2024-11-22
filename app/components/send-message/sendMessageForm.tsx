@@ -362,11 +362,12 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
             >
               <option value="" disabled>Select Time Zone</option>
               {timeZones.map((zone) => (
-    <option key={zone} value={zone}>
+         <option key={zone} value={zone}>
                   {zone}
                 </option>
               ))}
             </select>
+            <p className="text-gray-500 text-sm mb-4">*in case of schedule time is in the past, the message will be sent immediately</p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsScheduleModalOpen(false)}

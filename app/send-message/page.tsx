@@ -43,9 +43,6 @@ export default async function SendMessagePage(): Promise<JSX.Element> {
         }
     }
 
-    console.log(fromPhones);
-    console.log(toPhones);
-
     return (
         <div className="mt-5 flex flex-col items-center gap-5">
             <SendMessageForm fromPhones={fromPhones} toPhones={toPhones} />

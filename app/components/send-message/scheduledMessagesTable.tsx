@@ -10,6 +10,7 @@ interface ScheduledMessage {
   message: string;
   scheduleTime: string;
   timeZone: string;
+  mediaURL: string | null;
 }
 
 const ScheduledMessagesListTable: React.FC = () => {
@@ -74,6 +75,7 @@ const ScheduledMessagesListTable: React.FC = () => {
               <th className="border border-gray-300 p-2 text-left">Message</th>
               <th className="border border-gray-300 p-2 text-left">Schedule Time</th>
               <th className="border border-gray-300 p-2 text-left">Time Zone</th>
+              <th className="border border-gray-300 p-2 text-left">Media Included</th>
               <th className="border border-gray-300 p-2 text-left"></th>
             </tr>
           </thead>
@@ -81,10 +83,16 @@ const ScheduledMessagesListTable: React.FC = () => {
             {scheduledMessages.map((message, index) => (
               <tr key={index}>
                 <td className="border border-gray-300 p-2">{message.fromNumber}</td>
-                <td className="border border-gray-300 p-2">{message.toNumbers.join(", ")}</td>
+                <td className="border border-gray-300 p-2">
+                  {(() => {
+                    const toNumbersArray = Array.isArray(message.toNumbers) ? message.toNumbers : JSON.parse(message.toNumbers || "[]");
+                    return toNumbersArray.length > 1 ? toNumbersArray.join(", ") : toNumbersArray[0] || "N/A";
+                  })()}
+                </td>
                 <td className="border border-gray-300 p-2">{message.message}</td>
                 <td className="border border-gray-300 p-2">{message.scheduleTime}</td>
                 <td className="border border-gray-300 p-2">{message.timeZone}</td>
+                <td className="border border-gray-300 p-2">{message.mediaURL ? "Yes" : "No"}</td>
                 <td className="border border-gray-300 p-2">
                   <button
                     onClick={() => handleDelete(index)}

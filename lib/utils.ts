@@ -93,5 +93,6 @@ export const find_qr_id_by_phone = (user: any, phone_number: string) => {
 
 export const getAllUsersFromDatabase = async () => {
     const db = await getDb();
-    return await db.collection("users").find().toArray();
+    const users = await db.collection("users").find().toArray();
+    return users;
 };
