@@ -15,7 +15,7 @@ export default async function ProfilePage(): Promise<JSX.Element> {
 
   await wait(1000);
 
-  console.log(`session: ${JSON.stringify(session)}`);
+  console.log(`session1: ${JSON.stringify(session)}`);
 
   /*
   // Check if the session is loading or if there is no session
