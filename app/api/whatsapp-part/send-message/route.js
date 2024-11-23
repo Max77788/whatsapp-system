@@ -38,7 +38,7 @@ export async function POST(req) {
     const { clientId, keyThing } = find_qr_id_by_phone(user, fromNumber);
     console.log(`clientId: ${clientId}`);
 
-    const kbBaseAppUrl = user?.kbBaseAppUrl || "http://localhost:4000";
+    const kbBaseAppUrl = user?.kbAppBaseUrl || "http://localhost:4000";
     console.log(`kbBaseAppUrl: ${kbBaseAppUrl}`);
 
     const parsedToNumbers = JSON.parse(toNumbers || '[]');

@@ -64,7 +64,7 @@ const ScheduledMessagesListTable: React.FC = () => {
   return (
     <div className="mt-8 p-4 border border-gray-300 rounded-lg">
       <h1 className="text-2xl text-center font-semibold mb-4">Scheduled Messages</h1>
-      {scheduledMessages.length === 0 ? (
+      {scheduledMessages?.length === 0 ? (
         <p className="text-gray-500 italic">No messages are scheduled.</p>
       ) : (
         <table className="min-w-full border border-gray-300">
@@ -80,7 +80,7 @@ const ScheduledMessagesListTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {scheduledMessages.map((message, index) => (
+            {scheduledMessages?.map((message, index) => (
               <tr key={index}>
                 <td className="border border-gray-300 p-2">{message.fromNumber}</td>
                 <td className="border border-gray-300 p-2">

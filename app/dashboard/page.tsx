@@ -5,10 +5,14 @@ import { getServerSession } from "next-auth";
 import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
 import { authOptions } from "../../lib/auth/serverStuff";
 import { cookies } from "next/headers";
+import './dashboard.css'
 import { useEffect } from "react";
 import PackageDetails from "../components/dashboard/PackageDetails";
 import SubscriptionDetails from "../components/dashboard/SubscriptionDetails";
 import SystemNotifications from "../components/dashboard/SystemNotifications";
+import Sidebar from "../components/dashboard/Sidebar";
+import Header from "../components/dashboard/Header";
+import { find_user } from "@/lib/utils";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -30,7 +34,7 @@ export default async function DashboardPage() {
 
   await wait(1000);
 
-  console.log(`session: ${JSON.stringify(session)}`);
+  const user = session?.user?.email ? await find_user({ email: session.user.email }) : null;
 
   /*
   // Check if the session is loading or if there is no session
@@ -39,8 +43,22 @@ export default async function DashboardPage() {
   }
   */
 
+  let withKbBaseUrlLink = false;
+  if (user?.kbAppBaseUrl) {
+    withKbBaseUrlLink = true;
+  }
+  
+  const userName = 'Dashboard';
+
   // Render the dashboard content if the user is authenticated
   return (
+    <div className="dashboard-container">
+        <Sidebar withKbBaseUrlLink={withKbBaseUrlLink} />
+        
+        <div className="main-content">
+          <Header userName={userName} />
+          <div className="dashboard-body"></div>
+
     <div className="dashboard-container">
 
         {/* Main content section */}
@@ -68,5 +86,7 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+    </div>
+    </div>
   );
 };

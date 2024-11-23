@@ -25,7 +25,7 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
     const { data: session } = useSession();
     const [isOpen, setIsOpen] = useState(false);
     const [instructionSets, setInstructionSets] = useState<InstructionSet[]>([]);
-
+    
     useEffect(() => {
         const initializedTactics = initialTactics.map((set) => ({
             ...set,

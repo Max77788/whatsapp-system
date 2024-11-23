@@ -29,7 +29,7 @@ export async function GET(req) {
 
   let phoneNumbersList = [];
 
-  const ever_attached_numbers_list = user.ever_attached_numbers;
+  const ever_attached_numbers_list = user.ever_attached_numbers || [];
   console.log(ever_attached_numbers_list);
   
   for (let ever_attached_number of ever_attached_numbers_list) {

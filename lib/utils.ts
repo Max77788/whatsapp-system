@@ -8,8 +8,8 @@ if (!uri) {
     throw new Error("Missing MONGODB_URI environment variable");
 }
 
-let clientPromise: Promise<MongoClient> | null = null;
-let dbPromise: Promise<Db> | null = null;
+export let clientPromise: Promise<MongoClient> | null = null;
+export let dbPromise: Promise<Db> | null = null;
 
 /**
  * Initialize MongoClient and Database once
@@ -29,7 +29,7 @@ const initializeMongo = (): { getClient: () => Promise<MongoClient>; getDb: () =
     return { getClient, getDb };
 };
 
-const { getClient, getDb } = initializeMongo();
+export const { getClient, getDb } = initializeMongo();
 
 /**
  * Update User Utility

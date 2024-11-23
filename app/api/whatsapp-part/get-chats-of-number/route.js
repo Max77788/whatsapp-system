@@ -29,7 +29,7 @@ export async function POST(req) {
         return new Response(JSON.stringify({ error: "Phone number is required" }), { status: 400 });
     }
 
-    const kbBaseAppUrl = user?.kbBaseAppUrl || "http://localhost:4000";
+    const kbBaseAppUrl = user?.kbAppBaseUrl || "http://localhost:4000";
     console.log("KB Base App URL:", kbBaseAppUrl);
     
     const response = await fetch(`${kbBaseAppUrl}/client/${clientId}/chats`, {

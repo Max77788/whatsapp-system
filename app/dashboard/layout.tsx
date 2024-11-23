@@ -4,7 +4,8 @@ import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
 import { SessionProvider } from "next-auth/react";
 import "./dashboard.css"; // Optional: Use a CSS file to customize dashboard styling.
-
+import { find_user } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 export default function DashboardLayout({
   children,
@@ -15,14 +16,7 @@ export default function DashboardLayout({
 
   return (
     <SessionProvider>
-      <div className="dashboard-container">
-        <Sidebar />
-        
-        <div className="main-content">
-          <Header userName={userName} />
-          <div className="dashboard-body">{children}</div>
-        </div>
-      </div>
+      {children}
     </SessionProvider>
   );
 }

@@ -19,9 +19,7 @@ export default async function SettingsPage(): Promise<JSX.Element> {
     const user = await find_user({ email: userEmail });
     const uniqueId = user?.unique_id;
 
-    const initialData = (user?.messageLogicList && user.messageLogicList.length > 0) ? user.messageLogicList : [
-      { type: "includes", search_term: "", message_to_send: "", delay: 5 },
-    ];
+    const initialData = (user?.messageLogicList && user.messageLogicList.length > 0) ? user.messageLogicList : [{ name: "Default Set", rows: [{ type: "includes", search_term: "", message_to_send: "", delay: 5, platforms: ["wpforms"] }] }];
 
     const initialTactics = (user?.phoneNumberTactics && user.phoneNumberTactics.length > 0) ? user.phoneNumberTactics : [
         { phoneNumber: "", tactics: [] }

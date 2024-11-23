@@ -17,7 +17,7 @@ export async function POST(req) {
         const { clientId, keyThing } = find_qr_id_by_phone(user, phoneNumber);
         
         // That's how we usually get kb base app url
-        const kbBaseAppUrl = user?.kbBaseAppUrl;
+        const kbBaseAppUrl = user?.kbAppBaseUrl;
 
         const response = await fetch(`${kbBaseAppUrl}/disconnect-phone`, {
             method: 'POST',

@@ -84,7 +84,7 @@ const Sidebar = () => {
       {/* Error message */}
       {error && (
         <div style={{ color: 'red', marginBottom: '1rem' }}>
-          Error: {error}
+          Please connect your phone number in the settings page.
         </div>
       )}
 

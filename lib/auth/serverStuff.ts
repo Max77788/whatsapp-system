@@ -2,7 +2,7 @@ import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-import { clientPromise, clientPromiseDb }from "../mongodb"; // Setup MongoDB client connection
+import { clientPromise, dbPromise, getDb } from "../utils"; // Setup MongoDB client connection
 import { toast } from 'react-toastify';
 import { redirect } from 'next/navigation';
 import { getServerSession } from "next-auth";
@@ -12,12 +12,17 @@ import { UserInterface } from "@/lib/models/User";
 import credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
+import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
 
 
 interface Credentials {
   name?: string;
   email: string;
   password: string;
+}
+
+async function connectDB() {
+  await dbPromise; // Ensure the database is connected before executing operations
 }
 
 const DATABASE_NAME = process.env.DATABASE_NAME || "whatsappSystem";
@@ -34,9 +39,8 @@ export const authOptions: NextAuthOptions = {
           password: { label: "Password", type: "password" },
         },
         async authorize(credentials: Record<string, string> | undefined): Promise<UserInterface | null> {
-          const client = await clientPromise;
           
-          const db = client.db(DATABASE_NAME);
+          const db = await getDb();
           const userFound = await db.collection("users").findOne({ email: credentials?.email,
             $or: [
               { email_verified: true },            // Case where email_verified is true
@@ -44,7 +48,6 @@ export const authOptions: NextAuthOptions = {
             ] }) as UserInterface | null;
 
           if (!userFound) {
-            await client.close();
             throw new Error("User with this email not found") // Return null instead of an error object
           }
 
@@ -56,10 +59,8 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!passwordMatch) {
-            await client.close();
             throw new Error("Wrong Password"); // Return null for wrong password
           }
-          await client.close();
           return userFound; // Use typeof to reference the value
         }
       }),
@@ -87,66 +88,88 @@ export const authOptions: NextAuthOptions = {
     session: {
       strategy: "jwt",
     },
-    adapter: MongoDBAdapter(clientPromise),
+    adapter: MongoDBAdapter(clientPromise!),
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
       async signIn({ user, account, profile }) {
-        let client;
         try {
-          // Check if the provider is Google
-          if (account && account.provider === "google") {
-            console.log(`Entered Google sign-in`);
-      
-            // Create unique_id for the user
-            const unique_id = user.name?.replace(' ', '_').toLowerCase() + "_" + unique_id_aydi_part;
-      
-            // Custom attributes to add to the user document
-            const customAttributes = { unique_id };
-            const modifiedUser = { ...user, ...customAttributes };
-      
-            // Ensure the database client is connected
-            client = await clientPromise;
-            const db = client.db(DATABASE_NAME);
-      
-            // Check if the user already exists
-            const existingUser = await db.collection("users").findOne({ email: profile?.email });
-      
-            if (existingUser) {
-              // Update the user's OAuth account if they already exist
-              if (existingUser._id) {
-                await db.collection("accounts").updateOne(
-                  { userId: existingUser._id },
-                  { $set: { provider: "google", providerAccountId: account.providerAccountId } },
-                  { upsert: true } // Create if doesn't exist
-                );
+            if (account && account.provider === "google") {
+                console.log(`Entered Google sign-in`);
+    
+                // Create a unique ID for the user
+                const isLatin = (str: string) => /^[A-Za-z\s]*$/.test(str);
+                const generateRandomLatinLetters = (length: number) => {
+                    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                    let result = '';
+                    for (let i = 0; i < length; i++) {
+                        result += characters.charAt(Math.floor(Math.random() * characters.length));
+                    }
+                    return result;
+                };
+
+                const namePart = isLatin(user.name || '') ? user.name?.replace(' ', '-').toLowerCase() : generateRandomLatinLetters(5);
+                const unique_id = namePart + "-" + unique_id_aydi_part;
+    
+                // Ensure the database client is connected
+                const db = await getDb();
+    
+                // Check if the user already exists
+                const existingUser = await db.collection("users").findOne({ email: profile?.email });
+    
+                if (existingUser) {
+                  // Automatically link the Google account
+                  await db.collection("accounts").updateOne(
+                      { userId: existingUser.id, provider: account.provider },
+                      {
+                          $set: {
+                              providerAccountId: account.providerAccountId,
+                              type: account.type,
+                              provider: account.provider,
+                              accessToken: account.access_token,
+                              refreshToken: account.refresh_token,
+                          },
+                      },
+                      { upsert: true } // Create the entry if it doesn't exist
+                  );
+                  return true;
               } else {
-                console.log(`No user ID found for existing user.`);
-              }
-            } else {
-              // Create a new user document and link the OAuth account
-              const result = await db.collection("users").insertOne(modifiedUser);
-              await db.collection("accounts").insertOne({
-                userId: result.insertedId,
-                provider: "google",
-                providerAccountId: account.providerAccountId,
-              });
-      
-              // Optionally, trigger additional actions like Kubernetes deployment
-              // await createK8sDeployment(unique_id);
+                    console.log(`New Google signup for email: ${profile?.email}`);
+    
+                    // Add custom attributes for a new user
+                    const newUser = {
+                        id: account.providerAccountId,
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        unique_id
+                    };
+    
+                    // Create a new user document
+                    const result = await db.collection("users").insertOne(newUser);
+    
+                    
+                    // Link the OAuth account
+                    await db.collection("accounts").insertOne({
+                        userId: result.insertedId,
+                        provider: "google",
+                        providerAccountId: account.providerAccountId,
+                        accessToken: account.access_token,
+                        refreshToken: account.refresh_token,
+                    });
+                  
+    
+                    // Trigger additional workflows for new users (e.g., Kubernetes deployment)
+                    console.log(`Triggering Kubernetes deployment for user: ${unique_id}`);
+                    createK8sDeployment(unique_id);
+                }
             }
-          }
-      
-          return true; // Allow sign-in
+    
+            return true; // Allow sign-in
         } catch (error) {
-          console.error("Error during sign-in:", error);
-          throw new Error("Sign-in failed. Please try again.");
-        } finally {
-          // Ensure the client connection is closed only once
-          if (client) {
-            await client.close();
-          }
+            console.error("Error during Google sign-in:", error);
+            throw new Error("Google sign-in failed. Please try again.");
         }
-      },
+    },
       async redirect({ baseUrl }) {
         return `${baseUrl}/dashboard`; // Otherwise, redirect to the base URL
       },

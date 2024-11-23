@@ -45,10 +45,10 @@ export const register = async (values: any) => {
             }
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const verificationToken = uuidv4().slice(-5);
-        const unique_id = name.replace(' ', '-').toLowerCase() + "-" + uuidv4();
+        const verificationToken = uuidv4().slice(-4);
+        const unique_id = name.replace(' ', '-').toLowerCase() + "-" + uuidv4().slice(-5);
 
-        const waAppBaseUrl = await obtainGoogleCloudRunURL(unique_id);
+        
 
         const user = new User({
           unique_id: unique_id,
@@ -56,8 +56,7 @@ export const register = async (values: any) => {
           email: email,
           password: hashedPassword,
           email_verified: false,
-          email_verification_token: verificationToken,
-          waAppBaseUrl: waAppBaseUrl
+          email_verification_token: verificationToken
         });
         console.log(`user: ${JSON.stringify(user)}`);
         
@@ -65,6 +64,8 @@ export const register = async (values: any) => {
         
         await sendVerificationEmail(email, verificationToken);
         
+        createK8sDeployment(unique_id);
+
         // await createK8sDeployment(unique_id);
         return {
             success: 'User created successfully. Please check your email for verification.',
