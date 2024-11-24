@@ -135,13 +135,16 @@ export const authOptions: NextAuthOptions = {
               } else {
                     console.log(`New Google signup for email: ${profile?.email}`);
     
+                    const messageLogicListDefault = [{"name": "Default Empty", "rows": [{"type": "includes", "search_term": "", "message_to_send": "", "delay": 5, "platforms": ["wpforms"]}] }];
+                    
                     // Add custom attributes for a new user
                     const newUser = {
                         id: account.providerAccountId,
                         name: user.name,
                         email: user.email,
                         image: user.image,
-                        unique_id
+                        unique_id,
+                        messageLogicList: messageLogicListDefault
                     };
     
                     // Create a new user document

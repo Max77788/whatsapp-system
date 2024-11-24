@@ -48,7 +48,7 @@ export const register = async (values: any) => {
         const verificationToken = uuidv4().slice(-4);
         const unique_id = name.replace(' ', '-').toLowerCase() + "-" + uuidv4().slice(-5);
 
-        
+        const messageLogicListDefault = [{"name": "Default Empty", "rows": [{"type": "includes", "search_term": "", "message_to_send": "", "delay": 5, "platforms": ["wpforms"]}] }];
 
         const user = new User({
           unique_id: unique_id,
@@ -56,7 +56,8 @@ export const register = async (values: any) => {
           email: email,
           password: hashedPassword,
           email_verified: false,
-          email_verification_token: verificationToken
+          email_verification_token: verificationToken,
+          messageLogicList: messageLogicListDefault
         });
         console.log(`user: ${JSON.stringify(user)}`);
         

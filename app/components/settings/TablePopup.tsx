@@ -227,7 +227,7 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                                     
                                                     <td className="border border-gray-300 p-2">
                                                         <div className="flex flex-col">
-                                                            {["wpforms", "facebook", "other"].map((platform) => {
+                                                            {["wpforms", "facebook", "contact-forms7", "other"].map((platform) => {
                                                                 // Ensure platforms is a valid array
                                                                 if (!Array.isArray(row.platforms) || row.platforms.length === 0) {
                                                                     row.platforms = ["other"]; // Fallback to default

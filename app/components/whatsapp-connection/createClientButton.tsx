@@ -10,6 +10,7 @@ export default function CreateClientButton() {
   const { data: session } = useSession();
   const [qrCode, setQrCode] = useState(null);
   const [numberOfPhonesConnected, setNumberOfPhonesConnected] = useState(0);
+  const [previousPhonesConnected, setPreviousPhonesConnected] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [fadeOut, setFadeOut] = useState(false); // For smooth transition effect
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null); // Create a ref for the interval ID
@@ -22,6 +23,14 @@ export default function CreateClientButton() {
       const data = await response.json();
 
       if (response.ok) {
+        // Check if the number of phones connected has changed
+        if (previousPhonesConnected !== null && data.numberOfPhonesConnected !== previousPhonesConnected) {
+          location.reload(); // Reload if the number has changed
+        }
+
+        // Update the previous number of phones connected
+        setPreviousPhonesConnected(data.numberOfPhonesConnected);
+
         // Smooth fade effect before updating QR code
         setFadeOut(true);
         setTimeout(() => {

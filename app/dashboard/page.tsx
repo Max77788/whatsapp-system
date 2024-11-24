@@ -91,7 +91,6 @@ export default async function DashboardPage() {
             <div className="package-details">
               <PackageDetails />
             </div>
-            <button><a href="/settings">Settings</a></button>
           </div>
         </div>
       </div>
