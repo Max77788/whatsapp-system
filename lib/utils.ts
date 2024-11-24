@@ -54,6 +54,8 @@ export const update_user = async (
             return true;
         }
 
+        console.log("")
+
         return false;
     } catch (error) {
         console.error(`Error updating user: ${error}`);
