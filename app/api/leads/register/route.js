@@ -3,7 +3,8 @@ import { update_user } from '@/lib/utils';
 
 export async function POST(req) {
 
-    const { name, phone_number } = await req.json();
+    const { name, your_name, phone_number } = await req.json();
+    const leadName = name || your_name;
     
     console.log(`req on leads/register: ${JSON.stringify(req)}`);
 
@@ -13,7 +14,7 @@ export async function POST(req) {
 
     console.log(`unique_id: ${unique_id}`);
 
-    const success = await update_user({ unique_id: unique_id }, { leads: { name, phone_number, source: source } }, "$addToSet");
+    const success = await update_user({ unique_id: unique_id }, { leads: { name: leadName, phone_number: phone_number, source: source } }, "$addToSet");
     
     if (success) {
         return NextResponse.json({ message: `Lead from ${source} added` });
