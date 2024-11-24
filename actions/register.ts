@@ -64,7 +64,7 @@ export const register = async (values: any) => {
         
         await sendVerificationEmail(email, verificationToken);
         
-        createK8sDeployment(unique_id);
+        await createK8sDeployment(unique_id);
 
         // await createK8sDeployment(unique_id);
         return {

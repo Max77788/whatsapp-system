@@ -35,7 +35,7 @@ export default async function SendMessagePage(): Promise<JSX.Element> {
     const leads = user?.leads;
     
     let toPhones = [];
-    toPhones = leads.map((lead: any) => lead.phone_number);
+    toPhones = leads?.map((lead: any) => lead.phone_number);
 
     for (let i = 1; i < 6; i++) {
         if (user?.[`qrCode${i}`].phoneNumber) {

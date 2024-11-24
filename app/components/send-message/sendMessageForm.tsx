@@ -231,7 +231,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   <label className="block mb-2 font-semibold">To</label>
   <select
     multiple
-    size={toPhones.length || 5}
+    size={toPhones?.length || 5}
     value={toNumbers}
     onChange={(e) => {
       const values = Array.from(e.target.selectedOptions, (option) => option.value);
@@ -244,10 +244,10 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
     }}
     className="w-full text-black border border-gray-300 p-2 rounded"
   >
-    <option value="ALL" disabled={!toPhones.length}>
+    <option value="ALL" disabled={!toPhones?.length}>
       Choose All
     </option>
-    {toPhones.length ? (
+    {toPhones?.length ? (
       toPhones.map((phone) => (
         <option key={phone} value={phone}>
           {phone}

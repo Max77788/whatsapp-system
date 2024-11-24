@@ -14,6 +14,7 @@ export default function CredentialsRegistrationForm() {
   const ref = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (formData: FormData) => {
+    toast.info("Please wait a bit while we are creating your account...");
     const r = await register({
         email: formData.get("email"),
         password: formData.get("password"),

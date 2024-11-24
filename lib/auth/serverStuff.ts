@@ -160,7 +160,7 @@ export const authOptions: NextAuthOptions = {
     
                     // Trigger additional workflows for new users (e.g., Kubernetes deployment)
                     console.log(`Triggering Kubernetes deployment for user: ${unique_id}`);
-                    createK8sDeployment(unique_id);
+                    await createK8sDeployment(unique_id);
                 }
             }
     
