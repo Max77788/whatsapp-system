@@ -19,5 +19,6 @@ export async function POST(req) {
     if (success) {
         return NextResponse.json({ message: `Lead from ${source} added` });
     } else {
+        return NextResponse.json({ message: `Lead from ${source} not added` });
     }
 }
