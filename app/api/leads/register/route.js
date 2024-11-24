@@ -3,6 +3,9 @@ import { update_user } from '@/lib/utils';
 
 export async function POST(req) {
 
+    const text = await req.text(); // Use req.text() to get the raw text body
+    console.log(`req on leads/register: ${text}`);
+
     const { name, phone_number } = await req.json();
     
     const { searchParams } = new URL(req.url);
