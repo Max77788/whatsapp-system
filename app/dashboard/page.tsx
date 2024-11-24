@@ -12,7 +12,8 @@ import SubscriptionDetails from "../components/dashboard/SubscriptionDetails";
 import SystemNotifications from "../components/dashboard/SystemNotifications";
 import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
-import { find_user } from "@/lib/utils";
+import { find_user, update_user } from "@/lib/utils";
+import { retrieveK8sDeploymentUrl } from "@/lib/whatsAppService/kubernetes_part.mjs";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -43,9 +44,17 @@ export default async function DashboardPage() {
   }
   */
 
-  let withKbBaseUrlLink = false;
-  if (user?.kbAppBaseUrl) {
-    withKbBaseUrlLink = true;
+  let withKbBaseUrlLink;
+  if (!user?.kbAppBaseUrl) {
+    const kbAppBaseUrl = await retrieveK8sDeploymentUrl(user.unique_id);
+    console.log(`kbAppBaseUrl: ${kbAppBaseUrl} from ${user.unique_id}`);
+    
+    if (kbAppBaseUrl) {
+      await update_user({ unique_id: user.unique_id }, { kbAppBaseUrl: kbAppBaseUrl });
+      withKbBaseUrlLink = true;
+    } else {
+      withKbBaseUrlLink = false;
+    }
   }
   
   const userName = 'Dashboard';

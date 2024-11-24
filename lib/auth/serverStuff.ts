@@ -104,7 +104,7 @@ export const authOptions: NextAuthOptions = {
                     for (let i = 0; i < length; i++) {
                         result += characters.charAt(Math.floor(Math.random() * characters.length));
                     }
-                    return result;
+                    return result.toLowerCase();
                 };
 
                 const namePart = isLatin(user.name || '') ? user.name?.replace(' ', '-').toLowerCase() : generateRandomLatinLetters(5);
