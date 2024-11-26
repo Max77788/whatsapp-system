@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface PhoneNumber {
   phoneNumber: string;
@@ -97,7 +98,9 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
       });
 
       if (response.ok) {
-        alert("Phone number disconnected successfully!");
+        
+        toast.success("Phone number disconnected successfully!");
+        await new Promise((resolve) => setTimeout(resolve, 2000));
           // setPhoneNumbers((prev) => prev.filter((phone) => phone.phoneNumber !== phoneNumber));
           // setSelectedTactics((prev) => {
           // const newTactics = { ...prev };
@@ -106,7 +109,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
         // });
         location.reload();
       } else {
-        alert("Failed to disconnect phone number.");
+        toast.error("Failed to disconnect phone number.");
       }
     } catch (error) {
       console.error("Error disconnecting phone number:", error);

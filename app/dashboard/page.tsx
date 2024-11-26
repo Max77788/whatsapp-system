@@ -44,6 +44,10 @@ export default async function DashboardPage() {
   }
   */
 
+  console.log(`user: ${JSON.stringify(user)}`);
+
+  console.log(`kbAppBaseUrl: ${user?.kbAppBaseUrl}`);
+
   let withKbBaseUrlLink;
   if (!user?.kbAppBaseUrl) {
     const kbAppBaseUrl = await retrieveK8sDeploymentUrl(user.unique_id);

@@ -195,3 +195,7 @@ export const authOptions: NextAuthOptions = {
       return redirect("/auth/signin?notification=login-required");
     }
   }
+
+  export async function useSession() {
+    
+  }

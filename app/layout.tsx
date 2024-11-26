@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
 import path from 'path';
 import fs from 'fs';
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

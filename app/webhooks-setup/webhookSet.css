@@ -42,4 +42,25 @@
   border-radius: 8px;
 }
 
+.tabs-navigation {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.tabs-navigation button {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tabs-navigation button:hover {
+  color: #0070f3;
+}
+
+.tabs-navigation .border-b-2 {
+  border-color: #0070f3;
+}
+
   
