@@ -28,27 +28,28 @@ export default function CreateClientButton() {
     try {
       const response = await fetch("/api/whatsapp-part/generate-qr");
       const data = await response.json();
-
+  
       if (response.ok) {
         console.log("Response is OK. Processing QR code data...");
-
+  
         const newNumberOfPhonesConnected = data.numberOfPhonesConnected;
-
-        // Check if the number of phones connected has changed
-        if (previousPhonesConnected !== null && newNumberOfPhonesConnected !== previousPhonesConnected) {
+  
+        // Notify only if it's not the initial fetch and a change is detected
+        if (
+          previousPhonesConnected !== null &&
+          newNumberOfPhonesConnected !== previousPhonesConnected
+        ) {
           const message =
             newNumberOfPhonesConnected > previousPhonesConnected
               ? "Your phone has been connected successfully!"
               : "A phone has been detached successfully!";
           toast.success(message);
-          await new Promise((resolve) => setTimeout(resolve, 2000)); // Delay to allow toast to display
-          location.reload(); // Reload the page
         }
-
+  
         // Update state
         setPreviousPhonesConnected(newNumberOfPhonesConnected);
         setNumberOfPhonesConnected(newNumberOfPhonesConnected);
-
+  
         // Smooth fade effect before updating QR code
         setFadeOut(true);
         setTimeout(() => {
@@ -57,13 +58,15 @@ export default function CreateClientButton() {
         }, 300);
       } else {
         console.error(`Error on generate QR code endpoint: ${data.error}`);
-        // toast.error("Failed to generate QR code. Please try again.");
+        toast.error("Failed to generate QR code. Please try again.");
       }
     } catch (error) {
       console.error("Failed to fetch QR code:", error);
       toast.error("An error occurred while fetching the QR code.");
     }
   };
+  
+  
 
   const handleGenerateQRCode = async () => {
     if (!session) {

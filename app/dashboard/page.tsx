@@ -44,8 +44,6 @@ export default async function DashboardPage() {
   }
   */
 
-  console.log(`user: ${JSON.stringify(user)}`);
-
   console.log(`kbAppBaseUrl: ${user?.kbAppBaseUrl}`);
 
   let withKbBaseUrlLink;

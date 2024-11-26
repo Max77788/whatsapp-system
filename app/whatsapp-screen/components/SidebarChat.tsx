@@ -4,12 +4,17 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChatStore } from '@/lib/store/chatStore'; // Example of Zustand global store
 import { ChatStore } from '@/lib/store/chatStore';
+import { civicinfo } from 'googleapis/build/src/apis/civicinfo';
 
 const Sidebar = () => {
   const router = useRouter();
 
   // States
   const [selectedPhone, setSelectedPhone] = useState('');
+  
+  const [selectedPhones, setSelectedPhones] = useState<string[]>([]);
+
+
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -77,16 +82,47 @@ const Sidebar = () => {
     fetchChats();
   }, [selectedPhone]);
 
+
+  const handleExport = async () => {
+    try {
+      if (selectedPhones.length === 0) {
+        alert('No phone numbers selected for export.');
+        return;
+      }
+
+      console.log(`Selected phones: ${selectedPhones}`);
+  
+      const response = await fetch('/api/leads/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumbersList: selectedPhones }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+  
+      alert('Numbers exported successfully!');
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Failed to export phone numbers.');
+    }
+  };
+  
+
   return (
     <div style={{ padding: '1rem' }}>
       <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Chats</h2>
 
-      {/* Error message */}
+      {/* Error message 
       {error && (
         <div style={{ color: 'red', marginBottom: '1rem' }}>
           Please connect your phone number in the settings page.
         </div>
       )}
+        */}
 
       {/* Loading indicator */}
       {loading && (
@@ -113,6 +149,64 @@ const Sidebar = () => {
           ))}
         </select>
       </div>
+
+      {/* Selected phone numbers */}
+<div style={{ marginBottom: '1rem' }}>
+  <p>Export Phone Numbers:</p>
+  <select
+    id="selectedPhoneNumbers"
+    multiple
+    value={selectedPhones}
+    onChange={(e) => {
+      const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
+  
+      // Check if "Select All" was selected
+      if (selectedValues.includes("select-all")) {
+        const allValues = (useChatStore.getState() as { chats: { chatId: string; name: string }[] }).chats
+          .filter((chat: any) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone)
+          .map((chat: any) => chat.chatId.replace("@c.us", "").replace("@g.us", ""));
+        setSelectedPhones(allValues); // Select all options
+      } else {
+        setSelectedPhones(selectedValues); // Select specific options
+      }
+    }}
+    style={{
+      padding: '5px',
+      fontSize: '16px',
+      width: '100%',
+      height: '100px',
+    }}
+  >
+    {/* Add "Select All" option */}
+  <option value="select-all" style={{ fontWeight: 'bold' }}>
+      Select All
+    </option>
+    {(useChatStore.getState() as { chats: { chatId: string; name: string }[] })
+  .chats.filter((chat) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone) // Filter chats
+  .map((chat: any) => (
+    <option key={chat.chatId} value={"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", ""))}>
+      {"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", ""))}
+    </option>
+  ))}
+
+  </select>
+  <button
+    onClick={handleExport}
+    disabled={selectedPhones.length === 0}
+    style={{
+      marginTop: '10px',
+      padding: '10px 20px',
+      backgroundColor: selectedPhones.length === 0 ? '#ccc' : '#0070f3',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: selectedPhones.length === 0 ? 'not-allowed' : 'pointer',
+    }}
+  >
+    Export
+  </button>
+</div>
+
 
       {/* Chat list */}
       <ul style={{ listStyle: 'none', padding: '0' }}>
