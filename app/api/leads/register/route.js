@@ -32,8 +32,8 @@ export async function POST(req) {
     if (phoneNumbersList) {
         console.log(`phoneNumbersList: ${phoneNumbersList}`);
         const transformedPhoneNumbersList = phoneNumbersList
-            .filter((phone) => !existingLeadsPhones.includes(phone))
-            .map((phone) => ({name: null, phone_number: phone, source: "other" }));
+            .filter((phone) => !existingLeadsPhones.includes(phone.split("--")[0]))
+            .map((phone) => ({name: phone.split("--")[1], phone_number: phone.split("--")[0], source: "other" }));
         const success = await update_user({ unique_id: unique_id }, { leads: { "$each": transformedPhoneNumbersList } }, "$addToSet");
         if (success) {
             console.log(`Leads added list success on leads/register: ${transformedPhoneNumbersList}`);

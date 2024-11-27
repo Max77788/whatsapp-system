@@ -31,7 +31,7 @@ export default function FacebookTab({ uniqueId }: FacebookTabProps) {
       <a
         href="/static/webhook-scripts/blueprintFacebookWA.json"
         download
-        className="bg-blue-500 text-white px-4 py-2 rounded-md"
+        className="bg-green-600 hover:bg-green-700 text-white hover:text-white px-4 py-2 rounded-md"
       >
         <button>Download Facebook Make.com Script</button>
       </a>

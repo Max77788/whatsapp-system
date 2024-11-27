@@ -137,12 +137,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
   };
 
   const handleDeleteLead = (index: number) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete the lead: ${leadData[index].name}?`
-    );
-    if (confirmed) {
       setLeadData((prevData) => prevData.filter((_, i) => i !== index));
-    }
   };
   
 
@@ -268,7 +263,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
           </table>
           <button
             onClick={saveData}
-            className="px-4 py-2 bg-green-500 text-white rounded"
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
           >
             Save Data
           </button>
@@ -305,7 +300,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
         </div>
         <button
           onClick={handleAddLead}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
         >
           Add Lead
         </button>
@@ -323,7 +318,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }) => {
   ></textarea>
   <button
             onClick={handleBulkAdd}
-                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                  className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
         >
           Add Phone Numbers
         </button>

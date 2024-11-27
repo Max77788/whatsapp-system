@@ -140,7 +140,7 @@ const TablePopup: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
 
     return (
         <div>
-            <button onClick={togglePopup} className="px-4 py-2 bg-blue-500 text-white rounded">
+            <button onClick={togglePopup} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded">
                 Modify Bot Logic
             </button>
 

@@ -68,9 +68,7 @@ export default async function DashboardPage() {
         
         <div className="main-content">
           <Header userName={userName} />
-          <div className="dashboard-body"></div>
-
-    <div className="dashboard-container">
+          <div className="dashboard-body">
 
         {/* Main content section */}
         <div className="main-content">

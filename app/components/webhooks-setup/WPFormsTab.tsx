@@ -31,7 +31,7 @@ export default function WPFormsTab({ uniqueId }: WPFormsTabProps) {
       <a
         href="/static/webhook-scripts/blueprintWpformsWA.json"
         download
-        className="bg-blue-500 text-white px-4 py-2 rounded-md"
+        className="bg-green-600 hover:bg-green-700 text-white hover:text-white px-4 py-2 rounded-md"
       >
         <button>Download WPForms Make.com Script</button>
       </a>

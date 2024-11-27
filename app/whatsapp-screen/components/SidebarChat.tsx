@@ -140,7 +140,7 @@ const Sidebar = () => {
           id="phoneSelect"
           value={selectedPhone}
           onChange={(e) => setSelectedPhone(e.target.value)}
-          style={{ padding: '5px', fontSize: '16px' }}
+          style={{ padding: '5px', fontSize: '16px', color: '#000000' }}
         >
           {phoneNumbers.map((phoneObj: any, index: number) => (
             <option key={index} value={phoneObj.phoneNumber}>
@@ -151,21 +151,24 @@ const Sidebar = () => {
       </div>
 
       {/* Selected phone numbers */}
-<div style={{ marginBottom: '1rem' }}>
+      <div style={{ marginBottom: '1rem' }}>
   <p>Export Phone Numbers:</p>
   <select
     id="selectedPhoneNumbers"
     multiple
-    value={selectedPhones}
+    value={selectedPhones} // Ensure state reflects selected items
     onChange={(e) => {
       const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
-  
-      // Check if "Select All" was selected
+
+      console.log(selectedValues);
+
       if (selectedValues.includes("select-all")) {
+        // Select all phone numbers except the current phone
         const allValues = (useChatStore.getState() as { chats: { chatId: string; name: string }[] }).chats
           .filter((chat: any) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone)
-          .map((chat: any) => chat.chatId.replace("@c.us", "").replace("@g.us", ""));
-        setSelectedPhones(allValues); // Select all options
+          .map((chat: any) => "+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", "")).concat("--").concat(chat.name));
+
+        setSelectedPhones(allValues); // Set state to select all
       } else {
         setSelectedPhones(selectedValues); // Select specific options
       }
@@ -175,33 +178,27 @@ const Sidebar = () => {
       fontSize: '16px',
       width: '100%',
       height: '100px',
+      color: '#000000',
     }}
   >
     {/* Add "Select All" option */}
-  <option value="select-all" style={{ fontWeight: 'bold' }}>
+    <option value="select-all" style={{ fontWeight: 'bold' }}>
       Select All
     </option>
     {(useChatStore.getState() as { chats: { chatId: string; name: string }[] })
-  .chats.filter((chat) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone) // Filter chats
-  .map((chat: any) => (
-    <option key={chat.chatId} value={"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", ""))}>
-      {"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", ""))}
-    </option>
-  ))}
-
+      .chats.filter((chat) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone)
+      .map((chat: any) => (
+        <option key={chat.chatId} value={"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", "")).concat("--").concat(chat.name)}>
+          {"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", ""))}
+        </option>
+      ))}
   </select>
   <button
     onClick={handleExport}
     disabled={selectedPhones.length === 0}
-    style={{
-      marginTop: '10px',
-      padding: '10px 20px',
-      backgroundColor: selectedPhones.length === 0 ? '#ccc' : '#0070f3',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '5px',
-      cursor: selectedPhones.length === 0 ? 'not-allowed' : 'pointer',
-    }}
+    className={`mt-2 px-4 py-2 rounded border-none ${
+      selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black' : 'bg-green-600 hover:bg-green-700 cursor-pointer'
+    }`}
   >
     Export
   </button>

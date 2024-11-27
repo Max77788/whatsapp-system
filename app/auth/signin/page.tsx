@@ -72,9 +72,9 @@ const SignIn = () => {
           </div>
 
           <div className="text-center">
-            <p className="text-black">
+            <p className="">
               Don&apos;t have an account?{" "}
-              <Link href="/auth/signup" className="text-blue-500 hover:underline">
+              <Link href="/auth/signup" className="hover:underline">
                 Sign up
               </Link>
             </p>

@@ -7,6 +7,7 @@ export default function ChatWindow({ chat }: { chat: any }) {
         height: '100vh',
         backgroundColor: '#ece5dd',
         padding: '10px',
+        color: '#000000',
       }}
     >
       {/* Header */}

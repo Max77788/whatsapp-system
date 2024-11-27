@@ -9,8 +9,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffffff;
-    --foreground: #000000;
+    --background: #000000;
+    --foreground: #ffffff;
   }
 }
 
@@ -22,12 +22,12 @@ body {
 
 /* styles/globals.css */
 a {
-  color: #0070f3; /* Customize color */
+  color: #16A34A; /* Customize color */
   text-decoration: none; /* Remove underline */
 }
 
 a:hover {
-  color: #005bb5; /* Customize hover color */
+  color: #15803D; /* Customize hover color */
   text-decoration: underline; /* Optional hover effect */
 }
 

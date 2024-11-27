@@ -92,7 +92,7 @@ export default function CreateClientButton() {
 
   return (
     <div>
-      <button onClick={handleGenerateQRCode} className="px-4 py-2 bg-blue-500 text-white rounded">
+      <button onClick={handleGenerateQRCode} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded">
         Connect a New Phone
       </button>
 
