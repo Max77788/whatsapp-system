@@ -118,6 +118,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   
         if (response.ok) {
           toast.success("Message sent!");
+          await new Promise(resolve => setTimeout(resolve, 2000));
           location.reload();
         } else {
           toast.error("Failed to send message.");

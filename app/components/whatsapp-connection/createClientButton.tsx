@@ -58,7 +58,7 @@ export default function CreateClientButton() {
         }, 300);
       } else {
         console.error(`Error on generate QR code endpoint: ${data.error}`);
-        toast.error("Failed to generate QR code. Please try again.");
+        // toast.error("Failed to generate QR code. Please try again.");
       }
     } catch (error) {
       console.error("Failed to fetch QR code:", error);
