@@ -7,6 +7,8 @@ import path from 'path';
 import fs from 'fs';
 import { SessionProvider } from "next-auth/react";
 
+console.log("Layout");
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
