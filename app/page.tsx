@@ -8,7 +8,7 @@ export default function Home() {
         <div className="flex justify-center w-full">
           <a
             href="/auth/signin"
-            className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-green-600 rounded-full hover:bg-green-700 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 gap-2"
+            className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-green-600 rounded-full hover:bg-green-700 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 gap-2 hover:text-white"
           >
             Get Started
             <svg

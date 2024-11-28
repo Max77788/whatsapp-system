@@ -4,6 +4,7 @@
 import { getServerSession } from "next-auth";
 import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
 import { authOptions } from "../../lib/auth/serverStuff";
+import { find_user } from "@/lib/utils";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -13,10 +14,9 @@ export default async function ProfilePage(): Promise<JSX.Element> {
 
   const session = await getServerSession(authOptions);
 
-  await wait(1000);
-
   console.log(`session1: ${JSON.stringify(session)}`);
 
+  const user = await find_user({ email: session?.user?.email });
   /*
   // Check if the session is loading or if there is no session
   if (status === "loading") {
@@ -44,14 +44,20 @@ export default async function ProfilePage(): Promise<JSX.Element> {
             <h2 className="text-xl font-semibold mb-4 text-black">Personal Information</h2>
             <div className="space-y-3">
               <div className="flex flex-col items-center">
-                <span className="text-black">Name</span>
+                <span className="text-black font-bold">Name</span>
                 <span className="font-medium text-black">{session?.user?.name}</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-black">Email</span>
+                <span className="text-black font-bold">Email</span>
                 <span className="font-medium text-black">{session?.user?.email}</span>
               </div>
-          </div>
+              <div className="flex flex-col items-center">
+                <span className="text-black font-bold">Unique ID</span>
+                <span className="font-medium text-black">{user?.unique_id}</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-black font-bold">API Key</span>
+                <span className="font-medium text-black">{user?.apiKey}</span></div>
           
           {/*
           <div className="profile-section">
@@ -68,6 +74,7 @@ export default async function ProfilePage(): Promise<JSX.Element> {
           */}
         </div>
       </div>
+    </div>
     </div>
   );
 };

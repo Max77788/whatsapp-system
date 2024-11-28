@@ -1,4 +1,6 @@
 import { MongoClient, Db } from "mongodb";
+import bcrypt from "bcryptjs";
+import { nanoid } from "nanoid";
 
 // Database configuration
 const DATABASE_NAME = process.env.DATABASE_NAME || "whatsappSystem";
@@ -52,11 +54,9 @@ export const update_user = async (
 
             await db.collection("users").updateOne(filter, updateAction, options);
             return true;
+        } else {
+            return false;
         }
-
-        console.log("")
-
-        return false;
     } catch (error) {
         console.error(`Error updating user: ${error}`);
         throw error;
@@ -98,3 +98,35 @@ export const getAllUsersFromDatabase = async () => {
     const users = await db.collection("users").find().toArray();
     return users;
 };
+
+
+export const updateUserPassword = async (token: string, newPassword: string) => {
+    const db = await getDb();
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const resetToken = nanoid(10);
+
+    await db.collection("users").updateOne({ reset_token: token }, { $set: { password: hashedPassword, reset_token: resetToken } });
+};
+
+
+
+
+export async function verifyApiKey(apiKey: string) {
+    try {
+        const db = await getDb();
+        const user = await db.collection('users').findOne({ apiKey });
+
+        return !!user; // Return true if the API key matches a user
+    } catch (error) {
+        console.error('Error verifying API key:', error);
+        return false;
+    }
+}
+
+export const getAllApiKeys = async () => {
+    const db = await getDb();
+    const apiKeys = await db.collection('users').find({ apiKey: { $exists: true } }).project({ apiKey: 1, _id: 0 }).toArray();
+    return apiKeys.map(user => user?.apiKey);
+}

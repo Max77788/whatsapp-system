@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { clientPromiseDb } from "@/lib/mongodb";
 import { signIn } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { createK8sDeployment } from "@/lib/whatsAppService/kubernetes_part.mjs";
 
 export async function GET(req, { params }) {
     const { token } = await params;
@@ -20,6 +21,7 @@ export async function GET(req, { params }) {
             }   
           }
         );
+        createK8sDeployment(userFound.unique_id);
         return redirect("/auth/signin?notification=email-verified")
       } else {
         return redirect("/auth/signin?notification=invalid-token")

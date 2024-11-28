@@ -13,7 +13,7 @@ import credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
 import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
-
+import { nanoid } from 'nanoid'; // Generate unique keys
 
 interface Credentials {
   name?: string;
@@ -42,14 +42,19 @@ export const authOptions: NextAuthOptions = {
           
           const db = await getDb();
           const userFound = await db.collection("users").findOne({ email: credentials?.email,
-            $or: [
-              { email_verified: true },            // Case where email_verified is true
-              { email_verified: { $exists: false } } // Case where email_verified is not present
-            ] }) as UserInterface | null;
+             }) as UserInterface | null;
 
+          
+          
           if (!userFound) {
             throw new Error("User with this email not found") // Return null instead of an error object
           }
+
+          if (!userFound.email_verified && !userFound.id) {
+            throw new Error("User email not verified") // Return null instead of an error object
+          }
+
+
 
           console.log(`userFound on signin: ${JSON.stringify(userFound)}`);
 
@@ -144,7 +149,8 @@ export const authOptions: NextAuthOptions = {
                         email: user.email,
                         image: user.image,
                         unique_id,
-                        messageLogicList: messageLogicListDefault
+                        messageLogicList: messageLogicListDefault,
+                        apiKey: nanoid(32)
                     };
     
                     // Create a new user document
@@ -163,6 +169,7 @@ export const authOptions: NextAuthOptions = {
     
                     // Trigger additional workflows for new users (e.g., Kubernetes deployment)
                     console.log(`Triggering Kubernetes deployment for user: ${unique_id}`);
+                    
                     await createK8sDeployment(unique_id);
                 }
             }

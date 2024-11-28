@@ -12,6 +12,8 @@ export interface UserDocument {
     image: string;
     createdAt: Date;
     updatedAt: Date;
+    apiKey: string;
+    kbAppBaseUrl?: string
   }
 
 
@@ -51,6 +53,14 @@ export interface UserDocument {
       type: String,
       default: undefined, // Avoids overriding assigned value with null
     },
+    apiKey: {
+      type: String,
+      default: undefined, // Avoids overriding assigned value with null
+    },
+    kbAppBaseUrl: {
+      type: String,
+      default: undefined, // Avoids overriding assigned value with null
+    },
   },
   {
     timestamps: true,
@@ -63,7 +73,8 @@ export interface UserInterface {
   password: string;
   email_verified: boolean;
   email_verification_token: string;
-  waAppBaseUrl?: string
+  apiKey: string;
+  kbAppBaseUrl?: string
 }
 
 // mongoose.models.User = model<UserDocument>('User', UserSchema);

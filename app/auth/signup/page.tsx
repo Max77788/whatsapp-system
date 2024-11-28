@@ -52,6 +52,10 @@ const SignUp = () => {
               Sign in
             </Link>
           </p>
+          <p><Link href="/forgot-password" className="hover:underline">
+                Forgot password?
+            </Link>
+          </p>
         </div>
       </div>
   );

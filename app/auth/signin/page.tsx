@@ -1,16 +1,18 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { GoogleSignInButton } from "../../components/signin/authButtons";
 import CredentialsForm from "../../components/signin/credentialsForm";
+import { createK8sDeployment } from "@/lib/whatsAppService/kubernetes_part.mjs";
 
 // Component to handle search parameters and show notifications
 const SearchParamsHandler = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const notificationProcessedRef = useRef(false); 
 
   useEffect(() => {
     if (searchParams.toString()) {
@@ -18,6 +20,9 @@ const SearchParamsHandler = () => {
     }
 
     const notification = searchParams.get("notification");
+    if (notification && !notificationProcessedRef.current) {
+      notificationProcessedRef.current = true;
+    
     switch (notification) {
       case "login-required":
         toast.error("You must be signed in to view this page");
@@ -33,8 +38,15 @@ const SearchParamsHandler = () => {
       case "invalid-token":
         toast.error("Invalid token");
         break;
+      case "password-updated":
+        toast.success("Password updated successfully. Please sign in to continue.");
+        break;
+      case "use-google-signup":
+        toast.info("Use Google Signup");
+        break;
       default:
         break;
+    }
     }
   }, [router, searchParams]);
 
@@ -76,6 +88,10 @@ const SignIn = () => {
               Don&apos;t have an account?{" "}
               <Link href="/auth/signup" className="hover:underline">
                 Sign up
+              </Link>
+            </p>
+            <p><Link href="/forgot-password" className="hover:underline">
+                Forgot password?
               </Link>
             </p>
           </div>

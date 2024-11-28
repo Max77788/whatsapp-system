@@ -10,9 +10,16 @@ export async function GET(req) {
         // Parse the JSON body
         const userEmail = session?.user?.email;
 
-        const user = await find_user({ email: userEmail });
+        const apiKey = req.headers.get('x-api-key');
+
+        let user;
+        if (userEmail && !apiKey) {
+            user = await find_user({ email: userEmail });
+        } else if (apiKey) {
+            user = await find_user({ apiKey: apiKey });
+        }
         
-        const messageTemplates = user?.messageTemplates || [];
+        const messageTemplates = user?.messageTemplates || null;
 
         if (messageTemplates) {
             console.log("Returning message templates");

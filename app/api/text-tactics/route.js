@@ -23,10 +23,12 @@ export async function GET(req) {
 
    let text_tactics_names_list = [];
    let text_tactics_list = [];
-
-  for (let objectt of user.messageLogicList) {
-      text_tactics_names_list.push(objectt.name);
-      text_tactics_list.push(objectt);
+  
+   if (user.messageLogicList && Array.isArray(user.messageLogicList)) {
+    for (let objectt of user.messageLogicList) {
+        text_tactics_names_list.push(objectt.name);
+        text_tactics_list.push(objectt);
+    }
   }
 
   return NextResponse.json({text_tactics_names_list, text_tactics_list});
