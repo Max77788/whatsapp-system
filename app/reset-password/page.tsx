@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const router = useRouter();
+
+  if (!token) {
+    router.push("/auth/signin?notification=invalid-token");
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -45,5 +50,13 @@ export default function ResetPassword() {
       </form>
       {message && <p className="mt-4 text-red-500 w-64 text-center">{message}</p>}
     </div>
-  )
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
+  );
 }
