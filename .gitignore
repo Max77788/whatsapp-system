@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+service_acc_credentials.txt
+lib/models/whatapp-system-app-8d12a3d94f89.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
