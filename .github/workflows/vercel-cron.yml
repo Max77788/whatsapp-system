@@ -1,0 +1,14 @@
+name: Vercel Cron Trigger
+
+on:
+  schedule:
+    # Run this action every minute
+    - cron: "*/1 * * * *"
+
+jobs:
+  trigger-cron:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send GET request to Vercel Cron API
+        run: curl -X GET https://mom-ai-restaurant.lat/api/cron
