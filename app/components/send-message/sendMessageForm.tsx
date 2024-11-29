@@ -26,6 +26,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   const [scheduleTime, setScheduleTime] = useState("");
   const [timeZone, setTimeZone] = useState("");
   const [mediaAttachment, setMediaAttachment] = useState<File | null>(null);
+  const [isMediaPreviewVisible, setIsMediaPreviewVisible] = useState(false);
 
   const handleSaveMessage = async () => {
     try {
@@ -279,7 +280,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
       </div>
 
       {/* Phone Screen Design */}
-<div className="relative flex justify-center items-center mt-16 mb-12">
+      {!isSaveModalOpen && !isLoadModalOpen && !isScheduleModalOpen && <div className="relative flex justify-center items-center mt-16 mb-12">
   {/* Phone Frame */}
   <img
     src="/static/phone-frame.png" // Replace with the actual path to your phone frame image
@@ -288,31 +289,54 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   />
 
   {/* Phone Content */}
-  <div className="relative w-56 h-[calc(48vh)] bg-[#141c24] border-2 border-[#9CA3AF] rounded-2xl shadow-lg p-4 z-10">
+<div className="relative w-56 h-[calc(48vh)] bg-white rounded-2xl shadow-lg p-4 z-10">
 
-    {/* Messages Container */}
-    <div
-      className="w-full h-[calc(100%-2rem)] bg-white border border-gray-300 rounded-lg p-2 overflow-y-auto text-black flex flex-col gap-2"
-      style={{ wordWrap: "break-word" }}
-    >
-      {/* User Message */}
-      <div className="flex items-start gap-2">
-  {/* Placeholder User Icon */}
-  <div className="w-8 h-8 flex-shrink-0 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs">
-    U
-  </div>
-  {/* Message Content */}
-  <div
-    className="flex-1 bg-green-700 border text-white border-blue-300 rounded-lg p-2 w-full max-w-[8rem] break-words"
-    style={{ minHeight: "3rem" }} // Optional: Minimum height for consistent appearance
-  >
-    {message || "Type a message to see it here..."}
-  </div>
-</div>
-
+  {/* Media Preview with Icon */}
+  {isMediaPreviewVisible && (
+    <div className="flex items-start gap-2">
+      {/* User Icon */}
+      <div className="w-8 h-8 flex-shrink-0 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs">
+        U
+      </div>
+      {/* Media Preview and Caption */}
+      <div className="flex flex-col">
+        {/* Media Preview */}
+        <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm text-center">
+          Your file/video/image here
+        </div>
+        {/* Caption Message */}
+        <div
+          className="mt-2 bg-green-700 border text-white border-blue-300 rounded-lg p-2 w-full max-w-[10rem] break-words"
+          style={{ minHeight: "3rem" }}
+        >
+          {message || "Type a caption for your file..."}
+        </div>
+      </div>
     </div>
-  </div>
+  )}
+
+  {/* Regular Message (if no media preview) */}
+  {!isMediaPreviewVisible && (
+    <div className="flex items-start gap-2">
+      {/* User Icon */}
+      <div className="w-8 h-8 flex-shrink-0 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs">
+        U
+      </div>
+      {/* Message Content */}
+      <div
+        className="flex-1 bg-green-700 border text-white border-blue-300 rounded-lg p-2 w-full max-w-[10rem] break-words"
+        style={{ minHeight: "3rem" }}
+      >
+        {message || "Type a message to see it here..."}
+      </div>
+    </div>
+  )}
 </div>
+
+
+</div>
+}
+
 
 
       {/* Media Attachment Input */}
@@ -320,10 +344,24 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
       <label className="block mb-2 font-semibold">Media Attachment (optional)</label>
       <input
         type="file"
-        accept="image/*,video/*,audio/*,.pdf" // Accept various types of media
-        onChange={(e) => setMediaAttachment(e.target.files?.[0] || null)}
+        accept="image/*,.pdf" // Accept only image and pdf files
+        onChange={(e) => {
+          const file = e.target.files?.[0] || null;
+          if (file && (file.type.startsWith("image/") || file.type === "application/pdf")) {
+            setMediaAttachment(file); // Store the file in state
+            setIsMediaPreviewVisible(!!file); // Show preview if a file is uploaded
+          } else {
+            setMediaAttachment(null); // Clear the file if it's not an accepted type
+            setIsMediaPreviewVisible(false); // Hide preview if the file is not accepted
+            alert("Only image and PDF files are allowed.");
+            if (!!file) {
+              location.reload();
+            }
+          }
+        }}
         className="w-full text-black border border-gray-300 p-2 rounded"
       />
+      <p className="text-gray-500 italic">*supported file types: image, pdf</p>
     </div>
 
       <div className="flex justify-between gap-4">

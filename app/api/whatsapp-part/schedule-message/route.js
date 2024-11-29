@@ -23,9 +23,7 @@ export async function POST(req) {
         const timeZone = formData.get('timeZone'); // Get the 'timeZone' field
         const media = formData.get('media') || null; // Get the 'media' file or null if not present
 
-        console.log(
-            `fromNumber: ${fromNumber}, toNumbers: ${JSON.stringify(toNumbers)}, message: ${message}, scheduleTime: ${scheduleTime}, timeZone: ${timeZone}, media: ${media}`
-        );
+        
 
         let fileUrl = null;
 
