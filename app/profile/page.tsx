@@ -30,7 +30,7 @@ export default async function ProfilePage(): Promise<JSX.Element> {
       <div className="profile-header bg-white p-8 border-b-2 border-gray-200 mb-8 text-center rounded-lg">
         <div className="flex justify-center">
           <img 
-            src={session?.user?.image || '/static/default-icon.jpeg'} 
+            src={session?.user?.image || '/static/default-icon.png'} 
             alt="User Avatar" 
             className="w-32 h-32 rounded-full mb-4 border-4 border-gray-200 shadow-lg"
           />
