@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
     
     if (!origin) return NextResponse.next();
 
-    const internalDomains = ['https://mom-ai-restaurant.lat'];
+    const internalDomains = ['https://mom-ai-restaurant.lat', 'http://localhost:3000'];
     const isExternalRequest = !internalDomains.some((domain) => origin.startsWith(domain));
 
     if (isExternalRequest) {

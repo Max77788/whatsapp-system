@@ -113,7 +113,7 @@ const Sidebar = () => {
   
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <div style={{ padding: '1rem', backgroundColor: '#141c24' }}>
       <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Chats</h2>
 
       {/* Error message 
@@ -186,7 +186,7 @@ const Sidebar = () => {
       Select All
     </option>
     {(useChatStore.getState() as { chats: { chatId: string; name: string }[] })
-      .chats.filter((chat) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone)
+      .chats.filter((chat) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone && chat.chatId.replace("@c.us", "").replace("@g.us", "").length <= 14)
       .map((chat: any) => (
         <option key={chat.chatId} value={"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", "")).concat("--").concat(chat.name)}>
           {"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", ""))}
@@ -223,11 +223,12 @@ const Sidebar = () => {
               style={{
                 width: '40px',
                 height: '40px',
-                backgroundColor: '#ccc',
+                backgroundColor: '#fff',
                 borderRadius: '50%',
                 marginRight: '10px',
+                flexShrink: 0
               }}
-            ></div>
+            ><img src="/static/default-icon.png" alt="User Icon" /></div>
             <span>{chat.name}</span>
           </li>
         ))}

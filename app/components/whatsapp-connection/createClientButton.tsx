@@ -70,7 +70,7 @@ export default function CreateClientButton() {
 
   const handleGenerateQRCode = async () => {
     if (!session) {
-      toast.error("You need to be logged in to generate a QR code.");
+      // toast.error("You need to be logged in to generate a QR code.");
       return;
     }
 

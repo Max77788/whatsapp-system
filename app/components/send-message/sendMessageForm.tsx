@@ -48,6 +48,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
 
       if (response.ok) {
         toast.success("Template saved successfully!");
+        await new Promise(resolve => setTimeout(resolve, 2000));
         setIsSaveModalOpen(false); // Close modal
         setTemplateName(""); // Reset template name
         location.reload();
@@ -266,7 +267,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
 
       </div>
 
-      <div className="mb-4">
+      <div className="mb-12">
         <label className="block mb-2 font-semibold">Message</label>
         <textarea
           value={message}
@@ -274,7 +275,45 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
           className="w-full h-40 text-black border border-gray-300 rounded"
           placeholder="Enter your message here..."
         />
+        <i className="text-black">{`*include {{name}} to insert the name of the recipient. E.g. "Hello {{name}}, how are you?"`}</i>
       </div>
+
+      {/* Phone Screen Design */}
+<div className="relative flex justify-center items-center mt-16 mb-12">
+  {/* Phone Frame */}
+  <img
+    src="/static/phone-frame.png" // Replace with the actual path to your phone frame image
+    alt="Phone Frame"
+    className="absolute w-72 h-[calc(100vh-10rem)] object-contain"
+  />
+
+  {/* Phone Content */}
+  <div className="relative w-56 h-[calc(48vh)] bg-[#141c24] border-2 border-[#9CA3AF] rounded-2xl shadow-lg p-4 z-10">
+
+    {/* Messages Container */}
+    <div
+      className="w-full h-[calc(100%-2rem)] bg-white border border-gray-300 rounded-lg p-2 overflow-y-auto text-black flex flex-col gap-2"
+      style={{ wordWrap: "break-word" }}
+    >
+      {/* User Message */}
+      <div className="flex items-start gap-2">
+  {/* Placeholder User Icon */}
+  <div className="w-8 h-8 flex-shrink-0 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs">
+    U
+  </div>
+  {/* Message Content */}
+  <div
+    className="flex-1 bg-green-700 border text-white border-blue-300 rounded-lg p-2 w-full max-w-[8rem] break-words"
+    style={{ minHeight: "3rem" }} // Optional: Minimum height for consistent appearance
+  >
+    {message || "Type a message to see it here..."}
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+
 
       {/* Media Attachment Input */}
     <div className="mb-4">

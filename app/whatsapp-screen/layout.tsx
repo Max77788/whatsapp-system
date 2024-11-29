@@ -12,7 +12,7 @@ export default async function ChatLayout({ children, params }: { children: React
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div style={{ flex: 1, overflowY: 'auto', backgroundColor: '#ece5dd' }}>
         {children}
       </div>
     </div>
