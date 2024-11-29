@@ -426,12 +426,22 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
           <div className="bg-white p-6 rounded shadow-lg w-96">
             <h3 className="text-lg text-black font-bold mb-4">Schedule Message</h3>
             <label className="block mb-2 font-semibold text-black">Schedule Time</label>
-            <input
-              type="datetime-local"
+            <select
               value={scheduleTime}
               onChange={(e) => setScheduleTime(e.target.value)}
               className="w-full text-black mb-4 p-2 border border-gray-300 rounded"
-            />
+            >
+              {Array.from({ length: 288 }, (_, i) => {
+                const date = new Date();
+                date.setMinutes(Math.floor(date.getMinutes() / 5) * 5 + i * 5);
+                const timeString = date.toISOString().slice(0, 16);
+                return (
+                  <option key={i} value={timeString}>
+                    {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </option>
+                );
+              })}
+            </select>
             <label className="block mb-2 font-semibold text-black">Time Zone</label>
             <select
               value={timeZone}
