@@ -9,12 +9,12 @@ export async function GET(req, { params }) {
     console.log(`Token received: ${token_email}`);
 
     const db = await clientPromiseDb;
-    const userFound = await db.collection("users").findOne({ email_verification_token : token });
+    const userFound = await db.collection("users").findOne({ email_verification_token : token_email });
 
     if (userFound) {
         // Modify the document's properties
         await db.collection("users").updateOne(
-          { email_verification_token: token },   // Filter by the token to locate the document
+          { email_verification_token: token_email },   // Filter by the token to locate the document
           {
             $set: {
               email_verified: true    // Example of adding a timestamp
