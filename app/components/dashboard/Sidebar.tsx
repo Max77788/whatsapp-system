@@ -128,6 +128,32 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
+              href={withKbBaseUrlLink ? "/start-campaign" : "#"}
+              className={`${linkStyle} ${
+                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+              }`}
+              onClick={(e) => {
+                if (!withKbBaseUrlLink) e.preventDefault();
+              }}
+            >
+              <svg
+                className="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 2C10.343 2 9 3.343 9 5c0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3zm0 4c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1zm0 2c-2.21 0-4 1.79-4 4 0 1.657 1.343 3 3 3s3-1.343 3-3c0-2.21-1.79-4-4-4zm0 6c-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3z"
+                />
+              </svg>
+              Profile
+            </a>
+          </li>
+          <li>
+            <a
               href={withKbBaseUrlLink ? "/send-message" : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
