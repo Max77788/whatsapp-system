@@ -2,7 +2,7 @@ import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-import { clientPromise, dbPromise, getDb } from "../utils"; // Setup MongoDB client connection
+import { clientPromise, dbPromise, getDb, update_user } from "../utils"; // Setup MongoDB client connection
 import { toast } from 'react-toastify';
 import { redirect } from 'next/navigation';
 import { getServerSession } from "next-auth";
@@ -55,6 +55,9 @@ export const authOptions: NextAuthOptions = {
             const verificationToken = uuidv4().slice(-4);
             
             await sendVerificationEmail(userFound.email, verificationToken);
+            
+            await update_user({email: userFound.email}, {$set: {email_verification_token: verificationToken}});
+            
             throw new Error("User email not verified. Check your inbox") // Return null instead of an error object
           }
 
