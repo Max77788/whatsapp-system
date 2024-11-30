@@ -37,6 +37,9 @@ const ScheduledMessagesListTable: React.FC = () => {
 
   // Handle delete action
   const handleDelete = async (messageIndex: number) => {
+    const confirmDelete = window.confirm("Are you sure you want to unschedule this message?");
+    if (!confirmDelete) return;
+
     const messageToDelete = scheduledMessages[messageIndex];
     try {
       const response = await fetch(`/api/whatsapp-part/schedule-message/delete`, {

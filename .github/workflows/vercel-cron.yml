@@ -3,7 +3,7 @@ name: Vercel Cron Trigger v2
 on:
   schedule:
     # Run this action every minute
-    - cron: "*/5 * * * *"
+    - cron: "*/8 * * * *"
 
 jobs:
   trigger-cron:
