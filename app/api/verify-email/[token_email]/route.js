@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { createK8sDeployment } from "@/lib/whatsAppService/kubernetes_part.mjs";
 
 export async function GET(req, { params }) {
-    const { token } = await params;
-    console.log(`Token received: ${token}`);
+    const { token_email } = await params;
+    console.log(`Token received: ${token_email}`);
 
     const db = await clientPromiseDb;
     const userFound = await db.collection("users").findOne({ email_verification_token : token });
