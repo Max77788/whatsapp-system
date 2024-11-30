@@ -56,7 +56,7 @@ export const authOptions: NextAuthOptions = {
             
             await sendVerificationEmail(userFound.email, verificationToken);
             
-            await update_user({email: userFound.email}, {$set: {email_verification_token: verificationToken}});
+            await update_user({email: userFound.email}, {email_verification_token: verificationToken});
             
             throw new Error("User email not verified. Check your inbox") // Return null instead of an error object
           }
