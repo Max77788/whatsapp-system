@@ -13,7 +13,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 // Create user with a verification token
-const sendVerificationEmail = async (recipientEmail: string, verificationToken: string) => {
+export const sendVerificationEmail = async (recipientEmail: string, verificationToken: string) => {
     const verificationLink = `${BASE_URL}/api/verify-email/${verificationToken}`;
 
     const EMAIL_HTML = `

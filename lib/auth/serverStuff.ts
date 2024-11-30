@@ -14,6 +14,7 @@ import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
 import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
 import { nanoid } from 'nanoid'; // Generate unique keys
+import { sendVerificationEmail } from '@/actions/register';
 
 interface Credentials {
   name?: string;
@@ -51,7 +52,10 @@ export const authOptions: NextAuthOptions = {
           }
 
           if (!userFound.email_verified && !userFound.id) {
-            throw new Error("User email not verified") // Return null instead of an error object
+            const verificationToken = uuidv4().slice(-4);
+            
+            await sendVerificationEmail(userFound.email, verificationToken);
+            throw new Error("User email not verified. Check your inbox") // Return null instead of an error object
           }
 
 
