@@ -1,15 +1,16 @@
+// app/dashboard/layout.tsx
 "use client";
 import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
 import { SessionProvider } from "next-auth/react";
-import "./startCampaign.css"; // Optional: Use a CSS file to customize dashboard styling.
+import "./chatbot.css"; // Optional: Use a CSS file to customize dashboard styling.
 
-export default async function SendMessageLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const userName = "Start Campaign"; // Replace with dynamic username from session or auth context
+  const userName = "Chatbot"; // Replace with dynamic username from session or auth context
 
   return (
     <SessionProvider>

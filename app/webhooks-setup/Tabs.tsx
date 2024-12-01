@@ -17,7 +17,7 @@ export default function Tabs({ uniqueId }: { uniqueId: string | null }) {
   return (
     <>
       {/* Tab navigation */}
-      <nav className="tabs-navigation flex border-b">
+      <nav className="tabs-navigation flex border-b justify-center text-center">
         {tabs.map((tab) => (
           <button
             key={tab.id}

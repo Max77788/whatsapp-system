@@ -30,7 +30,13 @@ export async function POST(req) {
     const leadName = name || your_name || null;
 
     const { searchParams } = new URL(req.url);
-    const source = searchParams.get('source', "other");
+    let source = searchParams.get('source', "other");
+
+    const acceptedSources = ["wpforms", "facebook", "contact-forms7"];
+
+    if (!acceptedSources.includes(source)) {
+        source = "other";
+    }
 
     if (phoneNumbersList) {
         console.log(`phoneNumbersList: ${phoneNumbersList}`);

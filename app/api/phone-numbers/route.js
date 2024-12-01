@@ -25,8 +25,6 @@ export async function GET(req) {
         }
     }
 
-    console.log(phoneNumbers);
-
   let phoneNumbersList = [];
 
   const ever_attached_numbers_list = user.ever_attached_numbers || [];
@@ -39,8 +37,6 @@ export async function GET(req) {
       phoneNumbersList.push({ phoneNumber: ever_attached_number, active: false });
     }
   }
-
-  console.log(phoneNumbersList);
 
   return NextResponse.json(phoneNumbersList);
 }

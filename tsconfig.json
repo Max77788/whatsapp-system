@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/verify-email/[token_email]/route.js", "lib/whatsAppService/whatsAppClient/whatsAppClient.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/verify-email/[token_email]/route.js", "lib/whatsAppService/whatsAppClient/whatsAppClient.js", "test_gsheets.js"],
   "exclude": ["node_modules"]
 }

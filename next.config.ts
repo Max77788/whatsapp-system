@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     // Add the alias for "@/..."
     config.resolve.alias['@'] = path.resolve(__dirname);
+
     return config;
   }
   /* other config options here */

@@ -210,6 +210,6 @@ export const authOptions: NextAuthOptions = {
     }
   }
 
-  export async function useSession() {
-    
+  export async function fetchGoogleSheetData(url: string) {
+    console.log(`fetching google sheet data from ${url}`);
   }

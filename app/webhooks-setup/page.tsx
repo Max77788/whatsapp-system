@@ -23,9 +23,11 @@ export default async function WebhooksSetupPage() {
   return (
     <div className="dashboard-container flex">
       <Sidebar />
-
       <div className="main-content flex-1">
         <Header userName={session?.user?.name || "Webhooks Setup"} />
+        <p className="font-bold text-center text-2xl mt-4 mb-4">Important!</p>
+        <p className="text-center text-lg mb-4">Include the header "x-api-key" with the value of <b><a href="/profile">your API key</a></b> in the webhook request. ({`Example: x-api-key: <your-api-key>`})</p>
+        <p className="text-center text-lg mb-8">Video Tutorials: <b><a href="https://youtu.be/KAdx6EwfhoE" target="_blank" rel="noopener noreferrer">WPForms & Facebook</a></b> | <b><a href="https://youtu.be/eIZImc-UlYY" target="_blank" rel="noopener noreferrer">Contact Form 7</a></b></p>
         <Tabs uniqueId={uniqueId} />
       </div>
     </div>
