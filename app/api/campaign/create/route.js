@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getSession } from 'next-auth/react';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@lib/auth/serverStuff';
-import { update_user } from '@lib/utils';
+import { authOptions } from '@/lib/auth/serverStuff';
+import { update_user } from '@/lib/utils';
 
 export async function POST(req) {
   const session = await getServerSession(authOptions);
