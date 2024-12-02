@@ -6,11 +6,11 @@ import { google } from 'googleapis'; // Import Google Cloud SDK libraries
 
 dotenv.config();
 
-const BASE64_GOOGLE_CREDENTIALS = process.env.BASE64_GOOGLE_CREDENTIALS;
+const SERVICE_ACCOUNT_BASE64 = process.env.GOOGLE_STORAGE_ACC_BASE64;
 // Initialize Google Cloud Storage
 const storage = new Storage({
   projectId: 'whatapp-system-app',
-  credentials: JSON.parse(Buffer.from(BASE64_GOOGLE_CREDENTIALS!, 'base64').toString('utf-8')),
+  credentials: JSON.parse(Buffer.from(SERVICE_ACCOUNT_BASE64!, 'base64').toString('utf-8')),
 });
 const bucketName = 'user-attachments-523'; // Replace with your GCS bucket name
 
@@ -61,14 +61,14 @@ export async function deleteFile(fileUrl: string) {
   
 export async function setupGoogleCloudCredentials() {
   // Ensure BASE64_GOOGLE_CREDENTIALS is set in the environment variables
-  if (!process.env.BASE64_GOOGLE_CREDENTIALS) {
-    console.error('Error: BASE64_GOOGLE_CREDENTIALS environment variable is not set.');
+  if (!process.env.GOOGLE_STORAGE_ACC_BASE64) {
+    console.error('Error: GOOGLE_STORAGE_ACC_BASE64 environment variable is not set.');
     process.exit(1);
   }
   
   try {
     // Decode the Base64 credentials
-    const credentials = Buffer.from(process.env.BASE64_GOOGLE_CREDENTIALS, 'base64').toString('utf-8');
+    const credentials = Buffer.from(process.env.GOOGLE_STORAGE_ACC_BASE64, 'base64').toString('utf-8');
   
     // Parse the credentials to an object
     const credentialsObj = JSON.parse(credentials);

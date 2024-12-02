@@ -11,4 +11,6 @@ jobs:
 
     steps:
       - name: Send GET request to Vercel Cron API v2
-        run: curl -X GET https://mom-ai-restaurant.lat/api/cron
+        run: curl -X GET https://mom-ai-restaurant.lat/api/cron/scheduled-messages
+      - name: Send GET request to another API
+        run: curl -X GET https://mom-ai-restaurant.lat/api/cron/scheduled-campaigns

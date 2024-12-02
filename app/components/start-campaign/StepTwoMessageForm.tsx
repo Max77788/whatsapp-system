@@ -1,16 +1,20 @@
 "use client";
 
+import axios from "axios";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
   leads: { name: string; phone_number: string }[]; // Leads passed from state as recipients
   goBack: () => void; // Function to go back to the previous step
+  goForwardStartCampaign: () => void; // Function to go forward to the next step
+  goForwardScheduleCampaign: () => void; // Function to go forward to the next step
   fromNumbers: string[];
 }
 
-const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, fromNumbers }) => {
+const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCampaign, goForwardScheduleCampaign, fromNumbers }) => {
   const [fromNumber, setFromNumber] = useState("");
   const [message, setMessage] = useState("");
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -55,6 +59,10 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, fromNumbers }) => 
       formData.append("message", message);
       formData.append("leads", JSON.stringify(leads));
 
+      const campaignId = campaignName.toLowerCase().replace(/\s+/g, '-') + '-' + uuidv4().slice(-4);
+      
+      formData.append("campaignId", campaignId);
+
       if (mediaAttachment) {
         formData.append("media", mediaAttachment);
       }
@@ -67,6 +75,10 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, fromNumbers }) => 
 
         if (response.ok) {
           toast.success("Campaign started successfully!");
+          axios.post("/api/campaign/execute", {
+            campaignId: campaignId
+          });
+          goForwardStartCampaign();
         } else {
           toast.error("Failed to start campaign.");
         }
@@ -89,6 +101,9 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, fromNumbers }) => 
       formData.append("scheduleTime", scheduleTime);
       formData.append("timeZone", timeZone);
 
+      const campaignId = campaignName.toLowerCase().replace(/\s+/g, '-') + '-' + uuidv4().slice(-4);
+      formData.append("campaignId", campaignId);
+
       if (mediaAttachment) {
         formData.append("media", mediaAttachment);
       }
@@ -102,6 +117,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, fromNumbers }) => 
         if (response.ok) {
           toast.success("Campaign scheduled successfully!");
           setIsScheduleModalOpen(false);
+          goForwardScheduleCampaign();
         } else {
           toast.error("Failed to schedule campaign.");
         }

@@ -15,10 +15,28 @@ const StartCampaign = () => {
   const [leads, setLeads] = useState<
     { name: string; phone_number: string; source: string; sent_messages: number }[]
   >([]);
-  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [selectedLeads, setSelectedLeads] = useState<{ name: string; phone_number: string }[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [fromNumbers, setFromNumbers] = useState<string[]>([]);
+  const [campaignType, setCampaignType] = useState<"scheduled" | "now" | null>(null);
+  const [isLoadingFromNumbers, setIsLoadingFromNumbers] = useState(true);
+
+  const sendCampaign = async () => {
+    const response = await axios.post("/api/campaign/create", {
+      leads: selectedLeads,
+    });
+  }
+  
+  const goForwardStartCampaign = () => {
+    setStep(3);
+    setCampaignType("now");
+  }
+
+  const goForwardScheduleCampaign = () => {
+    setStep(3);
+    setCampaignType("scheduled");
+  }
 
   const resetStates = () => {
     setLeads([]);
@@ -35,6 +53,7 @@ const StartCampaign = () => {
     const fromNumbersList = response.data.filter((number: { active: boolean }) => number.active).map((number: { phoneNumber: string }) => number.phoneNumber);
 
     setFromNumbers(fromNumbersList);
+    setIsLoadingFromNumbers(false);
   };
 
   useEffect(() => {
@@ -128,18 +147,31 @@ const StartCampaign = () => {
     if (selectAll) {
       setSelectedLeads([]); // Clear selection
     } else {
-      setSelectedLeads(leads.map((lead) => lead.phone_number)); // Select all leads
+      setSelectedLeads(leads.map((lead) => ({ name: lead.name, phone_number: lead.phone_number }))); // Select all leads
     }
     setSelectAll(!selectAll);
   };
 
   const toggleLeadSelection = (phoneNumber: string) => {
-    if (selectedLeads.includes(phoneNumber)) {
-      setSelectedLeads(selectedLeads.filter((number) => number !== phoneNumber));
-    } else {
-      setSelectedLeads([...selectedLeads, phoneNumber]);
-    }
+    setSelectedLeads((prevSelectedLeads) => {
+      // Check if the lead is already selected
+      const isSelected = prevSelectedLeads.some((lead) => lead.phone_number === phoneNumber);
+      console.log(`Selected leads: ${JSON.stringify(prevSelectedLeads)}`);
+      if (isSelected) {
+        // Remove the lead if already selected
+        return prevSelectedLeads.filter((lead) => lead.phone_number !== phoneNumber);
+      } else {
+        // Find the lead in the original leads array
+        const leadToAdd = leads.find((lead) => lead.phone_number === phoneNumber);
+        if (leadToAdd) {
+          // Add the lead to the selectedLeads array
+          return [...prevSelectedLeads, leadToAdd];
+        }
+        return prevSelectedLeads; // Return previous state if lead is not found
+      }
+    });
   };
+  
 
   const renderStep = () => {
     if (step === 1) {
@@ -296,33 +328,51 @@ const StartCampaign = () => {
         </tr>
       </thead>
       <tbody>
-        {leads.map((lead, index) => (
-          <tr key={index}>
-            <td className="p-2 border">
-              <input
-                type="checkbox"
-                checked={selectedLeads.includes(lead.phone_number)}
-                onChange={() => toggleLeadSelection(lead.phone_number)}
-              />
-            </td>
-            <td className="p-2 border">{lead.name}</td>
-            <td className="p-2 border">{lead.phone_number}</td>
-            {importMethod === "existingLeads" && (
-              <>
-                <td className="p-2 border">{lead.source}</td>
-                <td className="p-2 border">{lead.sent_messages}</td>
-              </>
-            )}
-          </tr>
-        ))}
-      </tbody>
+  {leads.map((lead, index) => (
+    <tr
+      key={index}
+      className="cursor-pointer hover:bg-gray-100"
+      onClick={() => {
+        toggleLeadSelection(lead.phone_number); // Trigger row selection on row click
+      }}
+    >
+      <td className="p-2 border">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={selectedLeads.some((selectedLead) => selectedLead.phone_number === lead.phone_number)}
+            onClick={(e) => e.stopPropagation()} // Prevent row click when checkbox is clicked
+            onChange={(e) => {
+              e.stopPropagation(); // Ensure checkbox click does not bubble to the row
+              toggleLeadSelection(lead.phone_number); // Handle checkbox selection
+            }}
+          />
+        </label>
+      </td>
+      <td className="p-2 border">{lead.name}</td>
+      <td className="p-2 border">{lead.phone_number}</td>
+      {importMethod === "existingLeads" && (
+        <>
+          <td className="p-2 border">{lead.source}</td>
+          <td className="p-2 border">{lead.sent_messages}</td>
+        </>
+      )}
+    </tr>
+  ))}
+</tbody>
+
+
     </table>
   </div>
 )}
 
 
           <div className="text-center mt-8">
-            {fromNumbers.length > 0 ? (
+            {isLoadingFromNumbers ? (
+              <div className="animate-pulse flex justify-center">
+              <div className="h-10 bg-gray-300 rounded w-20"></div>
+            </div>
+            ) : fromNumbers.length > 0 ? (
               <button
                 onClick={() => setStep(2)}
                 className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-600 transition"
@@ -348,7 +398,25 @@ const StartCampaign = () => {
         </div>
       );
     } else if (step === 2) {
-      return <StepTwoMessageForm leads={leads} goBack={() => setStep(1)} fromNumbers={fromNumbers} />;
+      return <StepTwoMessageForm leads={selectedLeads} goBack={() => setStep(1)} fromNumbers={fromNumbers} goForwardStartCampaign={goForwardStartCampaign} goForwardScheduleCampaign={goForwardScheduleCampaign} />;
+    } else if (step === 3) {
+      if (campaignType === "scheduled") {
+        return (
+          <>
+            <img src="/static/check-icon.png" alt="Check Icon" className="w-16 h-16 mx-auto mb-4" />
+            <p className="text-center text-lg font-semibold">Congratulations your campaign has been successfully scheduled</p>
+            <button onClick={() => location.reload()} className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition mx-auto block text-center">Start Again</button>
+          </>
+        );
+      } else if (campaignType === "now") {
+        return (
+          <>
+            <img src="/static/check-icon.png" alt="Check Icon" className="w-16 h-16 mx-auto mb-4" />
+            <p className="text-center text-lg font-semibold">Congratulations your campaign has been successfully started.</p>
+            <button onClick={() => location.reload()} className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition mx-auto block text-center">Start Again</button>
+          </>
+        );
+      }
     }
   };
 

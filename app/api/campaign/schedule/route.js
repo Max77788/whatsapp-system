@@ -4,7 +4,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/serverStuff';
 import { update_user } from '@/lib/utils';
 import { uploadFile } from '@/lib/google_storage/google_storage';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req) {
   const session = await getServerSession(authOptions);
@@ -21,9 +20,10 @@ export async function POST(req) {
   const message = formData.get('message');
   const leads = JSON.parse(formData.get('leads') || '[]');
   const media = formData.get('media') || null;
+  const scheduleTime = formData.get('scheduleTime');
+  const timeZone = formData.get('timeZone');
   const campaignId = formData.get('campaignId');
-
-  if (!campaignName || !fromNumber || !message || !leads) {
+  if (!campaignName || !fromNumber || !message || !leads || !scheduleTime || !timeZone) {
     return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
   }
 
@@ -34,18 +34,15 @@ export async function POST(req) {
     const fileName = `${Date.now()}-${media.originalFilename}`;
     fileUrl = await uploadFile(base64Content, fileName, media.type);
   }
-
-  const currentDateTimeUTC = new Date().toISOString();
-  const timeZone = "GMT+00:00";
-
+  
   const campaignData = {
     campaignName,
     fromNumber,
     message,
     leads,
     mediaURL: fileUrl,
+    scheduleTime,
     timeZone,
-    scheduleTime: currentDateTimeUTC,
     campaignId,
     completed: false
   }

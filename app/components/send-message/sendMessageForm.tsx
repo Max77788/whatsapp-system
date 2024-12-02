@@ -286,11 +286,11 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   <img
     src="/static/phone-frame.png" // Replace with the actual path to your phone frame image
     alt="Phone Frame"
-    className="absolute w-72 h-[calc(100vh-10rem)] object-contain"
+    className="absolute w-108 h-[calc(100vh-5rem)] object-contain my-12"
   />
 
   {/* Phone Content */}
-<div className="relative w-56 h-[calc(48vh)] bg-white rounded-2xl shadow-lg p-4 z-10">
+<div className="relative w-48 h-[calc(62vh)] bg-white rounded-2xl shadow-lg p-4 z-10">
 
   {/* Media Preview with Icon */}
   {isMediaPreviewVisible && (
@@ -302,7 +302,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
       {/* Media Preview and Caption */}
       <div className="flex flex-col">
         {/* Media Preview */}
-        <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm text-center">
+        <div className="w-32 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm text-center">
           Your file/video/image here
         </div>
         {/* Caption Message */}
