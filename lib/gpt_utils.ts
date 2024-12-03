@@ -5,11 +5,12 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function generateResponse(prompt: string): Promise<string> {
+export async function generateResponse(prompt: string, instructions: string): Promise<string> {
   try {
     const completion = await client.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       messages: [
+        { role: 'system', content: instructions },
         { role: 'user', content: prompt }
       ],
     });
@@ -24,7 +25,7 @@ export async function generateResponse(prompt: string): Promise<string> {
 export async function generateChatResponse(messages: Array<{ role: string, content: string }>): Promise<string> {
   try {
     const completion = await client.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       messages: messages as ChatCompletionMessageParam[],
     });
 

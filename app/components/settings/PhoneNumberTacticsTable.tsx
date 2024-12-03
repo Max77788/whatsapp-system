@@ -37,13 +37,13 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
         const { text_tactics_names_list } = await tacticsResponse.json();
 
         setPhoneNumbers(phoneNumbersData);
-        setTactics(["Do Nothing", ...text_tactics_names_list]);
+        setTactics(["Do Nothing", "Enable AI Auto Response", ...text_tactics_names_list]);
 
         // Initialize selectedTactics with initial props or default "Do Nothing"
         const initialTacticsMap: Record<string, string[]> = phoneNumbersData.reduce(
           (acc, phone) => {
             const assignedTactics =
-              initialTactics.find((tactic) => tactic.phoneNumber === phone.phoneNumber)?.tactics || ["Do Nothing"];
+              initialTactics.find((tactic) => tactic.phoneNumber === phone.phoneNumber)?.tactics || ["Do Nothing", "Enable AI Auto Response"];
             acc[phone.phoneNumber] = assignedTactics;
             return acc;
           },
@@ -146,7 +146,9 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <div className="animate-pulse flex justify-center">
+    <div className="h-48 bg-gray-300 rounded w-96"></div>
+  </div>;
   }
 
   return (

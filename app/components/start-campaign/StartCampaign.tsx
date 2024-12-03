@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import StepTwoMessageForm from "./StepTwoMessageForm";
+import UserCampaigns from "./UserCampaigns";
+
+type Lead = { name: string; phone_number: string; source: string; sent_messages: number; group?: string };
 
 const StartCampaign = () => {
   const [step, setStep] = useState<number>(1);
@@ -12,21 +15,26 @@ const StartCampaign = () => {
   const [headers, setHeaders] = useState<string[]>([]);
   const [nameColumn, setNameColumn] = useState("");
   const [phoneNumberColumn, setPhoneNumberColumn] = useState("");
-  const [leads, setLeads] = useState<
-    { name: string; phone_number: string; source: string; sent_messages: number }[]
-  >([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLeads, setSelectedLeads] = useState<{ name: string; phone_number: string }[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [fromNumbers, setFromNumbers] = useState<string[]>([]);
   const [campaignType, setCampaignType] = useState<"scheduled" | "now" | null>(null);
   const [isLoadingFromNumbers, setIsLoadingFromNumbers] = useState(true);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [groups, setGroups] = useState<string[]>([]);
 
   const sendCampaign = async () => {
     const response = await axios.post("/api/campaign/create", {
       leads: selectedLeads,
     });
   }
+
+  const filteredLeads = selectedGroups.length === 0 
+  ? leads // Show all leads if no group is selected
+  : leads.filter((lead) => selectedGroups.includes(lead.group || "other"));
+
   
   const goForwardStartCampaign = () => {
     setStep(3);
@@ -46,18 +54,52 @@ const StartCampaign = () => {
     setSelectedLeads([]);
     setSelectAll(false);
     setCsvFile(null);
+    setSelectedGroups([]);
   };
 
-  const fetchFromNumbers = async () => {
+  const toggleGroupSelection = (group: string) => {
+    setSelectedGroups((prevSelectedGroups) => {
+      let updatedSelectedGroups;
+  
+      if (prevSelectedGroups.includes(group)) {
+        // If already selected, remove the group
+        updatedSelectedGroups = prevSelectedGroups.filter((g) => g !== group);
+      } else {
+        // Otherwise, add the group
+        updatedSelectedGroups = [...prevSelectedGroups, group];
+      }
+  
+      // Filter leads based on the updated selected groups
+      const filteredLeads = leads.filter((lead) =>
+        updatedSelectedGroups.includes(lead.group || "other")
+      );
+  
+      // Set the filtered leads as selected
+      setSelectedLeads(
+        filteredLeads.map((lead) => ({ name: lead.name, phone_number: lead.phone_number }))
+      );
+  
+      return updatedSelectedGroups;
+    });
+  };
+  
+  
+
+  const fetchFromNumbersAndGroups = async () => {
     const response = await axios.get("api/phone-numbers");
     const fromNumbersList = response.data.filter((number: { active: boolean }) => number.active).map((number: { phoneNumber: string }) => number.phoneNumber);
+    
+    const response_ = await axios.get("api/user/find_user");
+    const user = await response_.data;
+
+    setGroups(user.leadGroups || []);
 
     setFromNumbers(fromNumbersList);
     setIsLoadingFromNumbers(false);
   };
 
   useEffect(() => {
-    fetchFromNumbers();
+    fetchFromNumbersAndGroups();
   }, []);
 
   const handleImportMethodChange = (method: "csv" | "googleSheets" | "existingLeads") => {
@@ -310,72 +352,88 @@ const StartCampaign = () => {
       />
       <p className="ml-2">Select All</p>
     </div>
-    <table className="w-full text-left border">
-      
-      <thead>
-        <tr className="bg-gray-100">
-          <th className="p-2 border">
-            
-          </th>
-          <th className="p-2 border">Name</th>
-          <th className="p-2 border">Phone Number</th>
-          {importMethod === "existingLeads" && (
-            <>
-              <th className="p-2 border">Source</th>
-              <th className="p-2 border">Sent Messages</th>
-            </>
-          )}
-        </tr>
-      </thead>
-      <tbody>
-  {leads.map((lead, index) => (
-    <tr
-      key={index}
-      className="cursor-pointer hover:bg-gray-100"
-      onClick={() => {
-        toggleLeadSelection(lead.phone_number); // Trigger row selection on row click
-      }}
-    >
-      <td className="p-2 border">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={selectedLeads.some((selectedLead) => selectedLead.phone_number === lead.phone_number)}
-            onClick={(e) => e.stopPropagation()} // Prevent row click when checkbox is clicked
-            onChange={(e) => {
-              e.stopPropagation(); // Ensure checkbox click does not bubble to the row
-              toggleLeadSelection(lead.phone_number); // Handle checkbox selection
-            }}
-          />
-        </label>
-      </td>
-      <td className="p-2 border">{lead.name}</td>
-      <td className="p-2 border">{lead.phone_number}</td>
+    
+    <div className="mt-4">
+    <h3 className="text-lg font-semibold mb-2">Filter by Groups:</h3>
+<div className="flex flex-wrap gap-4 mb-4">
+  {groups.map((group, index) => (
+    <label key={index} className="flex items-center space-x-2">
+      <input
+        type="checkbox"
+        checked={selectedGroups.includes(group)}
+        onChange={() => toggleGroupSelection(group)}
+        className="form-checkbox"
+      />
+      <span>{group === "all" ? "All Groups" : group}</span>
+    </label>
+  ))}
+</div>
+
+<table className="w-full text-left border">
+  <thead>
+    <tr className="bg-gray-100">
+      <th className="p-2 border"></th>
+      <th className="p-2 border">Name</th>
+      <th className="p-2 border">Phone Number</th>
       {importMethod === "existingLeads" && (
         <>
-          <td className="p-2 border">{lead.source}</td>
-          <td className="p-2 border">{lead.sent_messages}</td>
+          <th className="p-2 border">Source</th>
+          <th className="p-2 border">Group</th>
+          <th className="p-2 border">Sent Messages</th>
         </>
       )}
     </tr>
-  ))}
-</tbody>
+  </thead>
+  <tbody>
+    {filteredLeads.map((lead, index) => (
+      <tr
+        key={index}
+        className="cursor-pointer hover:bg-gray-100"
+        onClick={() => toggleLeadSelection(lead.phone_number)}
+      >
+        <td className="p-2 border">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={selectedLeads.some(
+                (selectedLead) => selectedLead.phone_number === lead.phone_number
+              )}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                e.stopPropagation();
+                toggleLeadSelection(lead.phone_number);
+              }}
+            />
+          </label>
+        </td>
+        <td className="p-2 border">{lead.name}</td>
+        <td className="p-2 border">{lead.phone_number}</td>
+        {importMethod === "existingLeads" && (
+          <>
+            <td className="p-2 border">{lead.source}</td>
+            <td className="p-2 border">{lead.group || "other"}</td>
+            <td className="p-2 border">{lead.sent_messages}</td>
+          </>
+        )}
+      </tr>
+    ))}
+  </tbody>
+</table>
 
-
-    </table>
-  </div>
+</div>
+</div>
 )}
 
 
           <div className="text-center mt-8">
             {isLoadingFromNumbers ? (
-              <div className="animate-pulse flex justify-center">
+              <div className="animate-pulse flex justify-center mb-4">
               <div className="h-10 bg-gray-300 rounded w-20"></div>
             </div>
             ) : fromNumbers.length > 0 ? (
               <button
                 onClick={() => setStep(2)}
-                className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-600 transition"
+                className="px-6 py-2 mb-4 bg-green-600 text-white rounded hover:bg-green-600 transition"
                 disabled={selectedLeads.length === 0}
               >
                 <svg
@@ -392,9 +450,10 @@ const StartCampaign = () => {
                 </svg>
               </button>
             ) : (
-              <p className="text-red-500">Please <a href="/settings" className="text-red-500 hover:text-red-600 underline text-bold">connect your account</a> to proceed.</p>
+              <p className="text-red-500 mb-4">Please <a href="/settings" className="text-red-500 hover:text-red-600 underline text-bold">connect your account</a> to proceed.</p>
             )}
           </div>
+          <UserCampaigns />
         </div>
       );
     } else if (step === 2) {

@@ -21,7 +21,7 @@ export async function POST(req) {
 
     
     const fromNumber = formData.get('fromNumber'); // Get the 'fromNumber' field
-    const toNumbers = JSON.parse(formData.get('toNumbers') || '[]'); // Get the 'toNumbers' field and parse it to list
+    let toNumbers = JSON.parse(formData.get('toNumbers') || '[]'); // Get the 'toNumbers' field and parse it to list
     let message = formData.get('message'); // Get the 'message' field
     const media = formData.get('media') || null; // Get the 'media' file or null if not present
     
@@ -36,9 +36,16 @@ export async function POST(req) {
 
     const userEmail = session?.user?.email;
     const user = await find_user({ email: userEmail });
-
-    
     const leads = user?.leads;
+    
+    
+    const groups = JSON.parse(formData.get('groups') || '[]');
+
+    if (groups.length > 0) {
+      toNumbers = toNumbers.filter((toNumber) => groups.includes(user?.leads.find((lead) => lead.phone_number === toNumber)?.group || "other"));
+    }
+    
+    
     for (const toNumber of toNumbers) {
       const lead = leads.find((lead) => lead.phone_number === toNumber);
       

@@ -9,7 +9,7 @@ export default function CreateClientButton() {
   const { data: session } = useSession();
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [numberOfPhonesConnected, setNumberOfPhonesConnected] = useState<number>(0);
-  const [previousPhonesConnected, setPreviousPhonesConnected] = useState<number | null>(null);
+  const [previousPhonesConnected, setPreviousPhonesConnected] = useState<number>(-1); // Set to -1 initially
   const [isOpen, setIsOpen] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
@@ -28,28 +28,28 @@ export default function CreateClientButton() {
     try {
       const response = await fetch("/api/whatsapp-part/generate-qr");
       const data = await response.json();
-  
+
       if (response.ok) {
-        console.log("Response is OK. Processing QR code data...");
-  
         const newNumberOfPhonesConnected = data.numberOfPhonesConnected;
-  
-        // Notify only if it's not the initial fetch and a change is detected
-        if (
-          previousPhonesConnected !== null &&
-          newNumberOfPhonesConnected !== previousPhonesConnected
-        ) {
+
+        // Trigger notifications and reload page
+        if (previousPhonesConnected !== -1 && newNumberOfPhonesConnected !== previousPhonesConnected) {
           const message =
             newNumberOfPhonesConnected > previousPhonesConnected
               ? "Your phone has been connected successfully!"
               : "A phone has been detached successfully!";
           toast.success(message);
+
+          // Reload the page after the toast notification
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500); // Delay for toast visibility
         }
-  
+
         // Update state
         setPreviousPhonesConnected(newNumberOfPhonesConnected);
         setNumberOfPhonesConnected(newNumberOfPhonesConnected);
-  
+
         // Smooth fade effect before updating QR code
         setFadeOut(true);
         setTimeout(() => {
@@ -58,19 +58,17 @@ export default function CreateClientButton() {
         }, 300);
       } else {
         console.error(`Error on generate QR code endpoint: ${data.error}`);
-        // toast.error("Failed to generate QR code. Please try again.");
+        toast.error("Failed to generate QR code. Please try again.");
       }
     } catch (error) {
       console.error("Failed to fetch QR code:", error);
       toast.error("An error occurred while fetching the QR code.");
     }
   };
-  
-  
 
   const handleGenerateQRCode = async () => {
     if (!session) {
-      // toast.error("You need to be logged in to generate a QR code.");
+      toast.error("You need to be logged in to generate a QR code.");
       return;
     }
 

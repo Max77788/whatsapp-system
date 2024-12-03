@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
 import { find_user } from '@/lib/utils';
+import { generateResponse } from "@/lib/gpt_utils"
 
 export async function POST(req) {
     const { message, sender, clientId, uniqueId } = await req.json();      
 
+    const senderPhoneNumber = sender.split('@')[0];
+    
+    console.log(`senderPhoneNumber: ${senderPhoneNumber}`);
+    
     let respond_boolean = true;
     let user;
     user = await find_user({ unique_id: uniqueId })
@@ -50,13 +55,21 @@ export async function POST(req) {
     text_tactics_list = text_tactics_list.flatMap((tactic) => tactic.rows);
     console.log("Text tactics list after flattening:", text_tactics_list);
 
-    const lead_platform = user?.leads?.find((lead) => lead.phoneNumber === user_phone_number)?.platform || "other";
+    const lead_platform = user?.leads?.find((lead) => lead.phone_number.includes(senderPhoneNumber))?.source || "other";
+    const lead_group = user?.leads?.find((lead) => lead.phone_number.includes(senderPhoneNumber))?.group || "other";
 
-    let reply, delay;
+    console.log(`lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
+    
+    let terminate_response = false;
+
+    let reply, delay=5;
     text_tactics_list.forEach((tactic) => {
+        console.log(`Checking tactic: ${JSON.stringify(tactic)}`);
         if (tactic.type === "includes") {
             if (message.trim().toLowerCase().includes(tactic.search_term.trim().toLowerCase())) {
-                if (!tactic.platforms.includes(lead_platform)) {
+                if (!tactic.platforms.includes(lead_platform) || !tactic.selectedGroups.includes(lead_group)) {
+                    console.log(`Tactic not applicable for lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
+                    terminate_response = true;
                     return;
                 }
 
@@ -68,6 +81,12 @@ export async function POST(req) {
             }
         } else if (tactic.type === "starts with") {
             if (message.trim().toLowerCase().startsWith(tactic.search_term.trim().toLowerCase())) {
+                if (!tactic.platforms.includes(lead_platform) || !tactic.selectedGroups.includes(lead_group)) {
+                    console.log(`Tactic not applicable for lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
+                    terminate_response = true;
+                    return;
+                }
+
                 reply = tactic.message_to_send;
                 delay = tactic.delay;
                 console.log(`Match found with 'starts with': reply=${reply}, delay=${delay}`);
@@ -75,6 +94,17 @@ export async function POST(req) {
             }
         }
     });
+
+    if (terminate_response) {
+        console.log("Terminating response due to no applicable tactic");
+        return NextResponse.json({reply: "Do Nothing", respond_boolean: false});
+    }
+
+    console.log("name_tactics_to_use:", name_tactics_to_use);
+
+    if (!reply && name_tactics_to_use.includes("Enable AI Auto Response") && user?.aiSystemConfig.isOn) {
+        reply = await generateResponse(message, user?.aiSystemConfig.instructions || "Respond politely to this whatsapp message.");
+    }
 
     if (!reply) {
         respond_boolean = false;

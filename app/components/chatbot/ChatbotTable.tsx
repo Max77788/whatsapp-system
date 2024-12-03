@@ -10,6 +10,8 @@ type RowData = {
     message_to_send: string;
     delay: number;
     platforms: string[];
+    groups: string[];
+    selectedGroups: string[];
 };
 
 type InstructionSet = {
@@ -21,10 +23,29 @@ type TablePopupProps = {
     initialTactics?: InstructionSet[];
 };
 
+
+
 const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
     const { data: session } = useSession();
     const [instructionSets, setInstructionSets] = useState<InstructionSet[]>([]);
+    const [isLoadingInstructionSets, setIsLoadingInstructionSets] = useState(true);
+    const [groups, setGroups] = useState<string[]>([]);
+    const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
 
+    const fetchGroups = async () => {
+        const response = await fetch("/api/user/find_user");
+        const data = await response.json();
+        const leadGroups = data.leadGroups || ["other"];
+    
+        setGroups(leadGroups);
+    
+        return leadGroups;
+    };
+
+    useEffect(() => {
+        fetchGroups();
+    }, []);
+    
     useEffect(() => {
         const initializedTactics = (initialTactics || []).map((set) => ({
             ...set,
@@ -47,11 +68,15 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                   message_to_send: "dda",
                                   delay: 5,
                                   platforms: ["wpforms"],
+                                  groups: ["other"],
+                                  selectedGroups: ["other"],
                               },
                           ],
                       },
                   ]
         );
+
+        setIsLoadingInstructionSets(false);
     }, [initialTactics]);
     
 
@@ -73,6 +98,8 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                         message_to_send: "",
                         delay: 5,
                         platforms: ["wpforms"],
+                        groups: ["other"],
+                        selectedGroups: ["other"],
                     },
                 ],
             },
@@ -111,6 +138,23 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
         setInstructionSets(updatedSets);
     };
 
+    const handleGroupChange = (setIndex: number, rowIndex: number, group: string) => {
+        const updatedSets = [...instructionSets];
+        if (!Array.isArray(updatedSets[setIndex].rows[rowIndex].selectedGroups)) {
+            updatedSets[setIndex].rows[rowIndex].selectedGroups = [];
+        }
+        updatedSets[setIndex].rows[rowIndex].selectedGroups.push(group);
+        setSelectedGroups(updatedSets[setIndex].rows[rowIndex].selectedGroups);
+        
+        if (updatedSets[setIndex].rows[rowIndex].selectedGroups.length === 0) {
+            updatedSets[setIndex].rows[rowIndex].selectedGroups = ["other"];
+        }
+        
+        console.log(`updatedSets: ${JSON.stringify(updatedSets)}`);
+
+        setInstructionSets(updatedSets);
+    };
+
     const addRow = (setIndex: number) => {
         const updatedSets = [...instructionSets];
         updatedSets[setIndex].rows.push({
@@ -119,6 +163,8 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
             message_to_send: "",
             delay: 5,
             platforms: ["wpforms"],
+            groups: ["other"],
+            selectedGroups: ["other"],
         });
         setInstructionSets(updatedSets);
     };
@@ -161,8 +207,11 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
 
     return (
         <div className="p-4">
-            <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Message Configuration</h3>
-            {instructionSets.map((set, setIndex) => (
+            {!isLoadingInstructionSets && <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Message Configuration</h3>}
+            {isLoadingInstructionSets && <div className="animate-pulse flex justify-center">
+                <div className="h-20 bg-gray-300 rounded w-80"></div>
+            </div>}
+            {!isLoadingInstructionSets && instructionSets.map((set, setIndex) => (
                 <div key={setIndex} className="mb-6">
                     <div className="flex items-center justify-between">
                         <input
@@ -186,6 +235,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                 <th className="border border-gray-300 p-2 text-white">Send this message</th>
                                 <th className="border border-gray-300 p-2 text-white">In X seconds</th>
                                 <th className="border border-gray-300 p-2 text-white">Platforms</th>
+                                <th className="border border-gray-300 p-2 text-white">Groups</th>
                                 <th className="border border-gray-300 p-2 text-white"></th>
                             </tr>
                         </thead>
@@ -258,6 +308,23 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                         </div>
                                     </td>
                                     <td className="border border-gray-300 p-2">
+                                        <div className="flex flex-col">
+                                            {groups.map((group) => (
+                                                <label key={group} className="flex items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="mr-2"
+                                                        checked={row.selectedGroups?.includes(group)}
+                                                        onChange={() =>
+                                                            handleGroupChange(setIndex, rowIndex, group)
+                                                        }
+                                                    />
+                                                    {group}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </td>
+                                    <td className="border border-gray-300 p-2">
                                         <button
                                             onClick={() => removeRow(setIndex, rowIndex)}
                                             className="px-2 py-1 bg-red-600 text-white rounded"
@@ -277,14 +344,15 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                     </button>
                 </div>
             ))}
-            <div className="mt-4">
+            {!isLoadingInstructionSets && <div className="mt-4">
                 <button onClick={addSet} className="px-4 py-2 bg-blue-700 text-white rounded">
                     Add New Set
                 </button>
                 <button onClick={saveData} className="ml-4 px-4 py-2 bg-blue-700 text-white rounded">
                     Save
-                </button>
-            </div>
+                    </button>
+                    </div>
+            }
         </div>
     );
 };
