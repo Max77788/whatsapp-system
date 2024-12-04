@@ -8,7 +8,7 @@ export default function CredentialsForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("admin@demo.com");
+  const [email, setEmail] = useState("testacc@admin.com");
   const [password, setPassword] = useState("admin123");
 
   const handleSubmit = async (e: React.FormEvent) => {

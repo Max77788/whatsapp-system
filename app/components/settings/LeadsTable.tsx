@@ -18,7 +18,7 @@ interface Props {
   groups_list?: string[]; // Prop to accept initial groups data
 }
 
-const response = await fetch("/api/user/find_user");
+const response = await fetch("/api/user/find-user");
 const user = await response.json();
 const groups_list_: string[] = user?.leadGroups || ["other"];
 console.log(groups_list_);

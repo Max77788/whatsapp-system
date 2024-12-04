@@ -89,7 +89,7 @@ const StartCampaign = () => {
     const response = await axios.get("api/phone-numbers");
     const fromNumbersList = response.data.filter((number: { active: boolean }) => number.active).map((number: { phoneNumber: string }) => number.phoneNumber);
     
-    const response_ = await axios.get("api/user/find_user");
+    const response_ = await axios.get("api/user/find-user");
     const user = await response_.data;
 
     setGroups(user.leadGroups || []);

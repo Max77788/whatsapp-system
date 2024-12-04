@@ -33,7 +33,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
 
     const fetchGroups = async () => {
-        const response = await fetch("/api/user/find_user");
+        const response = await fetch("/api/user/find-user");
         const data = await response.json();
         const leadGroups = data.leadGroups || ["other"];
     

@@ -29,7 +29,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
 
   const fetchGroups = async () => {
     try {
-      const response = await axios.get("/api/user/find_user");
+      const response = await axios.get("/api/user/find-user");
       const user = response.data;
       setGroups(user.leadGroups || []);
     } catch (error) {
