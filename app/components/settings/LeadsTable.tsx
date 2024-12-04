@@ -231,7 +231,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         <p>No leads available. Add some data.</p>
       ) : (
         <>
-          <h1 className="text-2xl font-semibold mb-4">Leads Data</h1>
+          { /*<h1 className="text-2xl font-semibold mb-4">Leads Data</h1> */}
           <table className="min-w-full border border-gray-300 mb-4">
             <thead>
               <tr className="bg-blue-700 text-white">

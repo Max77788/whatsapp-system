@@ -17,14 +17,13 @@ export async function POST(req) {
 
         
         const fromNumber = formData.get('fromNumber'); // Get the 'fromNumber' field
-        const toNumbers = formData.get('toNumbers'); // Get the 'toNumbers' field
+        let toNumbers = JSON.parse(formData.get('toNumbers') || '[]'); // Get the 'toNumbers' field
         const message = formData.get('message'); // Get the 'message' field
         const scheduleTime = formData.get('scheduleTime'); // Get the 'scheduleTime' field
         const timeZone = formData.get('timeZone'); // Get the 'timeZone' field
         const media = formData.get('media') || null; // Get the 'media' file or null if not present
-        const groups = formData.get('groups') || null; // Get the 'groups' field
+        const groups = JSON.parse(formData.get('groups') || '[]'); // Get the 'groups' field
         
-
         let fileUrl = null;
 
         if (media !== null) {
@@ -38,7 +37,29 @@ export async function POST(req) {
         const user = await find_user({ email: userEmail });
         const currentScheduledMessages = user.scheduledMessages || [];
 
-        const toNumbersValue = toNumbers || groups;
+        
+        
+        let toNumbersValue = [];
+
+        if (groups.length > 0) {
+            const leads = user.leads;
+            
+            for (const group of groups) {
+                console.log(`group: ${group}`);
+                for (const lead of leads) {
+                    if (lead.group === group) {
+                        console.log(`lead: ${JSON.stringify(lead)}`);
+                        toNumbersValue.push(lead.phone_number);
+                    } else if (group === 'other' && (lead.group === null || lead.group === undefined || lead.group === '' || lead.group === 'other')) {
+                        toNumbersValue.push(lead.phone_number);
+                    }
+                }
+            }
+        } else {
+            toNumbersValue = toNumbers;
+        }
+
+        console.log(`toNumbersValue: ${JSON.stringify(toNumbersValue)}`);
 
         // Add new scheduled message to the user's record
         currentScheduledMessages.push({ fromNumber, toNumbers: toNumbersValue, message, scheduleTime, timeZone, mediaURL: fileUrl });

@@ -29,6 +29,9 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   
 
 const handleScheduleMessage = async () => {
+  console.log(`selectedGroups: ${JSON.stringify(selectedGroups)}`);
+  console.log(`toNumbers: ${JSON.stringify(toNumbers)}`);
+
   if (fromNumber && (toNumbers.length > 0 || selectedGroups.length > 0) && message && scheduleTime && timeZone) {
     const formData = new FormData();
     formData.append("fromNumber", fromNumber);
@@ -117,7 +120,7 @@ const handleScheduleMessage = async () => {
   };
 
   const handleSendMessage = async () => {
-    if (fromNumber && toNumbers.length > 0 && message) {
+    if (fromNumber && (toNumbers.length > 0 || selectedGroups.length > 0) && message) {
       const formData = new FormData();
       formData.append("fromNumber", fromNumber);
       formData.append("toNumbers", JSON.stringify(toNumbers));
@@ -298,9 +301,12 @@ const handleScheduleMessage = async () => {
         onChange={(e) => setTimeZone(e.target.value)}
         className="w-full border border-gray-300 p-2 rounded mb-4"
       >
+        <option key={'choose'} value={'choose'}>
+              Choose Time Zone
+            </option>
         {Array.from({ length: 23 }, (_, i) => {
           const offset = -11 + i; // Calculate GMT offset
-          const label = `GMT${offset >= 0 ? `+${offset}` : offset}`;
+          const label = `GMT${offset >= 0 ? `+${offset < 10 ? '0' : ''}${offset}` : `${offset > -10 ? '-0' : ''}${Math.abs(offset)}`}:00`;
           return (
             <option key={offset} value={label}>
               {label}

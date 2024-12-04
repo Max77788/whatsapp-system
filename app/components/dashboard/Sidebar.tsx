@@ -96,7 +96,33 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/settings" : "#"}
+              href={withKbBaseUrlLink ? "/accounts" : "#"}
+              className={`${linkStyle} ${
+                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+              }`}
+              onClick={(e) => {
+                if (!withKbBaseUrlLink) e.preventDefault();
+              }}
+            >
+              <svg
+                className="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M16 11V5a1 1 0 00-1-1H9a1 1 0 00-1 1v6M5 20h14a1 1 0 001-1v-7H4v7a1 1 0 001 1z"
+                />
+              </svg>
+              Accounts
+            </a>
+          </li>
+          <li>
+            <a
+              href={withKbBaseUrlLink ? "/leads" : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}

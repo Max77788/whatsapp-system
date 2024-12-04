@@ -41,12 +41,28 @@ export async function POST(req) {
     
     const groups = JSON.parse(formData.get('groups') || '[]');
 
+    let toNumbersValue = toNumbers;
+    
     if (groups.length > 0) {
-      toNumbers = toNumbers.filter((toNumber) => groups.includes(user?.leads.find((lead) => lead.phone_number === toNumber)?.group || "other"));
-    }
+      const leads = user.leads;
+      
+      for (const group of groups) {
+          console.log(`group: ${group}`);
+          for (const lead of leads) {
+              if (lead.group === group) {
+                  console.log(`lead: ${JSON.stringify(lead)}`);
+                  toNumbersValue.push(lead.phone_number);
+              } else if (group === 'other' && (lead.group === null || lead.group === undefined || lead.group === '' || lead.group === 'other')) {
+                  toNumbersValue.push(lead.phone_number);
+              }
+          }
+      }
+  } else {
+      toNumbersValue = toNumbers;
+  }
     
     
-    for (const toNumber of toNumbers) {
+    for (const toNumber of toNumbersValue) {
       const lead = leads.find((lead) => lead.phone_number === toNumber);
       
       let personalizedMessage = message;
@@ -116,7 +132,6 @@ export async function POST(req) {
       }
 
       if (!isUpdated) {
-        console.log(`No matching phoneNumber found in userLeads for ${parsedToNumbers}`);
         return NextResponse.json(
           { error: 'No matching phoneNumber found in userLeads' },
           { status: 404 }

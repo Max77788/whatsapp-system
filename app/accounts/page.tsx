@@ -32,7 +32,6 @@ export default async function SettingsPage(): Promise<JSX.Element> {
             {/* <TablePopup initialRows={initialData} /> */}
             <CreateClientButton />
             <PhoneNumberTacticsTable initialTactics={initialTactics} />
-            <LeadsTable leads={leadsData}/>
         </div>
     );
 };

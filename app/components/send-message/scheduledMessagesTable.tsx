@@ -24,6 +24,9 @@ const ScheduledMessagesListTable: React.FC = () => {
         const response = await fetch("/api/whatsapp-part/schedule-message/get");
         if (!response.ok) throw new Error("Failed to fetch scheduled messages");
         const { scheduledMessages } = await response.json();
+        scheduledMessages.sort((a: ScheduledMessage, b: ScheduledMessage) => new Date(a.scheduleTime).getTime() - new Date(b.scheduleTime).getTime());
+        
+        
         setScheduledMessages(scheduledMessages);
       } catch (error) {
         console.error("Error fetching scheduled messages:", error);
@@ -93,7 +96,7 @@ const ScheduledMessagesListTable: React.FC = () => {
                   })()}
                 </td>
                 <td className="border border-gray-300 p-2">{message.message}</td>
-                <td className="border border-gray-300 p-2">{message.scheduleTime}</td>
+                <td className="border border-gray-300 p-2">{message.scheduleTime.replace("T", " ").replace("Z", "")}</td>
                 <td className="border border-gray-300 p-2">{message.timeZone}</td>
                 <td className="border border-gray-300 p-2">{message.mediaURL ? "Yes" : "No"}</td>
                 <td className="border border-gray-300 p-2">
