@@ -90,7 +90,7 @@ export default function CreateClientButton() {
 
   return (
     <div>
-      <button onClick={handleGenerateQRCode} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded">
+      <button onClick={handleGenerateQRCode} className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full">
         Connect a New Phone
       </button>
 
@@ -122,7 +122,7 @@ export default function CreateClientButton() {
             </div>
 
             <div className="mt-4">
-              <button onClick={togglePopup} className="px-4 py-2 bg-red-500 text-white rounded">
+              <button onClick={togglePopup} className="px-4 py-2 bg-red-500 text-white rounded-full mx-auto block text-center">
                 Close
               </button>
             </div>

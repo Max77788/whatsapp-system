@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { userAgent } from "next/server";
 
 interface Lead {
   name: string;
@@ -18,12 +19,18 @@ interface Props {
   groups_list?: string[]; // Prop to accept initial groups data
 }
 
-const response = await fetch("/api/user/find-user");
-const user = await response.json();
-const groups_list_: string[] = user?.leadGroups || ["other"];
-console.log(groups_list_);
+const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
+  const fetchGroups = async () => {
+    const response = await fetch("/api/user/find-user");
+    const data = await response.json();
+    const leadGroups = data.leadGroups || ["other"];
 
-const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }: Props) => {
+    setGroups(leadGroups);
+
+    return leadGroups;
+};
+  
+  
   const [leadData, setLeadData] = useState<Lead[]>(leads);
   const [loading, setLoading] = useState(leads.length === 0);
   const [newLead, setNewLead] = useState<Lead>({
@@ -34,10 +41,14 @@ const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }:
     sent_messages: 0,
   });
   const [bulkPhoneNumbers, setBulkPhoneNumbers] = useState<string>("");
-  const [groups, setGroups] = useState<string[]>(groups_list); // Default group list with 'other'
+  const [groups, setGroups] = useState<string[]>([]); // Default group list with 'other'
   const [newGroup, setNewGroup] = useState<string>("");
 
   const { data: session } = useSession();
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
 
   useEffect(() => {
     if (leads.length === 0) {
@@ -223,7 +234,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }:
           <h1 className="text-2xl font-semibold mb-4">Leads Data</h1>
           <table className="min-w-full border border-gray-300 mb-4">
             <thead>
-              <tr className="bg-blue-500 text-white">
+              <tr className="bg-blue-700 text-white">
                 <th className="border border-gray-300 p-2 text-left">Name</th>
                 <th className="border border-gray-300 p-2 text-left">Phone Number</th>
                 <th className="border border-gray-300 p-2 text-left">Source</th>
@@ -309,7 +320,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }:
                   <td className="border border-gray-300 p-2">
                     <button
                       onClick={() => handleDeleteLead(index)}
-                      className="px-4 py-2 bg-red-500 text-white rounded"
+                      className="px-5 py-3 bg-red-500 hover:bg-red-700 text-white rounded-full mx-auto"
                     >
                       Delete
                     </button>
@@ -320,7 +331,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }:
           </table>
           <button
             onClick={saveData}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
+            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
             Save Data
           </button>
@@ -372,7 +383,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }:
         </div>
         <button
           onClick={handleAddLead}
-          className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
+          className="mt-4 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
         >
           Add Lead
         </button>
@@ -389,7 +400,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }:
   />
   <button
     onClick={handleBulkAdd}
-    className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+    className="mt-4 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full mx-auto"
   >
     Add Bulk Phone Numbers
         </button>
@@ -441,7 +452,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }:
           />
           <button
             onClick={handleAddGroup}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+            className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full mx-auto"
           >
             Add Group
           </button>
@@ -450,7 +461,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [], groups_list = groups_list_ }:
             group !== 'other' && (
               <div
                 key={group}
-                className="bg-gray-200 text-black px-3 py-1 rounded flex items-center"
+                className="bg-gray-200 text-black px-3 py-1 rounded-full flex items-center"
               >
                 <span>{group}</span>
                 <button

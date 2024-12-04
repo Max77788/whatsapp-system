@@ -278,7 +278,7 @@ const StartCampaign = () => {
               />
               <button
                 onClick={fetchCsvHeaders}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-600 transition"
+                className="mt-4 px-5 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition mx-auto"
               >
                 Fetch Headers
               </button>
@@ -297,7 +297,7 @@ const StartCampaign = () => {
               />
               <button
                 onClick={fetchHeaders}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-600 transition"
+                className="mt-4 px-5 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition mx-auto"
               >
                 Fetch Headers
               </button>
@@ -334,7 +334,7 @@ const StartCampaign = () => {
               </select>
               <button
                 onClick={fetchRows}
-                className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-600 transition"
+                className="mt-4 px-5 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition mx-auto"
               >
                 Fetch Rows
               </button>
@@ -433,7 +433,7 @@ const StartCampaign = () => {
             ) : fromNumbers.length > 0 ? (
               <button
                 onClick={() => setStep(2)}
-                className="px-6 py-2 mb-4 bg-green-600 text-white rounded hover:bg-green-600 transition"
+                className="px-6 py-3 mb-4 bg-green-600 text-white rounded-full hover:bg-green-700 transition mx-auto"
                 disabled={selectedLeads.length === 0}
               >
                 <svg

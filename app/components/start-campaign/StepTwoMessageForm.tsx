@@ -152,7 +152,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
             </div>
           ) : (
             <div className="flex items-start gap-2">
-              <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs">
+              <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs p-3">
                 U
               </div>
               <div className="bg-green-700 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
@@ -232,7 +232,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
         <div className="flex justify-between gap-4">
           <button
             onClick={goBack}
-            className="px-4 py-2 bg-gray-300 text-black rounded"
+            className="px-5 py-3 bg-gray-300 text-black rounded-full mx-auto"
           >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -251,7 +251,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           </button>
           <button
             onClick={handleStartCampaign}
-            className="px-4 py-2 bg-green-600 text-white rounded"
+            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
             Start Campaign
           </button>
@@ -263,7 +263,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
                 toast.error("Please fill in all fields.");
               }
             }}
-            className="px-4 py-2 bg-purple-500 text-white rounded"
+            className="px-5 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full mx-auto"
           >
             Schedule Campaign
           </button>

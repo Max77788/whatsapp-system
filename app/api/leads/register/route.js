@@ -15,7 +15,7 @@ export async function POST(req) {
         console.log('No session found for the request.');
     }
     
-    const { name, your_name, phone_number, phoneNumbersList } = await req.json();
+    const { name, your_name, phone_number, group, phoneNumbersList } = await req.json();
 
     // Attempt to find the user based on session (if available)
     const user = session ? await find_user({ email: session.user.email }) : await find_user({ apiKey });
@@ -53,7 +53,7 @@ export async function POST(req) {
         }
     }
     
-    const success = await update_user({ unique_id: unique_id }, { leads: { name: leadName, phone_number: phone_number, source: source } }, "$addToSet");
+    const success = await update_user({ unique_id: unique_id }, { leads: { name: leadName, phone_number: phone_number, source: source, group: group || "other" } }, "$addToSet");
     
     if (success) {
         return NextResponse.json({ message: `Lead from ${source} source added` });

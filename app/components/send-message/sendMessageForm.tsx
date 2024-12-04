@@ -178,7 +178,27 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
         </div>
       </div>
 
-      <div className="mb-12">
+      <div className="mb-4">
+          <label className="block font-semibold mb-2">Media Attachment (optional)</label>
+          <input
+            type="file"
+            accept="image/*,.pdf"
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              if (file) {
+                setMediaAttachment(file);
+                setIsMediaPreviewVisible(true);
+              } else {
+                setMediaAttachment(null);
+                setIsMediaPreviewVisible(false);
+              }
+            }}
+            className="w-full border border-gray-300 p-2 rounded"
+          />
+          <p className="text-gray-500 italic">*Supported file types: images, PDFs</p>
+        </div>
+
+      <div className="mb-2">
         <label className="block mb-2 font-semibold">Message</label>
         <textarea
           value={message}
@@ -189,10 +209,40 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
         <i className="text-black">{`*include {{name}} to insert the name of the recipient. E.g. "Hello {{name}}, how are you?"`}</i>
       </div>
 
+      <div className="relative">
+        <img
+          src="/static/phone-frame.png" // Replace with the actual path to your phone frame image
+          alt="Phone Frame"
+          className="w-72 mx-auto object-contain flex-shrink-0"
+        />
+        {/* Phone Content */}
+        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-56 h-[48vh] bg-white rounded-2xl shadow-lg p-4">
+          {isMediaPreviewVisible && mediaAttachment ? (
+            <div className="flex flex-col items-center justify-center">
+              <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm">
+                Media Preview
+              </div>
+              <div className="mt-4 bg-green-700 text-white rounded-lg p-2 w-full break-words">
+                {message || "Type a caption for your media..."}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-start gap-2">
+              <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs p-3">
+                U
+              </div>
+              <div className="bg-green-700 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
+                {message || "Type a message to see it here..."}
+              </div>
+            </div>
+          )}
+        </div>
+        </div>
+
       <div className="flex justify-between gap-4">
         <button
           onClick={handleSendMessage}
-          className="px-4 py-2 bg-green-500 text-white rounded"
+          className="px-5 py-3 mx-auto bg-green-600 hover:bg-green-700 text-white rounded-full"
         >
           Send Message
         </button>

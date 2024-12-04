@@ -160,7 +160,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
           <h1 className="text-2xl font-semibold mb-4">Phone Number Tactics</h1>
           <table className="min-w-full border border-gray-300 mb-4">
             <thead>
-              <tr className="bg-blue-500 text-white">
+              <tr className="bg-blue-700 text-white">
                 <th className="border border-gray-300 p-2 text-left">Phone Number</th>
                 <th className="border border-gray-300 p-2 text-left">Active</th>
                 <th className="border border-gray-300 p-2 text-left">Tactics</th>
@@ -193,7 +193,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
                     {phoneNumber.active && (
                       <button
                         onClick={() => handleDelete(phoneNumber.phoneNumber)}
-                        className="px-4 py-2 bg-red-500 text-white rounded"
+                        className="px-5 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full mx-auto"
                       >
                         Disconnect
                       </button>
@@ -205,7 +205,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
           </table>
           <button
             onClick={() => saveData()}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
+            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
             Save Tactics
           </button>
