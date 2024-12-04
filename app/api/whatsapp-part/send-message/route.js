@@ -96,6 +96,8 @@ export async function POST(req) {
       },
     });
 
+    let sentMessages = user?.sentMessages || 0;
+
     if (response.status === 200) {
       const userLeads = user?.leads;
       let isUpdated = false;
@@ -106,6 +108,7 @@ export async function POST(req) {
           lead.sent_messages = (lead.sent_messages || 0) + 1;
           isUpdated = true;
         }
+        sentMessages += 1;
       });
 
       if (payload.mediaURL) {
@@ -120,7 +123,7 @@ export async function POST(req) {
         );
       }
 
-      const success = await update_user({ email: userEmail }, { leads: userLeads });
+      const success = await update_user({ email: userEmail }, { leads: userLeads, sentMessages });
 
       if (success) {
         return NextResponse.json({ message: 'Message sent successfully' }, { status: 200 });

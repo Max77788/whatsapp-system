@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ userName }) => {
       <div className="flex items-center gap-4">
         <button 
           onClick={onLogout}
-          className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"
+          className="px-5 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-full transition-colors duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"
         >
           Logout
         </button>

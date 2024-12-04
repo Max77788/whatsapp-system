@@ -7,8 +7,6 @@ import path from 'path';
 import fs from 'fs';
 import { SessionProvider } from "next-auth/react";
 
-console.log("Layout");
-
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -34,6 +32,10 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{
+          backgroundColor: "var(--bg-color)",
+          color: "var(--text-color)",
+        }}
       >
         <ToastContainer 
           position="top-right" 

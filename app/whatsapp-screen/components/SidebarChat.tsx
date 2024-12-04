@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useChatStore } from '@/lib/store/chatStore'; // Example of Zustand global store
 import { ChatStore } from '@/lib/store/chatStore';
 import { civicinfo } from 'googleapis/build/src/apis/civicinfo';
+import { toast } from 'react-toastify';
 
 const Sidebar = () => {
   const router = useRouter();
@@ -104,10 +105,10 @@ const Sidebar = () => {
         throw new Error(`Error: ${response.statusText}`);
       }
   
-      alert('Numbers exported successfully!');
+      toast.success('Numbers exported successfully!');
     } catch (error) {
       console.error('Export error:', error);
-      alert('Failed to export phone numbers.');
+      toast.error('Failed to export phone numbers.');
     }
   };
   
@@ -197,7 +198,7 @@ const Sidebar = () => {
     onClick={handleExport}
     disabled={selectedPhones.length === 0}
     className={`mt-2 px-4 py-2 rounded border-none ${
-      selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black' : 'bg-green-600 hover:bg-green-700 cursor-pointer'
+      selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black rounded-full' : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
     }`}
   >
     Export

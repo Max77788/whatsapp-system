@@ -9,11 +9,11 @@ import './dashboard.css'
 import { useEffect } from "react";
 import PackageDetails from "../components/dashboard/PackageDetails";
 import SubscriptionDetails from "../components/dashboard/SubscriptionDetails";
-import SystemNotifications from "../components/dashboard/SystemNotifications";
 import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
 import { find_user, update_user } from "@/lib/utils";
 import { retrieveK8sDeploymentUrl } from "@/lib/whatsAppService/kubernetes_part.mjs";
+import SentMessagesTracker from "../components/dashboard/SentMessagesTracker";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -58,6 +58,8 @@ export default async function DashboardPage() {
       withKbBaseUrlLink = false;
     }
   }
+
+  const sentMessages = user?.sentMessages || 0;
   
   const userName = 'Dashboard';
 
@@ -80,7 +82,7 @@ export default async function DashboardPage() {
             {/* Content sections */}
             <div className="dashboard-sections">
               <div className="notifications-section">
-                <SystemNotifications />
+                <SentMessagesTracker sentMessages={sentMessages} />
               </div>
               <div className="subscription-section">
                 <SubscriptionDetails />

@@ -10,7 +10,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const userName = "Settings"; // Replace with dynamic username from session or auth context
+  const userName = "Leads"; // Replace with dynamic username from session or auth context
 
   return (
     <SessionProvider>

@@ -22,7 +22,7 @@ export async function POST(req) {
         const scheduleTime = formData.get('scheduleTime'); // Get the 'scheduleTime' field
         const timeZone = formData.get('timeZone'); // Get the 'timeZone' field
         const media = formData.get('media') || null; // Get the 'media' file or null if not present
-
+        const groups = formData.get('groups') || null; // Get the 'groups' field
         
 
         let fileUrl = null;
@@ -38,8 +38,10 @@ export async function POST(req) {
         const user = await find_user({ email: userEmail });
         const currentScheduledMessages = user.scheduledMessages || [];
 
+        const toNumbersValue = toNumbers || groups;
+
         // Add new scheduled message to the user's record
-        currentScheduledMessages.push({ fromNumber, toNumbers, message, scheduleTime, timeZone, mediaURL: fileUrl });
+        currentScheduledMessages.push({ fromNumber, toNumbers: toNumbersValue, message, scheduleTime, timeZone, mediaURL: fileUrl });
 
         const success = await update_user(
             { email: userEmail },

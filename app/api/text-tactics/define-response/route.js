@@ -3,7 +3,7 @@ import { find_user } from '@/lib/utils';
 import { generateResponse } from "@/lib/gpt_utils"
 
 export async function POST(req) {
-    const { message, sender, clientId, uniqueId } = await req.json();      
+    const { message, sender, clientId, uniqueId, message_history } = await req.json();      
 
     const senderPhoneNumber = sender.split('@')[0];
     
@@ -100,9 +100,16 @@ export async function POST(req) {
         return NextResponse.json({reply: "Do Nothing", respond_boolean: false});
     }
 
-    console.log("name_tactics_to_use:", name_tactics_to_use);
+    console.log("message_history: ", message_history);
 
     if (!reply && name_tactics_to_use.includes("Enable AI Auto Response") && user?.aiSystemConfig.isOn) {
+        const instructions = `
+        You are a whatsapp bot. Here are your instructions:
+        ${user?.aiSystemConfig.instructions}
+        Take into account the following message history:
+        ${message_history}
+        `
+        
         reply = await generateResponse(message, user?.aiSystemConfig.instructions || "Respond politely to this whatsapp message.");
     }
 

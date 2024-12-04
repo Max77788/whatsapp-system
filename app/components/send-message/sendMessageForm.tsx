@@ -26,6 +26,46 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   const [groups, setGroups] = useState<string[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+  
+
+const handleScheduleMessage = async () => {
+  if (fromNumber && (toNumbers.length > 0 || selectedGroups.length > 0) && message && scheduleTime && timeZone) {
+    const formData = new FormData();
+    formData.append("fromNumber", fromNumber);
+    formData.append("toNumbers", JSON.stringify(toNumbers));
+    formData.append("message", message);
+    formData.append("groups", JSON.stringify(selectedGroups));
+    formData.append("scheduleTime", scheduleTime);
+    formData.append("timeZone", timeZone);
+
+    if (mediaAttachment) {
+      formData.append("media", mediaAttachment);
+    }
+
+    try {
+      const response = await fetch("/api/whatsapp-part/schedule-message", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast.success("Message scheduled!");
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        location.reload();
+        setIsScheduleModalOpen(false);
+      } else {
+        toast.error("Failed to schedule message.");
+      }
+    } catch (error) {
+      console.error("Error scheduling message:", error);
+      toast.error("An error occurred while scheduling the message.");
+    }
+  } else {
+    toast.error("Please fill in all fields.");
+  }
+};
+
+
 
   const fetchGroups = async () => {
     try {
@@ -239,6 +279,56 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
         </div>
         </div>
 
+        {isScheduleModalOpen && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
+      <h2 className="text-xl font-semibold mb-4">Schedule Message</h2>
+      
+      <label className="block mb-2 font-semibold">Select Time</label>
+      <input
+        type="datetime-local"
+        value={scheduleTime}
+        onChange={(e) => setScheduleTime(e.target.value)}
+        className="w-full border border-gray-300 p-2 rounded mb-4"
+      />
+
+      <label className="block mb-2 font-semibold">Select Time Zone</label>
+      <select
+        value={timeZone}
+        onChange={(e) => setTimeZone(e.target.value)}
+        className="w-full border border-gray-300 p-2 rounded mb-4"
+      >
+        {Array.from({ length: 23 }, (_, i) => {
+          const offset = -11 + i; // Calculate GMT offset
+          const label = `GMT${offset >= 0 ? `+${offset}` : offset}`;
+          return (
+            <option key={offset} value={label}>
+              {label}
+            </option>
+          );
+        })}
+      </select>
+
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => setIsScheduleModalOpen(false)}
+          className="px-4 py-2 bg-gray-300 rounded-full"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleScheduleMessage}
+          className="px-4 py-2 bg-green-600 text-white rounded-full"
+        >
+          Schedule
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
       <div className="flex justify-between gap-4">
         <button
           onClick={handleSendMessage}
@@ -246,6 +336,19 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
         >
           Send Message
         </button>
+        <button
+          onClick={() => {
+            if (fromNumber && (toNumbers.length > 0 || selectedGroups.length > 0) && message) {
+              setIsScheduleModalOpen(true)
+            } else {
+              toast.error("Please fill in all fields.");
+            }
+          }}
+          className="px-5 py-3 mx-auto bg-blue-600 hover:bg-blue-700 text-white rounded-full"
+        >
+  Schedule Message
+        </button>
+
       </div>
     </div>
   );

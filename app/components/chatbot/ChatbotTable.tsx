@@ -222,7 +222,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                         />
                         <button
                             onClick={() => deleteSet(setIndex)}
-                            className="ml-2 px-4 py-2 bg-red-600 text-white rounded mb-2 flex items-center justify-center whitespace-nowrap"
+                            className="ml-2 px-5 py-3 bg-red-600 text-white rounded-full mb-2 flex items-center justify-center whitespace-nowrap"
                         >
                             Delete Set
                         </button>
@@ -327,7 +327,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                     <td className="border border-gray-300 p-2">
                                         <button
                                             onClick={() => removeRow(setIndex, rowIndex)}
-                                            className="px-2 py-1 bg-red-600 text-white rounded"
+                                            className="px-3 py-2 bg-red-600 text-white rounded-full"
                                         >
                                             Remove
                                         </button>
@@ -338,17 +338,17 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                     </table>
                     <button
                         onClick={() => addRow(setIndex)}
-                        className="px-4 py-2 bg-green-600 text-white rounded"
+                        className="px-5 py-3 bg-blue-700 text-white rounded-full"
                     >
                         Add Row
                     </button>
                 </div>
             ))}
             {!isLoadingInstructionSets && <div className="mt-4">
-                <button onClick={addSet} className="px-4 py-2 bg-blue-700 text-white rounded">
+                <button onClick={addSet} className="px-5 py-3 bg-blue-700 text-white rounded-full">
                     Add New Set
                 </button>
-                <button onClick={saveData} className="ml-4 px-4 py-2 bg-blue-700 text-white rounded">
+                <button onClick={saveData} className="ml-4 px-5 py-3 bg-blue-700 text-white rounded-full">
                     Save
                     </button>
                     </div>
