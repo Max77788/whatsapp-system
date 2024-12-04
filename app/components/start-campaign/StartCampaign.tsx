@@ -450,7 +450,7 @@ const StartCampaign = () => {
                 </svg>
               </button>
             ) : (
-              <p className="text-red-500 mb-4">Please <a href="/leads" className="text-red-500 hover:text-red-600 underline text-bold">connect your account</a> to proceed.</p>
+              <p className="text-red-500 mb-4">Please <a href="/accounts" className="text-red-500 hover:text-red-600 underline text-bold">connect your account</a> to proceed.</p>
             )}
           </div>
           <div className="mt-15">
