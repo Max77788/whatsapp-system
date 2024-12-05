@@ -34,7 +34,16 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
     matcher: [
-        '/api/leads/register',
-        '/api/message/get-templates'
-    ],
+        "/api/leads/register",
+        "/api/leads/retrieve",
+        "/api/message/get-templates",
+        "/api/message/save-template",
+        "/api/whatsapp-part/send-message",
+        "/api/whatsapp-part/schedule-message",
+        "/api/user/campaigns",
+        "/api/campaign/create",
+        "/api/campaign/schedule",
+        "/api/campaign/delete",
+        "/api/phone-numbers"
+    ]    
 };

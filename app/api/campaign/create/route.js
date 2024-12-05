@@ -21,8 +21,12 @@ export async function POST(req) {
   const message = formData.get('message');
   const leads = JSON.parse(formData.get('leads') || '[]');
   const media = formData.get('media') || null;
-  const campaignId = formData.get('campaignId');
+  let campaignId = formData.get('campaignId');
 
+  if (!campaignId) {
+    campaignId = campaignName.toLowerCase().replace(/\s+/g, '-') + '-' + uuidv4().slice(-4);
+  }
+  
   if (!campaignName || !fromNumber || !message || !leads) {
     return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
   }
@@ -50,14 +54,24 @@ export async function POST(req) {
     completed: false
   }
   
-  const userEmail = session.user.email;
+  const apiKey = req.headers.get('x-api-key');
 
-  const success = await update_user({email: userEmail}, {campaigns: campaignData}, "$push");
+  const userEmail = session?.user?.email;  
+
+  const success = session ? await update_user({email: userEmail}, {campaigns: campaignData}, "$push") : await update_user({apiKey: apiKey}, {campaigns: campaignData}, "$push");
 
   
+  if (session) {
   if (success) {
     return NextResponse.json({ message: 'Campaign created successfully' }, { status: 200 });
   } else {
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
+  } else {
+    if (success) {
+      return NextResponse.json({ message: 'Campaign created successfully', campaignId: campaignId }, { status: 200 });
+    } else {
+      return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    }
   }
 }

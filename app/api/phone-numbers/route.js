@@ -7,11 +7,10 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-  }
+  const userEmail = session?.user?.email;
+  const apiKey = req.headers.get('x-api-key');
 
-  const user = await find_user({ email: session.user.email });
+  const user = userEmail ? await find_user({ email: userEmail }) : await find_user({ apiKey });
 
   // Assuming the user object has properties qrCode1, qrCode2, qrCode3, qrCode4, qrCode5
     const phoneNumbers = [];

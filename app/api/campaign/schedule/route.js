@@ -47,14 +47,23 @@ export async function POST(req) {
     completed: false
   }
   
-  const userEmail = session.user.email;
-
-  const success = await update_user({email: userEmail}, {campaigns: campaignData}, "$push");
+  const userEmail = session?.user?.email;
+  const apiKey = req.headers.get('x-api-key');
+  
+  const success = userEmail ? await update_user({email: userEmail}, {campaigns: campaignData}, "$push") : await update_user({apiKey: apiKey}, {campaigns: campaignData}, "$push");
 
   
+  if (session) {
   if (success) {
     return NextResponse.json({ message: 'Campaign created successfully' }, { status: 200 });
   } else {
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
+  } else {
+    if (success) {
+      return NextResponse.json({ message: 'Campaign created successfully', campaignId: campaignId }, { status: 200 });
+    } else {
+      return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    }
   }
 }

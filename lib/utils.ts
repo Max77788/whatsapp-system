@@ -129,6 +129,7 @@ export async function verifyApiKey(apiKey: string) {
 export const getAllApiKeys = async () => {
     const db = await getDb();
     const apiKeys = await db.collection('users').find({ apiKey: { $exists: true } }).project({ apiKey: 1, _id: 0 }).toArray();
+    console.log(apiKeys);
     return apiKeys.map(user => user?.apiKey);
 }
 

@@ -7,19 +7,12 @@ export async function POST(req) {
 
     const apiKey = req.headers.get('x-api-key');
 
-    // Attempt to get the session
     const session = await getServerSession(authOptions);
-
-    // Handle missing session
-    if (!session) {
-        console.log('No session found for the request.');
-    }
     
+    const user = session ? await find_user({ email: session.user.email }) : await find_user({ apiKey });
+
     const { name, your_name, phone_number, group, phoneNumbersList } = await req.json();
 
-    // Attempt to find the user based on session (if available)
-    const user = session ? await find_user({ email: session.user.email }) : await find_user({ apiKey });
-    
     // Determine unique_id
     const unique_id = user?.unique_id;
 

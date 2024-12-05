@@ -7,10 +7,6 @@ import axios from 'axios';
 import { uploadFile } from '@/lib/google_storage/google_storage';
 
 export async function POST(req) {
-    const session = await getServerSession(authOptions);
-
-    const userEmail = session?.user?.email;
-
     try {
         // Parse the incoming form data
         const formData = await req.formData();
@@ -34,10 +30,15 @@ export async function POST(req) {
             console.log(`\n\n\nUploaded file to ${fileUrl}\n\n\n`);
         }
 
-        const user = await find_user({ email: userEmail });
-        const currentScheduledMessages = user.scheduledMessages || [];
+        const apiKey = req.headers.get('x-api-key');
 
+        const session = await getServerSession(authOptions);
+
+        const userEmail = session?.user?.email;
         
+        const user = session ? await find_user({ email: userEmail }) : await find_user({ apiKey });    
+
+        const currentScheduledMessages = user.scheduledMessages || [];
         
         let toNumbersValue = [];
 
@@ -64,10 +65,7 @@ export async function POST(req) {
         // Add new scheduled message to the user's record
         currentScheduledMessages.push({ fromNumber, toNumbers: toNumbersValue, message, scheduleTime, timeZone, mediaURL: fileUrl });
 
-        const success = await update_user(
-            { email: userEmail },
-            { scheduledMessages: currentScheduledMessages }
-        );
+        const success = session ? await update_user({ email: session?.user?.email }, { scheduledMessages: currentScheduledMessages }) : await update_user({ apiKey: apiKey }, { scheduledMessages: currentScheduledMessages });
 
         if (success) {
             return NextResponse.json({ message: 'Message scheduled successfully!' }, { status: 200 });

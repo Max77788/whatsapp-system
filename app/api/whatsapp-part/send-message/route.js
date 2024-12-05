@@ -4,16 +4,9 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/serverStuff';
 import { uploadFile, deleteFile } from '@/lib/google_storage/google_storage';
 import axios from 'axios';
-import fs from 'fs';
 
-export const config = {
-  api: {
-    bodyParser: false, // Required for Formidable to handle file uploads
-  },
-};
 
 export async function POST(req) {
-  const session = await getServerSession(authOptions);
 
   try {
     // Parse the incoming form data
@@ -34,8 +27,11 @@ export async function POST(req) {
 
     let messageAndPhoneNumbers = [];
 
-    const userEmail = session?.user?.email;
-    const user = await find_user({ email: userEmail });
+    const apiKey = req.headers.get('x-api-key');
+
+    const session = await getServerSession(authOptions);
+    
+    const user = session ? await find_user({ email: session.user.email }) : await find_user({ apiKey });
     const leads = user?.leads;
     
     
@@ -138,7 +134,7 @@ export async function POST(req) {
         );
       }
 
-      const success = await update_user({ email: userEmail }, { leads: userLeads, sentMessages });
+      const success = session ? await update_user({ email: session?.user?.email }, { leads: userLeads, sentMessages }) : await update_user({ apiKey: apiKey }, { leads: userLeads, sentMessages });
 
       if (success) {
         return NextResponse.json({ message: 'Message sent successfully' }, { status: 200 });
