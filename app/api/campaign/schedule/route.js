@@ -23,6 +23,10 @@ export async function POST(req) {
   const scheduleTime = formData.get('scheduleTime');
   const timeZone = formData.get('timeZone');
   const campaignId = formData.get('campaignId');
+  const batchSize = parseInt(formData.get('batchSize'));
+  const batchIntervalValue = parseInt(formData.get('batchIntervalValue') || 0);
+  const batchIntervalUnit = formData.get('batchIntervalUnit');
+  
   if (!campaignName || !fromNumber || !message || !leads || !scheduleTime || !timeZone) {
     return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
   }
@@ -34,6 +38,35 @@ export async function POST(req) {
     const fileName = `${Date.now()}-${media.originalFilename}`;
     fileUrl = await uploadFile(base64Content, fileName, media.type);
   }
+
+  const scheduledTimes = [];
+
+  let numberOfRuns = 0;
+
+  if (batchIntervalValue !== 0) {
+  let batchIntervalValueCalculated;
+  if (batchIntervalUnit === 'minutes') {
+    batchIntervalValueCalculated = batchIntervalValue;
+  } else if (batchIntervalUnit === 'hours') {
+    batchIntervalValueCalculated = batchIntervalValue * 60;
+  } else if (batchIntervalUnit === 'days') {
+    batchIntervalValueCalculated = batchIntervalValue * 60 * 24;
+  } else if (batchIntervalUnit === 'weeks') {
+    batchIntervalValueCalculated = batchIntervalValue * 60 * 24 * 7;
+  }
+  
+  numberOfRuns = Math.ceil(leads.length / batchSize);
+  for (let i = 0; i < numberOfRuns; i++) {
+    const scheduledTime = new Date(scheduleTime);
+    scheduledTime.setMinutes(scheduledTime.getMinutes() + (i * batchIntervalValueCalculated));
+      scheduledTimes.push(scheduledTime.toISOString());
+    }
+  } else {
+    numberOfRuns = 1;
+    scheduledTimes.push(scheduleTime);
+  }
+  
+  
   
   const campaignData = {
     campaignName,
@@ -41,10 +74,15 @@ export async function POST(req) {
     message,
     leads,
     mediaURL: fileUrl,
-    scheduleTime,
+    scheduledTimes,
     timeZone,
     campaignId,
-    completed: false
+    batchSize,
+    batchIntervalValue,
+    batchIntervalUnit,
+    totalNumberOfRuns: numberOfRuns,
+    numberOfRunsExecuted: 0,
+    completed: false,
   }
   
   const userEmail = session?.user?.email;

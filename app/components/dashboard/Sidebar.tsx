@@ -146,10 +146,10 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  d="M3 3h18v18H3V3zm2 2v14h14V5H5zm4 4h6v2H9V9zm0 4h6v2H9v-2z"
                 />
               </svg>
-              Leads 
+              Leads | CRM
             </a>
           </li>
           <li>

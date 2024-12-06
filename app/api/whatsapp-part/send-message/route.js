@@ -123,9 +123,9 @@ export async function POST(req) {
         sentMessages += 1;
       });
 
-      if (payload.mediaURL) {
-        await deleteFile(payload.mediaURL);
-      }
+      // if (payload.mediaURL) {
+      //   await deleteFile(payload.mediaURL);
+      // }
 
       if (!isUpdated) {
         return NextResponse.json(

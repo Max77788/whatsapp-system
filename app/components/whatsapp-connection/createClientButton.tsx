@@ -30,6 +30,8 @@ export default function CreateClientButton() {
       const data = await response.json();
 
       if (response.ok) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         const newNumberOfPhonesConnected = data.numberOfPhonesConnected;
 
         // Trigger notifications and reload page
@@ -62,7 +64,7 @@ export default function CreateClientButton() {
       }
     } catch (error) {
       console.error("Failed to fetch QR code:", error);
-      toast.error("An error occurred while fetching the QR code.");
+      // toast.error("An error occurred while fetching the QR code.");
     }
   };
 

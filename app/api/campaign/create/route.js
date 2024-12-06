@@ -22,6 +22,9 @@ export async function POST(req) {
   const leads = JSON.parse(formData.get('leads') || '[]');
   const media = formData.get('media') || null;
   let campaignId = formData.get('campaignId');
+  const batchSize = parseInt(formData.get('batchSize'));
+  const batchIntervalValue = parseInt(formData.get('batchIntervalValue'));
+  const batchIntervalUnit = formData.get('batchIntervalUnit');
 
   if (!campaignId) {
     campaignId = campaignName.toLowerCase().replace(/\s+/g, '-') + '-' + uuidv4().slice(-4);
@@ -42,6 +45,32 @@ export async function POST(req) {
   const currentDateTimeUTC = new Date().toISOString();
   const timeZone = "GMT+00:00";
 
+  let scheduledTimes = [];
+  let numberOfRuns = 0;
+
+  if (batchIntervalValue !== 0) {
+  let batchIntervalValueCalculated;
+  if (batchIntervalUnit === 'minutes') {
+    batchIntervalValueCalculated = batchIntervalValue;
+  } else if (batchIntervalUnit === 'hours') {
+    batchIntervalValueCalculated = batchIntervalValue * 60;
+  } else if (batchIntervalUnit === 'days') {
+    batchIntervalValueCalculated = batchIntervalValue * 60 * 24;
+  } else if (batchIntervalUnit === 'weeks') {
+    batchIntervalValueCalculated = batchIntervalValue * 60 * 24 * 7;
+  }
+  
+  numberOfRuns = Math.ceil(leads.length / batchSize);
+  for (let i = 0; i < numberOfRuns; i++) {
+    const scheduledTime = new Date(currentDateTimeUTC);
+    scheduledTime.setMinutes(scheduledTime.getMinutes() + (i * batchIntervalValueCalculated));
+      scheduledTimes.push(scheduledTime.toISOString());
+    }
+  } else {
+    numberOfRuns = 1;
+    scheduledTimes.push(currentDateTimeUTC);
+  }
+
   const campaignData = {
     campaignName,
     fromNumber,
@@ -49,8 +78,13 @@ export async function POST(req) {
     leads,
     mediaURL: fileUrl,
     timeZone,
-    scheduleTime: currentDateTimeUTC,
+    scheduledTimes,
     campaignId,
+    batchSize,
+    batchIntervalValue,
+    batchIntervalUnit,
+    totalNumberOfRuns: numberOfRuns,
+    numberOfRunsExecuted: 0,
     completed: false
   }
   

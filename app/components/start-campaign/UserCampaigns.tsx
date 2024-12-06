@@ -17,6 +17,10 @@ interface Campaign {
   timeZone: string;
   campaignId: string;
   completed: boolean;
+  batchSize?: number;
+  batchIntervalValue?: number;
+  batchIntervalUnit?: string;
+  scheduledTimes: string[];
 }
 
 
@@ -48,6 +52,8 @@ const UserCampaigns = () => {
   };
 
   const handleDeleteCampaign = async (campaignId: string) => {
+    
+    if (confirm("Are you sure you want to delete this campaign?")) {
     try {
       const response = await fetch(`/api/campaign/delete`, {
         method: "POST",
@@ -65,7 +71,8 @@ const UserCampaigns = () => {
       toast.success("Campaign deleted successfully");
     } catch (error) {
       console.error("Error deleting campaign:", error);
-      setError("Failed to delete the campaign. Please try again.");
+        setError("Failed to delete the campaign. Please try again.");
+      }
     }
   };
 
@@ -126,9 +133,15 @@ const UserCampaigns = () => {
         </div>
       )}
       <p className="text-sm text-gray-600">
-        <strong>Scheduled Time:</strong> {campaign.scheduleTime} (
+        <strong>Scheduled Time:</strong> {campaign.scheduledTimes[0]} (
         {campaign.timeZone})
       </p>
+      {campaign.batchSize && campaign.batchIntervalValue !== 0 && campaign.batchIntervalUnit && (
+        <p className="text-sm text-gray-600 my-2">
+          <strong>Batch Size:</strong> {campaign.batchSize}<br />
+          <strong>Batch Interval:</strong> {campaign.batchIntervalValue} {campaign.batchIntervalUnit}
+        </p>
+      )}
       <p
         className={`mt-2 text-sm font-medium ${
           campaign.completed ? "text-green-600" : "text-yellow-600"

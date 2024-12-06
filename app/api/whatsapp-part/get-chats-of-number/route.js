@@ -40,8 +40,9 @@ export async function POST(req) {
     });
     console.log("Response from external API:", response);
 
-    const { success, data: chats } = await response.json();
+    const { success, data: chats, contacts } = await response.json();
   
 
-  return NextResponse.json(chats);
+  console.log("Chats:", chats);
+  return NextResponse.json({ chats, contacts });
 }

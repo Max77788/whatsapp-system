@@ -28,14 +28,33 @@ export async function POST(req) {
     const message = campaign?.message;
     const fromNumber = campaign?.fromNumber;
     const mediaURL = campaign?.mediaURL;
+    const batchIntervalValue = campaign?.batchIntervalValue;
+    const batchIntervalUnit = campaign?.batchIntervalUnit;
 
     if (campaign?.completed) {
       return NextResponse.json({ message: 'Campaign already completed' }, { status: 200 });
     }
 
     const messageAndPhoneNumbers = [];
+
+    const batchSize = campaign?.batchIntervalValue !== 0 ? campaign?.batchSize : leads.length;
+
+    const numberOfRunsExecuted = campaign?.numberOfRunsExecuted;
+    const totalNumberOfRuns = campaign?.totalNumberOfRuns;
     
-    for (const toNumber of toNumbers) {
+    const start = numberOfRunsExecuted * batchSize;
+    const end = (numberOfRunsExecuted + 1) * batchSize;
+
+    // Ensure the end index does not exceed the length of toNumbers
+    const adjustedEnd = Math.min(end, toNumbers.length);
+    const toNumbersBatch = toNumbers.slice(start, adjustedEnd);
+ 
+    // Check if toNumbersBatch is empty
+    if (toNumbersBatch.length === 0) {
+      return NextResponse.json({ message: 'No more numbers to process' }, { status: 200 });
+    }
+
+    for (const toNumber of toNumbersBatch) {
       const lead = leads.find((lead) => lead.phone_number === toNumber);
       
       let personalizedMessage = message;
@@ -80,11 +99,15 @@ export async function POST(req) {
 
     if (response.status === 200) {
       
-      if (mediaURL) {
-        deleteFile(mediaURL);
-      }
+      // if (mediaURL) {
+      //   deleteFile(mediaURL);
+      // }
+
+      all_campaigns.find((campaign) => campaign.campaignId === campaignId).numberOfRunsExecuted += 1;
       
-      all_campaigns.find((campaign) => campaign.campaignId === campaignId).completed = true;
+      if (all_campaigns.find((campaign) => campaign.campaignId === campaignId).numberOfRunsExecuted === all_campaigns.find((campaign) => campaign.campaignId === campaignId).totalNumberOfRuns) {
+        all_campaigns.find((campaign) => campaign.campaignId === campaignId).completed = true;
+      }
 
       const success = userUniqueId ? await update_user({ unique_id: userUniqueId }, { campaigns: all_campaigns }) : await update_user({ email: userEmailSession }, { campaigns: all_campaigns });
 

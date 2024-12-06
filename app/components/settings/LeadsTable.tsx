@@ -12,6 +12,8 @@ interface Lead {
   source: string;
   group: string; // New group attribute
   sent_messages?: number; // Optional in case it's not always present
+  handled?: boolean;
+  extra_notes?: string;
 }
 
 interface Props {
@@ -189,12 +191,14 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         return;
       }
 
-      const leadsToSave = leadData.map(({ name, phone_number, source, group, sent_messages }) => ({
+      const leadsToSave = leadData.map(({ name, phone_number, source, group, sent_messages, handled, extra_notes }) => ({
         name,
         phone_number,
         source,
         group,
         sent_messages,
+        handled,
+        extra_notes,
       }));
 
       console.log(`leadsToSave: ${JSON.stringify(leadsToSave)}`);
@@ -240,6 +244,8 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                 <th className="border border-gray-300 p-2 text-left">Source</th>
                 <th className="border border-gray-300 p-2 text-left">Group</th>
                 <th className="border border-gray-300 p-2 text-left">Sent Messages</th>
+                <th className="border border-gray-300 p-2 text-left">Handled</th>
+                <th className="border border-gray-300 p-2 text-left">Extra Notes</th>
                 <th className="border border-gray-300 p-2 text-left">Actions</th>
               </tr>
             </thead>
@@ -318,6 +324,30 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                   </td>
                   <td className="border border-gray-300 p-2">{lead.sent_messages || 0}</td>
                   <td className="border border-gray-300 p-2">
+                    <select
+                      value={lead.handled ? "Yes" : "No"}
+                      onChange={(e) => {
+                        const updatedHandled = e.target.value === "Yes";
+                        setLeadData((prevData) =>
+                          prevData.map((item, i) =>
+                            i === index ? { ...item, handled: updatedHandled } : item
+                          )
+                        );
+                      }}
+                      className="border border-gray-300 rounded p-1"
+                    >
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    <textarea
+                      value={lead.extra_notes || ""}
+                      onChange={(e) => setLeadData((prevData) => prevData.map((item, i) => i === index ? { ...item, extra_notes: e.target.value } : item))}
+                      className="border border-gray-300 rounded p-1 w-full h-10 resize-none"
+                    />
+                  </td>
+                  <td className="border border-gray-300 p-2">
                     <button
                       onClick={() => handleDeleteLead(index)}
                       className="px-5 py-3 bg-red-500 hover:bg-red-700 text-white rounded-full mx-auto"
@@ -363,6 +393,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             onChange={(e) => setNewLead({ ...newLead, source: e.target.value })}
             className="border text-black border-gray-300 p-2 rounded"
           >
+            <option value="" disabled hidden>Choose Source</option>
             {sourcesList.map((source) => (
               <option key={source} value={source}>
                 {source}
@@ -374,6 +405,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             onChange={(e) => setNewLead({ ...newLead, group: e.target.value })}
             className="border text-black border-gray-300 p-2 rounded"
           >
+            <option value="" disabled hidden>Choose Group</option>
             {groups.map((group) => (
               <option key={group} value={group}>
                 {group}

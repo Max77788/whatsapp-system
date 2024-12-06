@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useChatStore } from '@/lib/store/chatStore'; // Example of Zustand global store
-import { ChatStore } from '@/lib/store/chatStore';
+import { useChatStore, useContactStore } from '@/lib/store/chatStore'; // Example of Zustand global store
+import { ChatStore, ContactStore } from '@/lib/store/chatStore';
 import { civicinfo } from 'googleapis/build/src/apis/civicinfo';
 import { toast } from 'react-toastify';
 
@@ -22,7 +22,7 @@ const Sidebar = () => {
 
   // Global state for storing chats
   const { setChats } = useChatStore() as ChatStore; // Type assertion
-
+  const { setContacts } = useContactStore() as ContactStore; // Type assertion
   // Fetch phone numbers on component mount
   useEffect(() => {
     const fetchPhoneNumbers = async () => {
@@ -71,8 +71,9 @@ const Sidebar = () => {
           throw new Error(`Error: ${response.statusText}`);
         }
 
-        const chats = await response.json();
+        const { chats, contacts } = await response.json();
         setChats(chats); // Save chats to global state
+        setContacts(contacts); // Save contacts to global state
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -165,9 +166,8 @@ const Sidebar = () => {
 
       if (selectedValues.includes("select-all")) {
         // Select all phone numbers except the current phone
-        const allValues = (useChatStore.getState() as { chats: { chatId: string; name: string }[] }).chats
-          .filter((chat: any) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone)
-          .map((chat: any) => "+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", "")).concat("--").concat(chat.name));
+        const allValues = (useContactStore.getState() as { contacts: { id: string; name: string }[] }).contacts
+          .map((contact: any) => "+".concat(contact.id).concat("--").concat(contact.name));
 
         setSelectedPhones(allValues); // Set state to select all
       } else {
@@ -186,13 +186,12 @@ const Sidebar = () => {
     <option value="select-all" style={{ fontWeight: 'bold' }}>
       Select All
     </option>
-    {(useChatStore.getState() as { chats: { chatId: string; name: string }[] })
-      .chats.filter((chat) => chat.chatId.replace("@c.us", "").replace("@g.us", "") !== selectedPhone && chat.chatId.replace("@c.us", "").replace("@g.us", "").length <= 14)
-      .map((chat: any) => (
-        <option key={chat.chatId} value={"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", "")).concat("--").concat(chat.name)}>
-          {"+".concat(chat.chatId.replace("@c.us", "").replace("@g.us", ""))}
+    {(useContactStore.getState() as { contacts: { id: string; name: string }[] }).contacts
+      .map((contact: any) => (
+        <option key={contact.id} value={"+".concat(contact.id.split('@')[0]).concat("--").concat(contact.name)}>
+          {"+".concat(contact.id).split('@')[0]}
         </option>
-      ))}
+            ))} 
   </select>
   <button
     onClick={handleExport}
