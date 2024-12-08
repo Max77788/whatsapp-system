@@ -165,9 +165,10 @@ const Sidebar = () => {
       console.log(selectedValues);
 
       if (selectedValues.includes("select-all")) {
-        // Select all phone numbers except the current phone
+        // Select all phone numbers
         const allValues = (useContactStore.getState() as { contacts: { id: string; name: string }[] }).contacts
-          .map((contact: any) => "+".concat(contact.id).concat("--").concat(contact.name));
+          .filter((contact: any) => contact.id.split('@')[0] !== selectedPhone.split('@')[0] && !contact.id.split('@')[1].includes("g") && contact.id.split('@')[0].length <= 12)
+          .map((contact: any) => "+".concat(contact.id.split('@')[0]).concat("--").concat(contact.name));
 
         setSelectedPhones(allValues); // Set state to select all
       } else {
@@ -187,6 +188,7 @@ const Sidebar = () => {
       Select All
     </option>
     {(useContactStore.getState() as { contacts: { id: string; name: string }[] }).contacts
+      .filter((contact: any) => contact.id.split('@')[0] !== selectedPhone.split('@')[0] && !contact.id.split('@')[1].includes("g") && contact.id.split('@')[0].length <= 13)
       .map((contact: any) => (
         <option key={contact.id} value={"+".concat(contact.id.split('@')[0]).concat("--").concat(contact.name)}>
           {"+".concat(contact.id).split('@')[0]}

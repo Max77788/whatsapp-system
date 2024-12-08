@@ -141,7 +141,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     setGroups((prevGroups) => [...prevGroups, newGroup]);
     setNewGroup("");
 
-    /*
+  
     // Create the updated groups array manually
     const updatedGroups = [...groups, newGroup];
 
@@ -151,7 +151,6 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ groups: updatedGroups }),
     });
-    */
   };
 
   const handleDeleteLead = async (index: number) => {

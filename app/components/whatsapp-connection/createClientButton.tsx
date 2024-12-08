@@ -9,10 +9,10 @@ export default function CreateClientButton() {
   const { data: session } = useSession();
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [numberOfPhonesConnected, setNumberOfPhonesConnected] = useState<number>(0);
-  const [previousPhonesConnected, setPreviousPhonesConnected] = useState<number>(-1); // Set to -1 initially
   const [isOpen, setIsOpen] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  const previousPhonesConnectedRef = useRef<number | null>(null); // Ref to store the previous number of connected phones
 
   const togglePopup = () => {
     setIsOpen(!isOpen);
@@ -28,30 +28,31 @@ export default function CreateClientButton() {
     try {
       const response = await fetch("/api/whatsapp-part/generate-qr");
       const data = await response.json();
-
+  
       if (response.ok) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-
+  
         const newNumberOfPhonesConnected = data.numberOfPhonesConnected;
+   
+        setNumberOfPhonesConnected(newNumberOfPhonesConnected);
 
-        // Trigger notifications and reload page
-        if (previousPhonesConnected !== -1 && newNumberOfPhonesConnected !== previousPhonesConnected) {
+        // Compare with the previous value stored in the ref
+        if (previousPhonesConnectedRef.current !== null && newNumberOfPhonesConnected !== previousPhonesConnectedRef.current) {
           const message =
-            newNumberOfPhonesConnected > previousPhonesConnected
+            newNumberOfPhonesConnected > previousPhonesConnectedRef.current
               ? "Your phone has been connected successfully!"
               : "A phone has been detached successfully!";
           toast.success(message);
-
+  
           // Reload the page after the toast notification
           setTimeout(() => {
             window.location.reload();
           }, 1500); // Delay for toast visibility
         }
-
-        // Update state
-        setPreviousPhonesConnected(newNumberOfPhonesConnected);
-        setNumberOfPhonesConnected(newNumberOfPhonesConnected);
-
+  
+        // Update the ref with the new value
+        previousPhonesConnectedRef.current = newNumberOfPhonesConnected;
+  
         // Smooth fade effect before updating QR code
         setFadeOut(true);
         setTimeout(() => {
@@ -60,11 +61,11 @@ export default function CreateClientButton() {
         }, 300);
       } else {
         console.error(`Error on generate QR code endpoint: ${data.error}`);
-        toast.error("Failed to generate QR code. Please try again.");
+        // toast.error("Failed to generate QR code. Please try again.");
       }
     } catch (error) {
       console.error("Failed to fetch QR code:", error);
-      // toast.error("An error occurred while fetching the QR code.");
+      //toast.error("An error occurred while fetching the QR code.");
     }
   };
 
