@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
-import { userAgent } from "next/server";
+import { saveAs } from 'file-saver'; // Import file-saver for exporting files
 
 interface Lead {
   name: string;
@@ -30,8 +30,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     setGroups(leadGroups);
 
     return leadGroups;
-};
-  
+  };
   
   const [leadData, setLeadData] = useState<Lead[]>(leads);
   const [loading, setLoading] = useState(leads.length === 0);
@@ -141,11 +140,9 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     setGroups((prevGroups) => [...prevGroups, newGroup]);
     setNewGroup("");
 
-  
     // Create the updated groups array manually
     const updatedGroups = [...groups, newGroup];
 
-    
     const response = await fetch("/api/leads/add-group", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -157,10 +154,10 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     setLeadData((prevData) => prevData.filter((_, i) => i !== index));
     
     const userEmail = session?.user?.email;
-      if (!userEmail) {
-        alert("User email not found.");
-        return;
-      }
+    if (!userEmail) {
+      alert("User email not found.");
+      return;
+    }
     
     const updatedLeads = leadData.map(({ name, phone_number, source, group, sent_messages }) => ({
       name,
@@ -224,6 +221,23 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     }
   };
 
+  const exportToCSV = () => {
+    const enrichedLeadData = leadData.map((lead) => ({
+      name: lead.name || "", // Ensure the name is not null
+      phone_number: lead.phone_number || "", // Ensure phone_number is not null
+      source: lead.source || "", // Default to an empty string if no source
+      group: lead.group || "other", // Default group is 'other'
+      sent_messages: lead.sent_messages || 0, // Default sent_messages to 0
+      handled: lead.handled ? "Yes" : "No", // Convert boolean to string for clarity
+      extra_notes: lead.extra_notes || "", // Default extra_notes to an empty string
+    }));
+  
+    const csv = Papa.unparse(enrichedLeadData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "leads.csv");
+  };
+  
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -234,10 +248,15 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         <p>No leads available. Add some data.</p>
       ) : (
         <>
-          { /*<h1 className="text-2xl font-semibold mb-4">Leads Data</h1> */}
+          <button
+            onClick={exportToCSV}
+            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto mb-4 mr-4"
+          >
+            Export as CSV
+          </button>
           <table className="min-w-full border border-gray-300 mb-4">
             <thead>
-              <tr className="bg-blue-700 text-white">
+              <tr className="bg-green-600 text-white">
                 <th className="border border-gray-300 p-2 text-left">Name</th>
                 <th className="border border-gray-300 p-2 text-left">Phone Number</th>
                 <th className="border border-gray-300 p-2 text-left">Source</th>
@@ -431,7 +450,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
   />
   <button
     onClick={handleBulkAdd}
-    className="mt-4 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full mx-auto"
+    className="mt-4 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
   >
     Add Bulk Phone Numbers
         </button>
@@ -483,7 +502,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
           />
           <button
             onClick={handleAddGroup}
-            className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full mx-auto"
+            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
             Add Group
           </button>

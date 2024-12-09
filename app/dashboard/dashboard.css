@@ -13,10 +13,10 @@
 
 .dashboard-greeting {
   font-size: 2.5rem;
-  margin-bottom: 20px;
-  margin-top: 15px;
+  margin-bottom: 10px;
   text-align: center;
   color: #000000;
+  font-weight: 600;
 }
 
 .dashboard-body {
@@ -29,13 +29,13 @@
 
 .dashboard-sections {
   display: flex;
-  gap: 20px;
+  gap: 10px;
 }
 
 .notifications-section,
 .subscription-section {
   flex: 1;
-  padding: 20px;
+  padding: 30px;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;

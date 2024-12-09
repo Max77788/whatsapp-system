@@ -229,7 +229,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                     </div>
                     <table className="w-full border border-gray-300 mb-2">
                         <thead>
-                            <tr className="bg-blue-700">
+                            <tr className="bg-green-600">
                                 <th className="border border-gray-300 p-2 text-white">If received message</th>
                                 <th className="border border-gray-300 p-2 text-white">Custom Match</th>
                                 <th className="border border-gray-300 p-2 text-white">Send this message</th>
@@ -338,17 +338,17 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                     </table>
                     <button
                         onClick={() => addRow(setIndex)}
-                        className="px-5 py-3 bg-blue-700 text-white rounded-full"
+                        className="px-5 py-3 bg-green-600 text-white rounded-full"
                     >
                         Add Row
                     </button>
                 </div>
             ))}
             {!isLoadingInstructionSets && <div className="mt-4">
-                <button onClick={addSet} className="px-5 py-3 bg-blue-700 text-white rounded-full">
+                <button onClick={addSet} className="px-5 py-3 bg-green-600 text-white rounded-full">
                     Add New Set
                 </button>
-                <button onClick={saveData} className="ml-4 px-5 py-3 bg-blue-700 text-white rounded-full">
+                <button onClick={saveData} className="ml-4 px-5 py-3 bg-green-600 text-white rounded-full">
                     Save
                     </button>
                     </div>

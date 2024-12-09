@@ -152,7 +152,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
   }
 
   return (
-    <div className="mt-8 p-4">
+    <div className="mt-8 p-4 flex flex-col gap-3 items-left justify-left">
       {phoneNumbers.length === 0 ? (
         <p>No numbers. Connect one.</p>
       ) : (
@@ -160,7 +160,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
           <h1 className="text-2xl font-semibold mb-4">Phone Number Tactics</h1>
           <table className="min-w-full border border-gray-300 mb-4">
             <thead>
-              <tr className="bg-blue-700 text-white">
+              <tr className="bg-green-600 text-white">
                 <th className="border border-gray-300 p-2 text-left">Phone Number</th>
                 <th className="border border-gray-300 p-2 text-left">Active</th>
                 <th className="border border-gray-300 p-2 text-left">Tactics</th>
@@ -172,7 +172,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
                 <tr key={phoneNumber.phoneNumber}>
                   <td className="border border-gray-300 p-2">{phoneNumber.phoneNumber}</td>
                   <td className="border border-gray-300 p-2">
-                    {phoneNumber.active ? "Active🟢" : "Inactive🔴"}
+                    {phoneNumber.active ? "🟢" : "🔴"}
                   </td>
                   <td className="border border-gray-300 p-2">
                     <div className="flex flex-wrap gap-2">
@@ -205,7 +205,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
           </table>
           <button
             onClick={() => saveData()}
-            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
+            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto block"
           >
             Save Tactics
           </button>

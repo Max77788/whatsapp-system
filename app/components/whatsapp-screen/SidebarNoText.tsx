@@ -269,6 +269,28 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
               </svg>
             </a>
           </li>
+          <hr></hr>
+          <li>
+            <a
+              href={withKbBaseUrlLink ? "http://docs.mom-ai-restaurant.lat" : "#"}
+              className={`${linkStyle} ${
+                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+              }`}
+              onClick={(e) => {
+                if (!withKbBaseUrlLink) e.preventDefault();
+              }}
+              target="_blank"
+            >
+              <svg
+                className="w-5 h-5 mr-3"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M21 4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h1V4h-1zm-2 0H7c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12V4zm-2 2v12H7V6h10zM3 4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h1V4H3z" />
+              </svg>
+            </a>
+          </li>
         </ul>
       </nav>
       {!withKbBaseUrlLink ? (<p className="text-white text-center mt-5">Please, reload the page<br></br>in 1 minute</p>

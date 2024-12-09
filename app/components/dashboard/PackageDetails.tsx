@@ -1,5 +1,6 @@
 // components/PackageDetails.js
 "use client";
+import { commonStyles } from "./SentMessagesTracker";
 
 const styles: {
   container: React.CSSProperties;
@@ -20,7 +21,7 @@ const styles: {
   header: {
     color: "#333",
     marginBottom: "15px",
-    fontSize: "1.5rem",
+    fontSize: "2.2rem",
     textAlign: "center",
   },
   details: {
@@ -41,7 +42,7 @@ const styles: {
 
 export default function PackageDetails() {
   return (
-    <div style={styles.container}>
+    <div style={{ ...commonStyles }}>
       <h2 style={styles.header}>📦 Package Details</h2>
       <div style={styles.details}>
         <p style={styles.detailItem}>

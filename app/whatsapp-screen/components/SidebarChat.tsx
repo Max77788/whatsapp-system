@@ -6,6 +6,8 @@ import { useChatStore, useContactStore } from '@/lib/store/chatStore'; // Exampl
 import { ChatStore, ContactStore } from '@/lib/store/chatStore';
 import { civicinfo } from 'googleapis/build/src/apis/civicinfo';
 import { toast } from 'react-toastify';
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
 
 const Sidebar = () => {
   const router = useRouter();
@@ -112,6 +114,27 @@ const Sidebar = () => {
       toast.error('Failed to export phone numbers.');
     }
   };
+
+  const handleExportCSV = async () => {
+    try {
+      if (selectedPhones.length === 0) {
+        alert('No phone numbers selected for export.');
+        return;
+      }
+
+      const csvContent = selectedPhones.map((element) => ({
+        phone_number: element.split("--")[0].toString(),
+        name: element.split("--")[1]
+      }));
+
+      const csv = Papa.unparse(csvContent);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, "leads.csv");
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export phone numbers.');
+    }
+  };
   
 
   return (
@@ -195,6 +218,7 @@ const Sidebar = () => {
         </option>
             ))} 
   </select>
+  <div className="flex flex-row gap-2">
   <button
     onClick={handleExport}
     disabled={selectedPhones.length === 0}
@@ -202,8 +226,18 @@ const Sidebar = () => {
       selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black rounded-full' : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
     }`}
   >
-    Export
+    Export to CRM
   </button>
+  <button
+    onClick={handleExportCSV}
+    disabled={selectedPhones.length === 0}
+    className={`mt-2 px-4 py-2 rounded border-none ${
+      selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black rounded-full' : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
+    }`}
+  >
+    Export to CSV
+  </button>
+  </div>
 </div>
 
 

@@ -354,7 +354,7 @@ const handleScheduleMessage = async () => {
               <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm">
                 Media Preview
               </div>
-              <div className="mt-4 bg-green-700 text-white rounded-lg p-2 w-full break-words">
+              <div className="mt-4 bg-green-600 text-white rounded-lg p-2 w-full break-words">
                 {message || "Type a caption for your media..."}
               </div>
             </div>
@@ -363,7 +363,7 @@ const handleScheduleMessage = async () => {
               <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs p-3">
                 U
               </div>
-              <div className="bg-green-700 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
+              <div className="bg-green-600 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
                 {message || "Type a message to see it here..."}
               </div>
             </div>
