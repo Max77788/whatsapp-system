@@ -18,7 +18,7 @@ export async function POST(req) {
 
     console.log(`unique_id: ${unique_id}`);
 
-    const existingLeadsPhones = user?.leads?.map((lead) => lead.phone_number);
+    const existingLeadsPhones = user?.leads?.map((lead) => lead.phone_number) || [];
 
     const leadName = name || your_name || null;
 
