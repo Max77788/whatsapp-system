@@ -157,7 +157,7 @@ const Sidebar = () => {
       )}
 
       {/* Phone number dropdown */}
-      <div style={{ marginBottom: '1rem' }}>
+      {phoneNumbers.length > 0 ? <div style={{ marginBottom: '1rem' }}>
         <label htmlFor="phoneSelect" style={{ marginRight: '10px' }}>
           Select Phone Number:
         </label>
@@ -173,7 +173,7 @@ const Sidebar = () => {
             </option>
           ))}
         </select>
-      </div>
+      </div> : <div>No phone numbers found. Please connect your phone number in the <a href="/accounts">Accounts page.</a></div>}
 
       {/* Selected phone numbers */}
       <div style={{ marginBottom: '1rem' }}>
