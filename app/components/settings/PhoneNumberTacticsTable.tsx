@@ -42,9 +42,13 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
         // Initialize selectedTactics with initial props or default "Do Nothing"
         const initialTacticsMap: Record<string, string[]> = phoneNumbersData.reduce(
           (acc, phone) => {
-            const assignedTactics =
-              initialTactics.find((tactic) => tactic.phoneNumber === phone.phoneNumber)?.tactics || ["Do Nothing", "Enable AI Auto Response"];
-            acc[phone.phoneNumber] = assignedTactics;
+            // Check if phone number already has assigned tactics
+            const assignedTactics = initialTactics.find(
+              (tactic) => tactic.phoneNumber === phone.phoneNumber
+            )?.tactics;
+  
+            // If tactics exist, use them; otherwise, default to ["Do Nothing"]
+            acc[phone.phoneNumber] = assignedTactics || ["Do Nothing"];
             return acc;
           },
           {} as Record<string, string[]>
