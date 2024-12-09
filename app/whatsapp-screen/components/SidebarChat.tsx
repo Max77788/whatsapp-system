@@ -173,7 +173,9 @@ const Sidebar = () => {
             </option>
           ))}
         </select>
-      </div> : <div>No phone numbers found. Please connect your phone number in the <a href="/accounts">Accounts page.</a></div>}
+      </div> : <div>No phone numbers found.<br></br>
+      Please connect your phone number<br></br>
+      in the <a href="/accounts">Accounts page.</a></div>}
 
       {/* Selected phone numbers */}
       <div style={{ marginBottom: '1rem' }}>
