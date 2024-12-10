@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { Dialog } from "@headlessui/react";
 import { toast } from "react-toastify";
 
-export default function CreateClientButton() {
+export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConnected: number}) {
   const { data: session } = useSession();
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [numberOfPhonesConnected, setNumberOfPhonesConnected] = useState<number>(0);
@@ -23,6 +23,8 @@ export default function CreateClientButton() {
       intervalIdRef.current = null;
     }
   };
+
+  
 
   const fetchQRCode = async () => {
     try {
@@ -107,7 +109,7 @@ export default function CreateClientButton() {
             <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 text-center">
               Scan this QR code to connect your phone
               <br />
-              You have {numberOfPhonesConnected} out of 5 phones connected
+              You have {numberOfPhonesConnected} out of {maxPhonesConnected} phones connected
             </Dialog.Title>
 
             <div className="mt-4 flex justify-center">

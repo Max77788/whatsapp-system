@@ -53,13 +53,17 @@ export const register = async (values: any) => {
 
         const user = new User({
           unique_id: unique_id,
+          id: nanoid(21),
           name: name,
           email: email,
           password: hashedPassword,
           email_verified: false,
           email_verification_token: verificationToken,
           messageLogicList: messageLogicListDefault,
-          apiKey: nanoid(32)
+          apiKey: nanoid(32),
+          planId: "0",
+          startedAt: new Date(),
+          expiresAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7)
         });
         console.log(`user: ${JSON.stringify(user)}`);
         

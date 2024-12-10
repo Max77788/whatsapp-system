@@ -100,6 +100,30 @@ export const getAllUsersFromDatabase = async () => {
     return users;
 };
 
+export const getAllPlansFromDatabase = async () => {
+    const db = await getDb();
+    const plans = await db.collection("plans").find().sort({price: 1}).toArray();
+    return plans;
+};
+
+export const getNumberOfActivePhones = async (user_email: string) => {
+    const db = await getDb();
+    const user = await db.collection("users").findOne({ email: user_email });
+    let nonNullPhoneNumberCount = 0;
+    for (let i = 1; i <= 5; i++) {
+        let attr = `qrCode${i}`;
+        if (user && user[attr] && user[attr].phoneNumber !== null) {
+                nonNullPhoneNumberCount++;
+        }
+    }
+    return nonNullPhoneNumberCount;
+};
+
+export const findPlanById = async (id: string) => {
+    const db = await getDb();
+    const plan = await db.collection("plans").findOne({ id: id });
+    return plan;
+};
 
 export const updateUserPassword = async (token: string, newPassword: string) => {
     const db = await getDb();

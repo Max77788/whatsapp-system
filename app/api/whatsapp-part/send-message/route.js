@@ -102,6 +102,21 @@ export async function POST(req) {
 
     console.log(`\n\n\n\nFinal payload: ${JSON.stringify(payload)}\n\n\n\n`);
 
+    const plan = await findPlanById(user?.planId);
+
+    const subscriptionStartDate = user.startedAt;
+
+    const totalMessagesSentSoFar = user.messages_date.filter(message => message.date >= subscriptionStartDate).reduce((acc, message) => acc + message.count, 0);
+
+    const messagesLimit = plan?.messagesLimit;
+    
+    if (messagesLimit) {
+    if (totalMessagesSentSoFar + leads.length > plan?.messagesLimit) {
+      return NextResponse.json({ message: 'You have reached the messages limit for your plan' }, { status: 400 });
+    }
+  }
+
+
     const response = await axios.post(`${kbBaseAppUrl}/send-message`, payload, {
       headers: {
         'Content-Type': 'application/json',
@@ -109,6 +124,9 @@ export async function POST(req) {
     });
 
     let sentMessages = user?.sentMessages || 0;
+
+    let messagesDate =  new Date();
+    let countMessages = 0;
 
     if (response.status === 200) {
       const userLeads = user?.leads;
@@ -121,6 +139,7 @@ export async function POST(req) {
           isUpdated = true;
         }
         sentMessages += 1;
+        countMessages += 1;
       });
 
       // if (payload.mediaURL) {
@@ -134,7 +153,9 @@ export async function POST(req) {
         );
       }
 
-      const success = session ? await update_user({ email: session?.user?.email }, { leads: userLeads, sentMessages }) : await update_user({ apiKey: apiKey }, { leads: userLeads, sentMessages });
+
+
+      const success = session ? await update_user({ email: session?.user?.email }, { leads: userLeads, sentMessages, messages_date: { date: messagesDate, count: countMessages } }) : await update_user({ apiKey: apiKey }, { leads: userLeads, sentMessages, messages_date: { date: messagesDate, count: countMessages } });
 
       if (success) {
         return NextResponse.json({ message: 'Message sent successfully' }, { status: 200 });

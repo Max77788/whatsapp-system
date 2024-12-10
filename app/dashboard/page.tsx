@@ -46,7 +46,7 @@ export default async function DashboardPage() {
 
   console.log(`kbAppBaseUrl: ${user?.kbAppBaseUrl}`);
 
-  let withKbBaseUrlLink;
+  let withKbBaseUrlLink, isAdmin;
   if (!user?.kbAppBaseUrl) {
     const kbAppBaseUrl = await retrieveK8sDeploymentUrl(user.unique_id);
     console.log(`kbAppBaseUrl: ${kbAppBaseUrl} from ${user.unique_id}`);
@@ -58,6 +58,8 @@ export default async function DashboardPage() {
       withKbBaseUrlLink = false;
     }
   }
+
+  isAdmin = user?.isAdmin || false;
 
   const sentMessages = user?.sentMessages || 0;
   
@@ -71,13 +73,13 @@ export default async function DashboardPage() {
         <div className="main-content">
           <Header userName={userName} />
           <div className="dashboard-body">
-
         {/* Main content section */}
         <div className="main-content">
 
           <div className="dashboard-body">
             {/* Greeting Section */}
             <h1 className="dashboard-greeting">Hello, {session?.user?.name}!</h1>
+            {isAdmin ? <h1 className="text-2xl font-bold text-black underline"><a href="/admin/packages">Access to admin panel</a></h1> : null}
 
             {/* Content sections */}
             <div className="dashboard-sections">

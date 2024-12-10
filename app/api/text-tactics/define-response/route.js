@@ -120,5 +120,9 @@ export async function POST(req) {
 
     console.log(`reply: ${reply}, delay: ${delay}, respond_boolean: ${respond_boolean}`);
 
+    if (respond_boolean) {
+        await update_user({email: user.email}, {sentMessages: user.sentMessages + 1});
+    }
+
   return NextResponse.json({reply, delay, respond_boolean: respond_boolean});
 }

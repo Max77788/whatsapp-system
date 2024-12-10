@@ -13,7 +13,9 @@ export default function Home() {
           >
             Get Started
           </a>
+          
         </div>
+        <div className="flex justify-center w-full"><a href="/plans" className="inline-flex items-center justify-center px-1 py-1 text-xl font-medium text-white underline rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 gap-2 hover:text-white">View Plans</a></div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <p className="text-sm text-gray-500">© {new Date().getFullYear()} AI-Powered WhatsApp Lead Management System. All rights reserved.</p>

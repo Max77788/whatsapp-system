@@ -8,10 +8,6 @@ import { uploadFile } from '@/lib/google_storage/google_storage';
 export async function POST(req) {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
-
   // Parse the incoming form data
   const formData = await req.formData();
 
@@ -65,6 +61,10 @@ export async function POST(req) {
     numberOfRuns = 1;
     scheduledTimes.push(scheduleTime);
   }
+
+  
+
+  
   
   
   
@@ -87,6 +87,22 @@ export async function POST(req) {
   
   const userEmail = session?.user?.email;
   const apiKey = req.headers.get('x-api-key');
+
+  const user = session ? await find_user({email: userEmail}) : await find_user({apiKey: apiKey});
+
+  const plan = await findPlanById(user?.planId);
+
+  const subscriptionStartDate = user.startedAt;
+
+  const totalMessagesSentSoFar = user.messages_date.filter(message => message.date >= subscriptionStartDate).reduce((acc, message) => acc + message.count, 0);
+
+  const messagesLimit = plan?.messagesLimit;
+  
+  if (messagesLimit) {
+  if (totalMessagesSentSoFar + leads.length > plan?.messagesLimit) {
+    return NextResponse.json({ message: 'You have reached the messages limit for your plan' }, { status: 400 });
+  }
+}
   
   const success = userEmail ? await update_user({email: userEmail}, {campaigns: campaignData}, "$push") : await update_user({apiKey: apiKey}, {campaigns: campaignData}, "$push");
 

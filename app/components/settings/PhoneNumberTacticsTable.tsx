@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 interface PhoneNumber {
   phoneNumber: string;
@@ -23,22 +24,33 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
   const [selectedTactics, setSelectedTactics] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
 
+  let aiIncluded = false;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const phoneNumbersResponse = await fetch("/api/phone-numbers");
         const tacticsResponse = await fetch("/api/text-tactics");
-
-        if (!phoneNumbersResponse.ok || !tacticsResponse.ok) {
+        const planResponse = await fetch("/api/plan/find-plan");
+  
+        if (!phoneNumbersResponse.ok || !tacticsResponse.ok || !planResponse.ok) {
           throw new Error("Failed to fetch data");
         }
-
+  
         const phoneNumbersData: PhoneNumber[] = await phoneNumbersResponse.json();
         const { text_tactics_names_list } = await tacticsResponse.json();
-
+        const plan = await planResponse.json();
+  
+        const aiIncluded = plan?.aiIncluded || false;
+  
+        // Conditionally include or exclude "Enable AI Auto Response"
+        const availableTactics = aiIncluded
+          ? ["Do Nothing", "Enable AI Auto Response", ...text_tactics_names_list]
+          : ["Do Nothing", ...text_tactics_names_list];
+  
         setPhoneNumbers(phoneNumbersData);
-        setTactics(["Do Nothing", "Enable AI Auto Response", ...text_tactics_names_list]);
-
+        setTactics(availableTactics);
+  
         // Initialize selectedTactics with initial props or default "Do Nothing"
         const initialTacticsMap: Record<string, string[]> = phoneNumbersData.reduce(
           (acc, phone) => {
@@ -60,9 +72,10 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [initialTactics]);
+  
 
   const handleTacticChange = (phoneNumber: string, tactic: string) => {
     setSelectedTactics((prev) => {

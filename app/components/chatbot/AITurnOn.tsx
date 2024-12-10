@@ -5,9 +5,11 @@ import { useState, useEffect } from "react";
 export default function AITurnOn({
   initialInstructions,
   initialIsOn,
+  isInPlan
 }: {
   initialInstructions: string;
   initialIsOn: boolean;
+  isInPlan: boolean;
 }) {
   const [isOn, setIsOn] = useState(initialIsOn);
   const [instructions, setInstructions] = useState(initialInstructions);
@@ -40,6 +42,14 @@ export default function AITurnOn({
   useEffect(() => {
     sendConfig(instructions, isOn);
   }, [instructions]);
+
+  if (!isInPlan) {
+    return (
+      <div>
+        <h1>You are not in a plan that includes this feature</h1>
+      </div>
+    )
+  }
 
   return (
     <div className="p-4">

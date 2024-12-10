@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from 'next-auth/react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/serverStuff';
-import { update_user } from '@/lib/utils';
+import { update_user, find_user, findPlanById } from '@/lib/utils';
 import { uploadFile } from '@/lib/google_storage/google_storage';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -91,6 +91,22 @@ export async function POST(req) {
   const apiKey = req.headers.get('x-api-key');
 
   const userEmail = session?.user?.email;  
+
+  const user = session ? await find_user({email: userEmail}) : await find_user({apiKey: apiKey});
+
+  const plan = await findPlanById(user?.planId);
+
+  const subscriptionStartDate = user.startedAt;
+
+  const totalMessagesSentSoFar = user.messages_date.filter(message => message.date >= subscriptionStartDate).reduce((acc, message) => acc + message.count, 0);
+
+  const messagesLimit = plan?.messagesLimit;
+  
+  if (messagesLimit) {
+  if (totalMessagesSentSoFar + leads.length > plan?.messagesLimit) {
+    return NextResponse.json({ message: 'You have reached the messages limit for your plan' }, { status: 400 });
+  }
+}
 
   const success = session ? await update_user({email: userEmail}, {campaigns: campaignData}, "$push") : await update_user({apiKey: apiKey}, {campaigns: campaignData}, "$push");
 

@@ -157,7 +157,10 @@ export const authOptions: NextAuthOptions = {
                         image: user.image,
                         unique_id,
                         messageLogicList: messageLogicListDefault,
-                        apiKey: nanoid(32)
+                        apiKey: nanoid(32),
+                        planId: "0",
+                        startedAt: new Date(),
+                        expiresAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7)
                     };
     
                     // Create a new user document
