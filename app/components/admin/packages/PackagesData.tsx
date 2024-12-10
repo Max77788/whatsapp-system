@@ -69,6 +69,7 @@ export default function PlansTable() {
   // Render the table
   return (
     <div className="p-4">
+      <h1 className="text-3xl font-bold mb-4 text-center">List of Plans</h1>
       <table className="min-w-full border border-gray-300 text-left">
         <thead className="bg-green-600 text-white">
           <tr>
@@ -148,13 +149,13 @@ export default function PlansTable() {
                   <td className="py-2 px-4">
                     <button
                       onClick={() => handleSave(plan.id)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded mr-2 mb-2"
+                      className="bg-blue-500 text-white px-3 py-1 rounded-full mr-2 mb-2"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setIsEditing(null)}
-                      className="bg-gray-500 text-white px-3 py-1 rounded"
+                      className="bg-gray-500 text-white px-3 py-1 rounded-full"
                     >
                       Cancel
                     </button>
@@ -170,7 +171,7 @@ export default function PlansTable() {
                   <td className="py-2 px-4">
                     <button
                       onClick={() => setIsEditing(plan.id)}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded"
+                      className="bg-green-600 text-white px-3 py-1 rounded-full"
                     >
                       Edit
                     </button>
