@@ -1,8 +1,8 @@
 "use client";
 
 export const commonStyles: React.CSSProperties = {
-  width: "500px", // Set a consistent width
-  height: "330px", // Set a consistent height
+  width: "650px", // Set a consistent width
+  height: "430px", // Set a consistent height
   margin: "20px auto",
   padding: "20px",
   border: "1px solid #ddd",

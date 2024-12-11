@@ -40,19 +40,30 @@ const styles: {
   },
 };
 
-export default function PackageDetails() {
+export default async function PackageDetails() {
+
+  const planData = await fetch("/api/plan/find-plan");
+
+  const plan = await planData.json();
+  
   return (
     <div style={{ ...commonStyles }}>
       <h2 style={styles.header}>📦 Package Details</h2>
       <div style={styles.details}>
         <p style={styles.detailItem}>
-          <strong>Package:</strong> 7-days Free Trial
+          <strong>Package:</strong> {plan.name}
         </p>
         <p style={styles.detailItem}>
-          <strong>Features:</strong> 10 messages/day, 35 scheduled messages/week, no AI included!
+          <strong>AI Included:</strong> {plan?.aiIncluded ? "Yes" : "No"}
         </p>
         <p style={styles.detailItem}>
-          <strong>Price:</strong> FREE
+          <strong>Maximum WhatsApp Accounts:</strong> {plan?.maxWaAccsNumber ? plan?.maxWaAccsNumber : "Unlimited"}
+        </p>
+        <p style={styles.detailItem}>
+          <strong>Messages per Month:</strong> {plan?.messageLimit ? plan?.messageLimit : "Unlimited"}
+        </p>
+        <p style={styles.detailItem}>
+          <strong>Price:</strong> {plan.price} NIS
         </p>
       </div>
     </div>

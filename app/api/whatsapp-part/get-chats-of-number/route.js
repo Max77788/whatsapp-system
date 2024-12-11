@@ -56,10 +56,6 @@ export async function POST(req) {
     // console.log(`All contacts: ${JSON.stringify(all_contacts)}`)
 
     all_contacts.push(all_contacts_object)
-
-    console.log(`Type of all_contacts: ${typeof all_contacts}, is array: ${Array.isArray(all_contacts)}`)
-    console.log(`Type of contacts: ${typeof contacts} is array: ${Array.isArray(contacts)}`)
-    console.log(`Type of chats: ${typeof chats} is array: ${Array.isArray(chats)}`)
   return NextResponse.json({ chats, contacts, all_contacts });
 }
 

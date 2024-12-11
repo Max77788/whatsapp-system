@@ -40,19 +40,26 @@ const styles: {
   },
 };
 
-export default function SubscriptionDetails() {
+export default async function SubscriptionDetails() {
+
+  const planData = await fetch("/api/plan/find-plan");
+  const plan = await planData.json();
+
+  let renewalDate = new Date();
+  renewalDate.setMonth(renewalDate.getMonth() + 1);
+  
   return (
     <div style={{ ...commonStyles }}>
       <h2 style={styles.header}>📜 Subscription Details</h2>
       <div style={styles.details}>
         <p style={styles.detailItem}>
-          <strong>Plan:</strong> Free
+          <strong>Plan:</strong> {plan.name}
         </p>
         <p style={styles.detailItem}>
           <strong>Status:</strong> Active
         </p>
         <p style={styles.detailItem}>
-          <strong>Renewal Date:</strong> 2024-12-01
+          <strong>Renewal Date:</strong> {renewalDate.toLocaleDateString()}
         </p>
       </div>
     </div>

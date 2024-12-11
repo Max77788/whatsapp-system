@@ -46,7 +46,7 @@ export default function AITurnOn({
   if (!isInPlan) {
     return (
       <div>
-        <h1>You are not in a plan that includes this feature</h1>
+        <h1>You are not in a plan that includes AI feature</h1>
       </div>
     )
   }

@@ -92,9 +92,7 @@ const Sidebar = () => {
         const { chats, contacts, all_contacts } = await response.json();
         
 
-        console.log(`Contacts: ${contacts}`)
-
-        console.log(`All contacts on fetch: ${JSON.stringify(all_contacts)}`)
+        
 
         setChats(chats); // Save chats to global state
         setContacts(contacts); // Save contacts to global state
@@ -120,8 +118,6 @@ const Sidebar = () => {
         alert('No phone numbers selected for export.');
         return;
       }
-
-      console.log(`Selected phones: ${selectedPhones}`);
   
       const response = await fetch('/api/leads/register', {
         method: 'POST',
@@ -218,8 +214,6 @@ const Sidebar = () => {
   value={selectedPhones} // Ensure state reflects selected items
   onChange={(e) => {
     const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
-
-    console.log(selectedValues);
 
     if (selectedValues.includes("select-all")) {
       // Select all phone numbers
