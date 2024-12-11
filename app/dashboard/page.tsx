@@ -25,9 +25,7 @@ interface DashboardPageProps {
 export default async function DashboardPage() {
 
   const cookieStore = await cookies();
-  console.log(cookieStore);
   const loggedOut = cookieStore.get("loggedOut")?.value === "true";
-  console.log(`loggedOut: ${loggedOut}`);
 
   await loginIsRequiredServer(loggedOut);
 
@@ -46,7 +44,10 @@ export default async function DashboardPage() {
 
   console.log(`kbAppBaseUrl: ${user?.kbAppBaseUrl}`);
 
-  let withKbBaseUrlLink, isAdmin;
+  let withKbBaseUrlLink = true, isAdmin = false;
+  
+  if (process.env.NODE_ENV !== "development") {
+  
   if (!user?.kbAppBaseUrl) {
     const kbAppBaseUrl = await retrieveK8sDeploymentUrl(user.unique_id);
     console.log(`kbAppBaseUrl: ${kbAppBaseUrl} from ${user.unique_id}`);
@@ -58,17 +59,29 @@ export default async function DashboardPage() {
       withKbBaseUrlLink = false;
     }
   }
+}
 
   isAdmin = user?.isAdmin || false;
+
+  let isNotPaused = true;
+  if (user?.isPaused) {
+    isNotPaused = !user?.isPaused;
+  }
+
+  console.log(`isNotPaused: ${isNotPaused}`);
 
   const sentMessages = user?.sentMessages || 0;
   
   const userName = 'Dashboard';
 
+  const boolToPass = withKbBaseUrlLink && isNotPaused;
+
+  console.log(`boolToPass: ${boolToPass}`);
+
   // Render the dashboard content if the user is authenticated
   return (
     <div className="dashboard-container">
-        <Sidebar withKbBaseUrlLink={withKbBaseUrlLink} />
+        <Sidebar withKbBaseUrlLink={withKbBaseUrlLink} isPaused={!isNotPaused} />
         
         <div className="main-content">
           <Header userName={userName} />
@@ -77,8 +90,8 @@ export default async function DashboardPage() {
         <div className="main-content">
 
           <div className="dashboard-body">
-            {/* Greeting Section */}
-            <h1 className="dashboard-greeting">Hello, {session?.user?.name}!</h1>
+
+            {isNotPaused ? <h1 className="dashboard-greeting">Hello, {session?.user?.name}!</h1> : <h1 className="dashboard-greeting">Hello, {session?.user?.name}! Your account is paused.</h1>}
             {isAdmin ? <h1 className="text-2xl font-bold text-black underline"><a href="/admin/packages">Access to admin panel</a></h1> : null}
 
             {/* Content sections */}

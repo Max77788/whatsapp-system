@@ -2,7 +2,7 @@
 
 import React from "react";
 
-const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) => {
+const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrlLink?: boolean, isPaused?: boolean }) => {
   const linkStyle =
     "flex items-center p-3 rounded-lg transition-colors";
   const activeLinkStyle =
@@ -50,7 +50,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           <li>
             <a
               href="/dashboard"
-              className={`${linkStyle} ${activeLinkStyle}`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle}`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -72,7 +72,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "/profile" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -98,7 +98,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "/accounts" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -124,7 +124,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "/leads" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -156,7 +156,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "/start-campaign" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -182,7 +182,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "/chatbot-setup" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -208,7 +208,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "/send-message" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -234,7 +234,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "/webhooks-setup" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -262,7 +262,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "/whatsapp-screen" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -283,7 +283,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             <a
               href={withKbBaseUrlLink ? "http://docs.mom-ai-restaurant.lat" : "#"}
               className={`${linkStyle} ${
-                withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
@@ -303,7 +303,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
         </ul>
       </nav>
-      {!withKbBaseUrlLink ? (<p className="text-white text-center mt-5">Please, reload the page<br></br>in 1 minute</p>
+      {isPaused ? (<p className="text-white text-center mt-5">Your acc has been paused</p>) : !withKbBaseUrlLink ? (<p className="text-white text-center mt-5">Please, reload the page<br></br>in 1 minute</p>
       ) : (
         <></>
       )}

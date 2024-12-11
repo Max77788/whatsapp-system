@@ -32,6 +32,21 @@ export const sendVerificationEmail = async (recipientEmail: string, verification
     console.log(`Verification email sent to ${recipientEmail} with token ${verificationToken}`);
 }
 
+export const sendNotificationEmailToAviv = async (newUserEmail: any) => {
+
+    const EMAIL_HTML = `
+    <p>Hi, Aviv! How are ya?</p>
+    <p>By the way, we have a new user: ${newUserEmail}</p>
+    `
+
+    await resend.emails.send({
+        from: 'contact@mom-ai-restaurant.lat',
+        to: "avivmor@gmail.com",
+        subject: 'New user registered',
+        html: EMAIL_HTML,
+    });
+}
+
 export const register = async (values: any) => {
     const { email, password, name } = values;
 
@@ -70,6 +85,8 @@ export const register = async (values: any) => {
         await db.collection("users").insertOne(user);
         
         await sendVerificationEmail(email, verificationToken);
+
+        await sendNotificationEmailToAviv(email);
         
         return {
             success: 'User created successfully. Please check your email for verification.',

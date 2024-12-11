@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth/serverStuff";
 import { find_user } from '@/lib/utils';
 import UserPackagesData from "@/app/components/admin/packages/UserPackagesData";
 import PackagesData from "@/app/components/admin/packages/PackagesData";
+import { fdatasync } from "fs";
 
 export default async function SettingsPage(): Promise<JSX.Element> {
     await loginIsRequiredServer();
@@ -13,13 +14,10 @@ export default async function SettingsPage(): Promise<JSX.Element> {
     
     const session = await getServerSession(authOptions);
     const userEmail = session?.user?.email;
-    
-    const isAdmin = session?.user?.email === "adminlocal@demo.com" || session?.user?.email === "testacc@admin.com";
 
     const user = await find_user({ email: userEmail });
     
-
-
+    const isAdmin = user?.isAdmin || false;
 
     return (
         isAdmin ? <div className="mt-5 flex flex-col items-center gap-5">

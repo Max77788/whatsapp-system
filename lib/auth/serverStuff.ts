@@ -14,7 +14,7 @@ import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
 import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
 import { nanoid } from 'nanoid'; // Generate unique keys
-import { sendVerificationEmail } from '@/actions/register';
+import { sendVerificationEmail, sendNotificationEmailToAviv } from '@/actions/register';
 
 interface Credentials {
   name?: string;
@@ -175,12 +175,13 @@ export const authOptions: NextAuthOptions = {
                         accessToken: account.access_token,
                         refreshToken: account.refresh_token,
                     });
-                  
     
-                    // Trigger additional workflows for new users (e.g., Kubernetes deployment)
-                    console.log(`Triggering Kubernetes deployment for user: ${unique_id}`);
                     
-                    await createK8sDeployment(unique_id);
+                    // await createK8sDeployment(unique_id);
+
+                    await sendNotificationEmailToAviv(user.email);
+
+                    return true;
                 }
             }
     

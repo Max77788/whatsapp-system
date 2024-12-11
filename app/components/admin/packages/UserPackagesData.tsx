@@ -33,8 +33,6 @@ export default function UsersTable() {
         if (!plansRes.ok) throw new Error('Failed to fetch plans');
         const plansData = await plansRes.json();
 
-        console.log(`Plans: ${plansData}`);
-
         setUsers(usersData);
         setPlans(plansData);
 
@@ -86,6 +84,53 @@ export default function UsersTable() {
     }
   };
 
+  // Delete updated user plan
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this user?")) {
+    try {
+      const res = await fetch(`/api/admin/users/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: id }), // Use optional chaining
+      });
+      if (!res.ok) throw new Error('Failed to delete user plan');
+
+      // Update local state
+      setUsers((prev: any) =>
+        prev.map((user: any) => (user.id === id ? editedUsers[id] : user))
+      );
+        setIsEditing(null);
+
+        location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const handlePause = async (id: string) => {
+    if (confirm("Are you sure you want to change the pause status of this user?")) {
+    try {
+      const res = await fetch(`/api/admin/users/pause`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: id }), // Use optional chaining
+      });
+      if (!res.ok) throw new Error('Failed to delete user plan');
+
+      // Update local state
+      setUsers((prev: any) =>
+        prev.map((user: any) => (user.id === id ? editedUsers[id] : user))
+      );
+        setIsEditing(null);
+
+        location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-3xl font-bold mb-4 text-center">List of Users</h1>
@@ -95,6 +140,7 @@ export default function UsersTable() {
             <th className="py-2 px-4">User Name</th>
             <th className="py-2 px-4">Email</th>
             <th className="py-2 px-4">Plan</th>
+            <th className="py-2 px-4">Active/Paused</th>
             <th className="py-2 px-4">Actions</th>
           </tr>
         </thead>
@@ -119,6 +165,9 @@ export default function UsersTable() {
                     </select>
                   </td>
                   <td className="py-2 px-4">
+                    {user?.isPaused ? "Paused" : "Active"}
+                  </td>
+                  <td className="py-2 px-4">
                     <button
                       onClick={() => handleSave(user.id)}
                       className="bg-blue-500 text-white px-3 py-1 rounded-full mr-2 mb-2"
@@ -127,9 +176,21 @@ export default function UsersTable() {
                     </button>
                     <button
                       onClick={() => setIsEditing(null)}
-                      className="bg-gray-500 text-white px-3 py-1 rounded-full"
+                      className="bg-gray-500 text-white px-3 py-1 rounded-full mr-2"
                     >
                       Cancel
+                    </button>
+                    <button
+                      onClick={() => handlePause(user.id)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded-full mr-2 mb-2"
+                    >
+                      {user?.isPaused ? "Unpause" : "Pause"}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(user.id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded-full mr-2 mb-2"
+                    >
+                      Delete
                     </button>
                   </td>
                 </>
@@ -139,6 +200,9 @@ export default function UsersTable() {
                   <td className="py-2 px-4">{user.email}</td>
                   <td className="py-2 px-4">
                     {plans.find((plan: Plan) => plan.id === user.planId)?.name || 'No Plan'}
+                  </td>
+                  <td className="py-2 px-4">
+                    {user?.isPaused ? "Paused" : "Active"}
                   </td>
                   <td className="py-2 px-4">
                     <button
