@@ -2,12 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useChatStore, useContactStore } from '@/lib/store/chatStore'; // Example of Zustand global store
-import { ChatStore, ContactStore } from '@/lib/store/chatStore';
+import { useChatStore, useContactStore, useAllContactsStore, getPhoneNumbersFromStore,
+  getPhoneGroupsFromStore, getContactsForGroup
+ } from '@/lib/store/chatStore'; // Example of Zustand global store
+import { ChatStore, ContactStore, AllContactsStore } from '@/lib/store/chatStore';
 import { civicinfo } from 'googleapis/build/src/apis/civicinfo';
 import { toast } from 'react-toastify';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
+
+// Define a type for the contact
+interface Contact {
+  id: string;
+  name: string;
+  // Add other properties if needed
+}
 
 const Sidebar = () => {
   const router = useRouter();
@@ -21,10 +30,17 @@ const Sidebar = () => {
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  const [phoneGroups, setPhoneGroups] = useState<any[]>([]);
+  const [isContactsLoaded, setIsContactsLoaded] = useState(false);
 
   // Global state for storing chats
   const { setChats } = useChatStore() as ChatStore; // Type assertion
   const { setContacts } = useContactStore() as ContactStore; // Type assertion
+  const { setAllContacts } = useAllContactsStore() as AllContactsStore; // Type assertion
+
+  
+
   // Fetch phone numbers on component mount
   useEffect(() => {
     const fetchPhoneNumbers = async () => {
@@ -73,9 +89,21 @@ const Sidebar = () => {
           throw new Error(`Error: ${response.statusText}`);
         }
 
-        const { chats, contacts } = await response.json();
+        const { chats, contacts, all_contacts } = await response.json();
+        
+
+        console.log(`Contacts: ${contacts}`)
+
+        console.log(`All contacts on fetch: ${JSON.stringify(all_contacts)}`)
+
         setChats(chats); // Save chats to global state
         setContacts(contacts); // Save contacts to global state
+        setAllContacts(all_contacts); // Save all contacts to global state
+
+        // Update phone groups and mark contacts as loaded
+        const groups = getPhoneGroupsFromStore();
+    setPhoneGroups(groups);
+    setIsContactsLoaded(true);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -85,7 +113,6 @@ const Sidebar = () => {
 
     fetchChats();
   }, [selectedPhone]);
-
 
   const handleExport = async () => {
     try {
@@ -173,53 +200,73 @@ const Sidebar = () => {
             </option>
           ))}
         </select>
-      </div> : <div>No phone numbers found.<br></br>
-      Please connect your phone number<br></br>
-      in the <a href="/accounts">Accounts page.</a><br></br><br></br></div>}
+      </div> : !loading && (
+        <div>
+          No phone numbers found.<br></br>
+          Please connect your phone number<br></br>
+          in the <a href="/accounts">Accounts page.</a><br></br><br></br>
+        </div>
+      )}
 
       {/* Selected phone numbers */}
       <div style={{ marginBottom: '1rem' }}>
   <p>Export Phone Numbers:</p>
+  {isContactsLoaded ? (
   <select
-    id="selectedPhoneNumbers"
-    multiple
-    value={selectedPhones} // Ensure state reflects selected items
-    onChange={(e) => {
-      const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
+  id="selectedPhoneNumbers"
+  multiple
+  value={selectedPhones} // Ensure state reflects selected items
+  onChange={(e) => {
+    const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
 
-      console.log(selectedValues);
+    console.log(selectedValues);
 
-      if (selectedValues.includes("select-all")) {
-        // Select all phone numbers
-        const allValues = (useContactStore.getState() as { contacts: { id: string; name: string }[] }).contacts
-          .filter((contact: any) => contact.id.split('@')[0] !== selectedPhone.split('@')[0] && !contact.id.split('@')[1].includes("g") && contact.id.split('@')[0].length <= 12)
-          .map((contact: any) => "+".concat(contact.id.split('@')[0]).concat("--").concat(contact.name));
+    if (selectedValues.includes("select-all")) {
+      // Select all phone numbers
+      const allValues = getPhoneNumbersFromStore();
+      setSelectedPhones(allValues); // Set state to select all
+    } else {
+      setSelectedPhones(selectedValues); // Select specific options
+    }
+  }}
+  style={{
+    padding: '5px',
+    fontSize: '16px',
+    width: '100%',
+    height: '200px', // Adjusted height for better grouping visibility
+    color: '#000000',
+  }}
+>
 
-        setSelectedPhones(allValues); // Set state to select all
-      } else {
-        setSelectedPhones(selectedValues); // Select specific options
-      }
-    }}
-    style={{
-      padding: '5px',
-      fontSize: '16px',
-      width: '100%',
-      height: '100px',
-      color: '#000000',
-    }}
-  >
-    {/* Add "Select All" option */}
-    <option value="select-all" style={{ fontWeight: 'bold' }}>
-      Select All
-    </option>
-    {(useContactStore.getState() as { contacts: { id: string; name: string }[] }).contacts
-      .filter((contact: any) => contact.id.split('@')[0] !== selectedPhone.split('@')[0] && !contact.id.split('@')[1].includes("g") && contact.id.split('@')[0].length <= 13)
-      .map((contact: any) => (
-        <option key={contact.id} value={"+".concat(contact.id.split('@')[0]).concat("--").concat(contact.name)}>
-          {"+".concat(contact.id).split('@')[0]}
+  {phoneGroups.map((group) => (
+    <optgroup label={group.name} key={group.name} style={{ fontWeight: 'bold' }}>
+      <option
+        value={`group-${group.name}`}
+        style={{ fontWeight: 'bold', textDecoration: 'underline' }}
+        onClick={() => {
+          // Select all contacts in this group
+          const groupContacts = getContactsForGroup(group);
+          setSelectedPhones(groupContacts);
+        }}
+      >
+        [Select All in {group.name}]
+      </option>
+      {group.contacts.map((contact: Contact) => (
+        (contact.id.split('@')[0].length <= 13 && !contact.id.split('@')[1].includes("g") && !phoneNumbers.some(phone => phone === contact.id.split('@')[0]) && contact.id.split('@')[0] !== selectedPhone) && <option
+          key={contact.id}
+          value={"+".concat(contact.id.split('@')[0]).concat("--").concat(contact.name).concat("--").concat(group.name)}
+        >
+          {"+".concat(contact.id.split('@')[0])}
         </option>
-            ))} 
-  </select>
+      ))}
+    </optgroup>
+  ))}
+</select>
+  ) : (
+    <div>Loading...</div>
+  )}
+
+
   <div className="flex flex-row gap-2">
   <button
     onClick={handleExport}

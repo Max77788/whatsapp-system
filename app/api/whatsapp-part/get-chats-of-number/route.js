@@ -5,10 +5,8 @@ import { NextResponse } from "next/server";
 import { find_qr_id_by_phone } from "@/lib/utils";
 
 export async function POST(req) {
-    console.log("Starting POST request to get chats of number");
 
     const session = await getServerSession(authOptions);
-    console.log("Session retrieved:", session);
 
     if (!session) {
         console.error("Unauthorized access attempt");
@@ -16,13 +14,10 @@ export async function POST(req) {
     }
     
     const user = await find_user({ email: session.user.email });
-    console.log("User found:", user);
 
     const { phoneNumber } = await req.json();
-    console.log("Phone number received:", phoneNumber);
 
     const { clientId, keyThing } = await find_qr_id_by_phone(user, phoneNumber);
-    console.log("Client ID and Key Thing:", clientId, keyThing);
 
     if (!phoneNumber) {
         console.error("Phone number is missing in the request");
@@ -30,7 +25,6 @@ export async function POST(req) {
     }
 
     const kbBaseAppUrl = user?.kbAppBaseUrl;
-    console.log("KB Base App URL:", kbBaseAppUrl);
     
     const response = await fetch(`${kbBaseAppUrl}/client/${clientId}/chats`, {
         method: 'GET',
@@ -38,11 +32,35 @@ export async function POST(req) {
             'Content-Type': 'application/json',
         },
     });
-    console.log("Response from external API:", response);
 
-    const { success, data: chats, contacts } = await response.json();
-  
+    const { success, data: chats, contacts, group_contacts } = await response.json();
+    
+    group_contacts.forEach(group_contact_object => {
+        
+        group_contact_object.contacts.forEach(group_contact => {
+            const name = contacts.find(c => c.id.includes(group_contact.id.user))?.name || "unknown";
 
-  console.log("Chats:", chats);
-  return NextResponse.json({ chats, contacts });
+            group_contact.id = group_contact.id._serialized;
+            group_contact.name = name;
+        });
+    });
+
+    const all_contacts = group_contacts
+
+    const all_contacts_object = {
+        id: "all_contacts@gg.us",
+        name: "All Contacts",
+        contacts: contacts
+    }
+
+    // console.log(`All contacts: ${JSON.stringify(all_contacts)}`)
+
+    all_contacts.push(all_contacts_object)
+
+    console.log(`Type of all_contacts: ${typeof all_contacts}, is array: ${Array.isArray(all_contacts)}`)
+    console.log(`Type of contacts: ${typeof contacts} is array: ${Array.isArray(contacts)}`)
+    console.log(`Type of chats: ${typeof chats} is array: ${Array.isArray(chats)}`)
+  return NextResponse.json({ chats, contacts, all_contacts });
 }
+
+
