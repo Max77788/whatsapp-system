@@ -94,7 +94,12 @@ export async function POST(req) {
 
   const subscriptionStartDate = user.startedAt;
 
-  const totalMessagesSentSoFar = user.messages_date.filter(message => message.date >= subscriptionStartDate).reduce((acc, message) => acc + message.count, 0);
+  let totalMessagesSentSoFar = 0;
+  if (user?.messages_date) {
+    totalMessagesSentSoFar = user?.messages_date?.filter(message => message.date >= subscriptionStartDate).reduce((acc, message) => acc + message.count, 0);
+  } else {
+    totalMessagesSentSoFar = 0;
+  }
 
   const messagesLimit = plan?.messagesLimit;
   
