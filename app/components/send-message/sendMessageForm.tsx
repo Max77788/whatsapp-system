@@ -127,7 +127,7 @@ const handleScheduleMessage = async () => {
         const data = await response.json();
         setTemplates(data.messageTemplates);
       } else {
-        toast.error("Failed to fetch message templates.");
+        // toast.error("Failed to fetch message templates.");
       }
     } catch (error) {
       console.error("Error fetching templates:", error);
