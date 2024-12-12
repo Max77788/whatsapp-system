@@ -75,6 +75,7 @@ export interface UserInterface {
   email_verification_token: string;
   apiKey: string;
   kbAppBaseUrl?: string
+  provider?: string;
 }
 
 // mongoose.models.User = model<UserDocument>('User', UserSchema);

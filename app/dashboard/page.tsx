@@ -42,8 +42,6 @@ export default async function DashboardPage() {
   }
   */
 
-  console.log(`kbAppBaseUrl: ${user?.kbAppBaseUrl}`);
-
   let withKbBaseUrlLink = true, isAdmin = false;
   
   if (process.env.NODE_ENV !== "development") {
@@ -68,15 +66,11 @@ export default async function DashboardPage() {
     isNotPaused = !user?.isPaused;
   }
 
-  console.log(`isNotPaused: ${isNotPaused}`);
-
   const sentMessages = user?.sentMessages || 0;
   
   const userName = 'Dashboard';
 
   const boolToPass = withKbBaseUrlLink && isNotPaused;
-
-  console.log(`boolToPass: ${boolToPass}`);
 
   // Render the dashboard content if the user is authenticated
   return (

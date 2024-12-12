@@ -50,8 +50,6 @@ export const sendNotificationEmailToAviv = async (newUserEmail: any) => {
 export const register = async (values: any) => {
     const { email, password, name } = values;
 
-    console.log(`email: ${email}, password: ${password}, name: ${name}`);
-
     try {
         const db = await clientPromiseDb;
         const userFound = await db.collection("users").findOne({ email: email });

@@ -1,6 +1,7 @@
 // components/PackageDetails.js
 "use client";
 import { commonStyles } from "./SentMessagesTracker";
+import { useEffect, useState } from "react";
 
 const styles: {
   container: React.CSSProperties;
@@ -40,11 +41,67 @@ const styles: {
   },
 };
 
-export default async function PackageDetails() {
+export default function PackageDetails() {
+  const [plan, setPlan] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    async function fetchPlan() {
+      try {
+        const response = await fetch("/api/plan/find-plan", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-  const planData = await fetch("/api/plan/find-plan");
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
 
-  const plan = await planData.json();
+        const data = await response.json();
+        setPlan(data);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    }
+
+    fetchPlan();
+  }, []);
+
+  if (error) {
+    return (
+      <div style={styles.container}>
+        <h2 style={styles.header}>Error</h2>
+        <p style={styles.detailItem}>{error}</p>
+      </div>
+    );
+  }
+
+  if (!plan) {
+    return (
+      <div style={{ ...commonStyles }}>
+      <h2 style={styles.header}>📦 Package Details</h2>
+      <div style={styles.details}>
+        <p style={styles.detailItem}>
+          <strong>Package:</strong>
+        </p>
+        <p style={styles.detailItem}>
+          <strong>AI Included:</strong>
+        </p>
+        <p style={styles.detailItem}>
+          <strong>Maximum WhatsApp Accounts:</strong> 
+        </p>
+        <p style={styles.detailItem}>
+          <strong>Messages per Month:</strong> 
+        </p>
+        <p style={styles.detailItem}>
+          <strong>Price:</strong> NIS
+        </p>
+      </div>
+    </div>
+    );
+  }
   
   return (
     <div style={{ ...commonStyles }}>

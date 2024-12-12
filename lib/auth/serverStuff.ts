@@ -65,6 +65,11 @@ export const authOptions: NextAuthOptions = {
 
           console.log(`userFound on signin: ${JSON.stringify(userFound)}`);
 
+          
+          if (userFound.provider === "google") {
+            throw new Error("Please use Google sign-in to login");
+          }
+
           const passwordMatch = await bcrypt.compare(
             credentials!.password,
             userFound.password
@@ -153,6 +158,7 @@ export const authOptions: NextAuthOptions = {
                     const newUser = {
                         id: account.providerAccountId,
                         name: user.name,
+                        provider: "google",
                         email: user.email,
                         image: user.image,
                         unique_id,
@@ -177,7 +183,7 @@ export const authOptions: NextAuthOptions = {
                     });
     
                     
-                    // await createK8sDeployment(unique_id);
+                    await createK8sDeployment(unique_id);
 
                     await sendNotificationEmailToAviv(user.email);
 

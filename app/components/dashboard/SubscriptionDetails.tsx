@@ -1,6 +1,7 @@
 // components/SubscriptionDetails.js
 "use client";
 import { commonStyles } from "./SentMessagesTracker";
+import { useEffect, useState } from "react";
 
 const styles: {
   container: React.CSSProperties;
@@ -40,14 +41,56 @@ const styles: {
   },
 };
 
-export default async function SubscriptionDetails() {
+export default function SubscriptionDetails() {
+  const [plan, setPlan] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const planData = await fetch("/api/plan/find-plan");
-  const plan = await planData.json();
+  useEffect(() => {
+    async function fetchPlan() {
+      try {
+        const planData = await fetch("/api/plan/find-plan");
+        const plan = await planData.json();
+        setPlan(plan);
+      } catch (err: any) {
+      setError(err.message);
+    }
+  }
+
+  fetchPlan();
+}, []);
 
   let renewalDate = new Date();
   renewalDate.setMonth(renewalDate.getMonth() + 1);
   
+  // Conditional rendering
+  if (error) {
+    return (
+      <div style={styles.container}>
+        <h2 style={styles.header}>Error</h2>
+        <p style={styles.detailItem}>{error}</p>
+      </div>
+    );
+  }
+
+  if (!plan) {
+    return (
+      <div style={{ ...commonStyles }}>
+      <h2 style={styles.header}>📜 Subscription Details</h2>
+      <div style={styles.details}>
+        <p style={styles.detailItem}>
+          <strong>Plan:</strong>
+        </p>
+        <p style={styles.detailItem}>
+          <strong>Status:</strong> Active
+        </p>
+        <p style={styles.detailItem}>
+          <strong>Renewal Date:</strong> {renewalDate.toLocaleDateString()}
+        </p>
+      </div>
+    </div>
+    );
+  }
+
   return (
     <div style={{ ...commonStyles }}>
       <h2 style={styles.header}>📜 Subscription Details</h2>
