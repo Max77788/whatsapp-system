@@ -183,7 +183,7 @@ export const authOptions: NextAuthOptions = {
                     });
     
                     
-                    await createK8sDeployment(unique_id);
+                    // await createK8sDeployment(unique_id);
 
                     await sendNotificationEmailToAviv(user.email);
 
