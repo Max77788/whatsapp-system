@@ -1,7 +1,7 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
+import { loginIsRequiredServer } from "../../../../lib/auth/serverStuff";
 import { authOptions } from "@/lib/auth/serverStuff";
 import TablePopup from "../components/chatbot/ChatbotTable";
 import { clientPromiseDb } from '@/lib/mongodb';

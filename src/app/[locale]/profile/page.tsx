@@ -2,8 +2,8 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
-import { authOptions } from "../../lib/auth/serverStuff";
+import { loginIsRequiredServer } from "../../../../lib/auth/serverStuff";
+import { authOptions } from "../../../../lib/auth/serverStuff";
 import { find_user } from "@/lib/utils";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

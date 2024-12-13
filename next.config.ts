@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 import path from "path";
 import { setupGoogleCloudCredentials } from "@/lib/google_storage/google_storage";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   webpack: (config) => {
@@ -12,5 +15,5 @@ const nextConfig: NextConfig = {
   /* other config options here */
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
 

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import ContactForm7Tab from "@/app/components/webhooks-setup/ContactForm7Tab";
-import FacebookTab from "@/app/components/webhooks-setup/FacebookTab";
-import WPFormsTab from "@/app/components/webhooks-setup/WPFormsTab";
+import ContactForm7Tab from "@/src/app/[locale]/components/webhooks-setup/ContactForm7Tab";
+import FacebookTab from "@/src/app/[locale]/components/webhooks-setup/FacebookTab";
+import WPFormsTab from "@/src/app/[locale]/components/webhooks-setup/WPFormsTab";
 
 const tabs = [
   { id: "facebook", label: "Facebook" },

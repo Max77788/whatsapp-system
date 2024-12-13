@@ -4,8 +4,8 @@ import { getServerSession } from "next-auth";
 import { loginIsRequiredServer } from "@/lib/auth/serverStuff";
 import { authOptions } from "@/lib/auth/serverStuff";
 import { find_user } from '@/lib/utils';
-import UserPackagesData from "@/app/components/admin/packages/UserPackagesData";
-import PackagesData from "@/app/components/admin/packages/PackagesData";
+import UserPackagesData from "@/src/app/[locale]/components/admin/packages/UserPackagesData";
+import PackagesData from "@/src/app/[locale]/components/admin/packages/PackagesData";
 import { fdatasync } from "fs";
 
 export default async function SettingsPage(): Promise<JSX.Element> {

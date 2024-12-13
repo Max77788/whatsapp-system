@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/serverStuff";
 import { find_user } from "@/lib/utils";
-import Sidebar from "@/app/components/dashboard/Sidebar";
-import Header from "@/app/components/dashboard/Header";
-import ContactForm7Tab from "@/app/components/webhooks-setup/ContactForm7Tab";
-import FacebookTab from "@/app/components/webhooks-setup/FacebookTab";
-import WPFormsTab from "@/app/components/webhooks-setup/WPFormsTab";
+import Sidebar from "@/src/app/[locale]/components/dashboard/Sidebar";
+import Header from "@/src/app/[locale]/components/dashboard/Header";
+import ContactForm7Tab from "@/src/app/[locale]/components/webhooks-setup/ContactForm7Tab";
+import FacebookTab from "@/src/app/[locale]/components/webhooks-setup/FacebookTab";
+import WPFormsTab from "@/src/app/[locale]/components/webhooks-setup/WPFormsTab";
 import Tabs from "./Tabs"; // Client component for tabs
 import "./webhookSet.css";
 

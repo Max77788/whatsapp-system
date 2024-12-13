@@ -2,8 +2,8 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { loginIsRequiredServer } from "../../lib/auth/serverStuff";
-import { authOptions } from "../../lib/auth/serverStuff";
+import { loginIsRequiredServer } from "../../../../lib/auth/serverStuff";
+import { authOptions } from "../../../../lib/auth/serverStuff";
 import { cookies } from "next/headers";
 import './dashboard.css'
 import { useEffect } from "react";

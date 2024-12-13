@@ -1,4 +1,4 @@
-import PlansAvailable from "@/app/components/plans/PlansAvailable";
+import PlansAvailable from "@/src/app/[locale]/components/plans/PlansAvailable";
 
 export default function PlansPage() {
   return (
