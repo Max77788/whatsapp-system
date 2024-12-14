@@ -38,7 +38,8 @@
         "resetPassword": "אישור שינוי ססמה",
         "loading": "טוען...",
         "sendResetLink": "שלח קישור שחזור",
-        "error": "שגיאה"
+        "error": "שגיאה",
+        "signingInWithGoogle": "התחברות עם Google..."
     },
     "dashboard": {
         "logout": "התנתק",

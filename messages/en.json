@@ -44,7 +44,8 @@
         "messagesPerMonth": "Messages per Month",
         "maximumWhatsAppAccounts": "Maximum WhatsApp Accounts",
         "price": "Price",
-        "nis": "₪"
+        "nis": "₪",
+        "signingInWithGoogle": "Signing in with Google..."
     },
     "dashboard": {
         "logout": "Logout",

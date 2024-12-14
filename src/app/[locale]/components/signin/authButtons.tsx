@@ -14,7 +14,7 @@ export function GoogleSignInButton() {
         signIn('google', {
             callbackUrl: `/${currentLocale}/dashboard`,
         });
-        toast.info('Signing in with Google...');
+        toast.info(t('signingInWithGoogle'));
     }
     
     return (
