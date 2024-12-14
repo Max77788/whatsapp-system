@@ -4,13 +4,15 @@ import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
 import { SessionProvider } from "next-auth/react";
 import "./chatbot.css"; // Optional: Use a CSS file to customize dashboard styling.
-
+import { useTranslations } from "next-intl";
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const userName = "Chatbot"; // Replace with dynamic username from session or auth context
+  const t = useTranslations("sidebar");
+
+  const userName = t("chatbot"); // Replace with dynamic username from session or auth context
 
   return (
     <SessionProvider>

@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { saveAs } from 'file-saver'; // Import file-saver for exporting files
+import { useTranslations } from "next-intl";
 
 interface Lead {
   name: string;
@@ -22,6 +23,8 @@ interface Props {
 }
 
 const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
+  const t = useTranslations("leads");
+  
   const fetchGroups = async () => {
     const response = await fetch("/api/user/find-user");
     const data = await response.json();
@@ -77,7 +80,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
 
   const handleAddLead = () => {
     if (!newLead.name || !newLead.phone_number || !newLead.source) {
-      alert("Please fill in all fields before adding a lead.");
+      alert(t("please_fill_in_all_fields_before_adding_a_lead"));
       return;
     }
 
@@ -99,7 +102,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
 
   const handleBulkAdd = () => {
     if (!bulkPhoneNumbers.trim()) {
-      alert("Please paste some phone numbers.");
+      alert(t("please_paste_some_phone_numbers"));
       return;
     }
 
@@ -109,7 +112,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       .filter((number) => number); // Remove empty entries
 
     if (phoneNumbers.length === 0) {
-      alert("No valid phone numbers found.");
+      alert(t("no_valid_phone_numbers_found"));
       return;
     }
 
@@ -123,17 +126,17 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
 
     setLeadData((prevData) => [...prevData, ...newLeads]);
     setBulkPhoneNumbers(""); // Clear the text area
-    alert(`${newLeads.length} phone numbers added successfully!`);
+    alert(`${newLeads.length} ${t("phone_numbers_added_successfully")}`);
   };
 
   const handleAddGroup = async () => {
     if (!newGroup.trim()) {
-      alert("Please enter a group name.");
+      alert(t("please_enter_a_group_name"));
       return;
     }
 
     if (groups.includes(newGroup)) {
-      alert("This group already exists.");
+      alert(t("this_group_already_exists"));
       return;
     }
 
@@ -155,7 +158,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     
     const userEmail = session?.user?.email;
     if (!userEmail) {
-      alert("User email not found.");
+      alert(t("user_email_not_found"));
       return;
     }
     
@@ -166,8 +169,6 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       group,
       sent_messages,
     }));
-
-    console.log(`updatedLeads on delete: ${JSON.stringify(updatedLeads)}`);
 
     const response = await fetch("/api/leads/save", {
       method: "POST",
@@ -183,7 +184,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     try {
       const userEmail = session?.user?.email;
       if (!userEmail) {
-        alert("User email not found.");
+        alert(t("user_email_not_found"));
         return;
       }
 
@@ -197,8 +198,6 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         extra_notes,
       }));
 
-      console.log(`leadsToSave: ${JSON.stringify(leadsToSave)}`);
-
       const response = await fetch("/api/leads/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -209,15 +208,15 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       });
 
       if (response.ok) {
-        toast.success("Leads data saved successfully!");
+        toast.success(t("leads_data_saved_successfully"));
         await new Promise(resolve => setTimeout(resolve, 1000));
         location.reload();
       } else {
-        alert("Failed to save leads data.");
+        alert(t("failed_to_save_leads_data"));
       }
     } catch (error) {
       console.error("Error saving leads data:", error);
-      alert("An error occurred while saving leads data.");
+      alert(t("an_error_occurred_while_saving_leads_data"));
     }
   };
 
@@ -239,32 +238,32 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
   
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p>{t("loading")}</p>;
   }
 
   return (
     <div className="mt-8 p-4">
       {leadData.length === 0 ? (
-        <p>No leads available. Add some data.</p>
+        <p>{t("no_leads_available_add_some_data")}</p>
       ) : (
         <>
           <button
             onClick={exportToCSV}
             className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto mb-4 mr-4"
           >
-            Export as CSV
+            {t("export_as_csv")}
           </button>
           <table className="min-w-full border border-gray-300 mb-4">
             <thead>
               <tr className="bg-green-600 text-white">
-                <th className="border border-gray-300 p-2 text-left">Name</th>
-                <th className="border border-gray-300 p-2 text-left">Phone Number</th>
-                <th className="border border-gray-300 p-2 text-left">Source</th>
-                <th className="border border-gray-300 p-2 text-left">Group</th>
-                <th className="border border-gray-300 p-2 text-left">Sent Messages</th>
-                <th className="border border-gray-300 p-2 text-left">Handled</th>
-                <th className="border border-gray-300 p-2 text-left">Extra Notes</th>
-                <th className="border border-gray-300 p-2 text-left">Actions</th>
+                <th className="border border-gray-300 p-2 text-left">{t("name")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("phone_number")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("source")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("group")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("sent_messages")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("handled")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("extra_notes")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -343,9 +342,9 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                   <td className="border border-gray-300 p-2">{lead.sent_messages || 0}</td>
                   <td className="border border-gray-300 p-2">
                     <select
-                      value={lead.handled ? "Yes" : "No"}
+                      value={lead.handled ? t("yes") : t("no")}
                       onChange={(e) => {
-                        const updatedHandled = e.target.value === "Yes";
+                        const updatedHandled = e.target.value === t("yes");
                         setLeadData((prevData) =>
                           prevData.map((item, i) =>
                             i === index ? { ...item, handled: updatedHandled } : item
@@ -354,8 +353,8 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                       }}
                       className="border border-gray-300 rounded p-1"
                     >
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
+                      <option value={t("yes")}>{t("yes")}</option>
+                      <option value={t("no")}>{t("no")}</option>
                     </select>
                   </td>
                   <td className="border border-gray-300 p-2">
@@ -370,7 +369,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                       onClick={() => handleDeleteLead(index)}
                       className="px-5 py-3 bg-red-500 hover:bg-red-700 text-white rounded-full mx-auto"
                     >
-                      Delete
+                      {t("delete")}
                     </button>
                   </td>
                 </tr>
@@ -381,20 +380,20 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             onClick={saveData}
             className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
-            Save Data
+            {t("save_data")}
           </button>
         </>
       )}
 
       {/* Add New Lead */}
       <div className="mt-6 p-4 border border-gray-300 rounded">
-        <h2 className="text-xl font-semibold mb-4">Add New Lead</h2>
+        <h2 className="text-xl font-semibold mb-4">{t("add_new_lead")}</h2>
         <div className="grid grid-cols-4 gap-4">
           <input
             type="text"
             value={newLead.name}
             onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
-            placeholder="Name"
+            placeholder={t("name")}
             className="border text-black border-gray-300 p-2 rounded"
           />
           <input
@@ -403,7 +402,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             onChange={(e) =>
               setNewLead({ ...newLead, phone_number: e.target.value })
             }
-            placeholder="Phone Number"
+            placeholder={t("phone_number")}
             className="border text-black border-gray-300 p-2 rounded"
           />
           <select
@@ -411,7 +410,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             onChange={(e) => setNewLead({ ...newLead, source: e.target.value })}
             className="border text-black border-gray-300 p-2 rounded"
           >
-            <option value="" disabled hidden>Choose Source</option>
+            <option value="" disabled hidden>{t("choose_source")}</option>
             {sourcesList.map((source) => (
               <option key={source} value={source}>
                 {source}
@@ -423,7 +422,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             onChange={(e) => setNewLead({ ...newLead, group: e.target.value })}
             className="border text-black border-gray-300 p-2 rounded"
           >
-            <option value="" disabled hidden>Choose Group</option>
+            <option value="" disabled hidden>{t("choose_group")}</option>
             {groups.map((group) => (
               <option key={group} value={group}>
                 {group}
@@ -435,30 +434,30 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
           onClick={handleAddLead}
           className="mt-4 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
         >
-          Add Lead
+          {t("add_lead")}
         </button>
       </div>
 
       {/* Bulk Add Phone Numbers */}
      <div className="mt-6 p-4 border border-gray-300 rounded">
-  <h2 className="text-xl font-semibold mb-4">Bulk Add Phone Numbers</h2>
+  <h2 className="text-xl font-semibold mb-4">{t("bulk_add_phone_numbers")}</h2>
   <textarea
     value={bulkPhoneNumbers}
     onChange={(e) => setBulkPhoneNumbers(e.target.value)}
-    placeholder="Paste phone numbers here, separated by commas or new lines."
+    placeholder={t("paste_phone_numbers_here_separated_by_commas_or_new_lines")}
     className="w-full border text-black border-gray-300 p-2 rounded h-32 resize-none"
   />
   <button
     onClick={handleBulkAdd}
     className="mt-4 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
   >
-    Add Bulk Phone Numbers
+    {t("add_bulk_phone_numbers")}
         </button>
       </div>
 
       {/* Import CSV */}
 <div className="mt-6 p-4 border border-gray-300 rounded">
-  <h2 className="text-xl font-semibold mb-4">Import Leads from CSV</h2>
+  <h2 className="text-xl font-semibold mb-4">{t("import_leads_from_csv")}</h2>
   <input
     type="file"
     accept=".csv"
@@ -476,10 +475,10 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
               sent_messages: lead.sent_messages || 0, // Default sent messages
             }));
             setLeadData((prevData) => [...prevData, ...newLeads]);
-            alert(`${newLeads.length} leads imported successfully!`);
+            alert(`${newLeads.length} ${t("leads_imported_successfully")}`);
           },
           error: (error) => {
-            alert("Failed to parse the CSV file. Please check the format.");
+            alert(t("failed_to_parse_the_csv_file_please_check_the_format"));
             console.error(error);
           },
         });
@@ -491,20 +490,20 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
 
       {/* Add New Group */}
       <div className="mt-6 p-4 border border-gray-300 rounded">
-        <h2 className="text-xl font-semibold mb-4">Add New Group</h2>
+        <h2 className="text-xl font-semibold mb-4">{t("add_new_group")}</h2>
         <div className="flex items-center space-x-4">
           <input
             type="text"
             value={newGroup}
             onChange={(e) => setNewGroup(e.target.value)}
-            placeholder="New Group Name"
+            placeholder={t("new_group_name")}
             className="border text-black border-gray-300 p-2 rounded"
           />
           <button
             onClick={handleAddGroup}
-            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
+            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mr-2 ml-2"
           >
-            Add Group
+            {t("add_group")}
           </button>
           <div className="mt-4 flex flex-wrap gap-2">
           {groups.map((group) => (

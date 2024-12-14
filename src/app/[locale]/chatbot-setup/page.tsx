@@ -10,11 +10,14 @@ import CreateClientButton from "../components/whatsapp-connection/createClientBu
 import PhoneNumberTacticsTable from "../components/settings/PhoneNumberTacticsTable";
 import LeadsTable from "../components/settings/LeadsTable";
 import AITurnOn from "../components/chatbot/AITurnOn";
+import { getLocale } from "next-intl/server";
 
 export default async function SettingsPage(): Promise<JSX.Element> {
-    await loginIsRequiredServer();
-    
     const session = await getServerSession(authOptions);
+
+    const currentLocale = await getLocale();
+
+    await loginIsRequiredServer(session, false, currentLocale);
     const userEmail = session?.user?.email;
     
     const user = await find_user({ email: userEmail });

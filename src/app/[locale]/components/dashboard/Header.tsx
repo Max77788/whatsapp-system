@@ -1,6 +1,7 @@
 "use client";
 
 import { signOut } from "next-auth/react";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect } from "react";
 
 interface HeaderProps {
@@ -8,10 +9,13 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ userName }) => {
+  const currentLocale = useLocale();
+  const t = useTranslations('dashboard');
+
   const onLogout = () => {
     document.cookie = "loggedOut=true; path=/";
     signOut({
-      callbackUrl: "/dashboard", // After logout, redirect here
+      callbackUrl: `/${currentLocale}/dashboard`, // After logout, redirect here
     });
   };
 
@@ -23,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ userName }) => {
           onClick={onLogout}
           className="px-5 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-full transition-colors duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"
         >
-          Logout
+          {t('logout')}
         </button>
       </div>
     </header>

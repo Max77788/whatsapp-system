@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export default function AITurnOn({
   initialInstructions,
@@ -13,6 +14,8 @@ export default function AITurnOn({
 }) {
   const [isOn, setIsOn] = useState(initialIsOn);
   const [instructions, setInstructions] = useState(initialInstructions);
+  const t = useTranslations("chatbotSetup");
+
 
   // Function to send data to the server
   const sendConfig = async (updatedInstructions: string, updatedIsOn: boolean) => {
@@ -46,7 +49,7 @@ export default function AITurnOn({
   if (!isInPlan) {
     return (
       <div>
-        <h1>You are not in a plan that includes AI feature</h1>
+        <h1>{t("notInPlan")}</h1>
       </div>
     )
   }
@@ -60,7 +63,7 @@ export default function AITurnOn({
           onChange={(e) => setIsOn(e.target.checked)}
           className="cursor-pointer"
         />
-        <label className="text-lg font-semibold">AI System On</label>
+        <label className="text-lg font-semibold">{t("aiSystemOn")}</label>
       </div>
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
@@ -68,7 +71,7 @@ export default function AITurnOn({
         }`}
       >
         <textarea
-          placeholder="Enter instructions. E.g. You are a massage parlour receptionist. And you are answering user's inquiries."
+          placeholder={t("aiSystemInstructionsPlaceholder")}
           value={instructions}
           onChange={(e) => setInstructions(e.target.value)}
           rows={4}

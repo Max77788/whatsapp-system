@@ -1,11 +1,15 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 type FacebookTabProps = {
   tab?: string;
   uniqueId?: string | null;
 };
 
 export default function FacebookTab({ uniqueId }: FacebookTabProps) {
+ 
+  const t = useTranslations("fbWebhooksSetup");
 
   return (
     <div className="flex flex-col items-center gap-5 bg-gray-100 rounded-lg p-5">
@@ -22,42 +26,39 @@ export default function FacebookTab({ uniqueId }: FacebookTabProps) {
       ></iframe>
 
       <p>
-        1. Go on{" "}
+        1. {t("goOn")}&nbsp;
         <a href="https://make.com" target="_blank">
           Make.com
         </a>{" "}
-        and insert the scenario which you can download below
+        {t("andInsertTheScenarioWhichYouCanDownloadBelow")}
       </p>
       <a
         href="/static/webhook-scripts/blueprintFacebookWA.json"
         download
         className="bg-green-600 hover:bg-green-700 text-white hover:text-white px-4 py-2 rounded-md"
       >
-        <button>Download Facebook Make.com Script</button>
+        <button>{t("downloadFacebookMakecomScript")}</button>
       </a>
       <p>
-        2. Follow{" "}
+        {t("follow")}{" "}
         <a
           href="https://developers.facebook.com/tools/lead-ads-testing"
           target="_blank"
         >
-          this link
+          {t("thisLink")}
         </a>{" "}
-        and follow the video tutorial above to setup form submission and
-        Make.com scenario
+        {t("andFollowTheVideoTutorialAboveToSetupFormSubmissionAndMakecomScenario")}
       </p>
       <p>
-        3. Grab the webhook URL below and insert in "Set Multiple Variables"
-        module (the second module):
+        {t("grabTheWebhookUrlBelowAndInsertInSetMultipleVariablesModule")}
       </p>
       <p>
         <code>{`https://mom-ai-restaurant.lat/api/leads/register?unique_id=${uniqueId}&source=facebook`}</code>
       </p>
       <p className="text-center">
-        4. Link the fields which return name and phone number of your lead to
-        the respective variables in the same "Set Multiple Variables" module
+        {t("linkTheFieldsWhichReturnNameAndPhoneNumberOfYourLeadToTheRespectiveVariablesInTheSameSetMultipleVariablesModule")}
       </p>
-      <p className="text-center text-xl font-bold">✅Done✅</p>
+      <p className="text-center text-xl font-bold">✅{t("done")}✅</p>
     </div>
   );
 }

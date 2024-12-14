@@ -6,6 +6,8 @@ import Link from "next/link";
 import { register } from "@/actions/register";
 import { GoogleSignInButton } from "../../components/signin/authButtons";
 import CredentialsRegistrationForm from "../../components/signin/credentialsRegistrationForm";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 
 const SignUp = () => {
   const [error, setError] = useState<string>();
@@ -27,6 +29,9 @@ const SignUp = () => {
     }
   };
 
+  const currentLocale = useLocale();
+  const t = useTranslations('signin');
+
   return (
       <div className="w-full max-w-md mx-auto p-6 space-y-6 rounded-lg shadow-lg mt-4">
         <div className="space-y-4">
@@ -47,13 +52,13 @@ const SignUp = () => {
 
         <div className="text-center">
           <p className="">
-            Already have an account?{" "}
-            <Link href="/auth/signin" className="hover:underline">
-              Sign in
+            {t('alreadyHaveAnAccount')}
+            <Link href={`/${currentLocale}/auth/signin`} className="hover:underline">
+              {t('signIn')}
             </Link>
           </p>
-          <p><Link href="/forgot-password" className="hover:underline">
-                Forgot password?
+          <p><Link href={`/${currentLocale}/forgot-password`} className="hover:underline">
+                {t('forgotPassword')}
             </Link>
           </p>
         </div>

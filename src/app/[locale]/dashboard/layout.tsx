@@ -6,13 +6,13 @@ import { SessionProvider } from "next-auth/react";
 import "./dashboard.css"; // Optional: Use a CSS file to customize dashboard styling.
 import { find_user } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const userName = "Dashboard"; // Replace with dynamic username from session or auth context
 
   return (
     <SessionProvider>

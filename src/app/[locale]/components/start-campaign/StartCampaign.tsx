@@ -5,10 +5,14 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import StepTwoMessageForm from "./StepTwoMessageForm";
 import UserCampaigns from "./UserCampaigns";
+import { useLocale, useTranslations } from "next-intl";
 
 type Lead = { name: string; phone_number: string; source: string; sent_messages: number; group?: string };
 
 const StartCampaign = () => {
+  const t = useTranslations("startCampaign");
+  
+
   const [step, setStep] = useState<number>(1);
   const [importMethod, setImportMethod] = useState<"csv" | "googleSheets" | "existingLeads" | null>(null);
   const [googleSheetUrl, setGoogleSheetUrl] = useState("");
@@ -24,12 +28,15 @@ const StartCampaign = () => {
   const [isLoadingFromNumbers, setIsLoadingFromNumbers] = useState(true);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
+  const [thereAreNoLeads, setThereAreNoLeads] = useState(false);
 
   const sendCampaign = async () => {
     const response = await axios.post("/api/campaign/create", {
       leads: selectedLeads,
     });
   }
+
+  const currentLocale = useLocale();
 
   const filteredLeads = selectedGroups.length === 0 
   ? leads // Show all leads if no group is selected
@@ -86,16 +93,19 @@ const StartCampaign = () => {
   
 
   const fetchFromNumbersAndGroups = async () => {
-    const response = await axios.get("api/phone-numbers");
+    const response = await axios.get("/api/phone-numbers");
     const fromNumbersList = response.data.filter((number: { active: boolean }) => number.active).map((number: { phoneNumber: string }) => number.phoneNumber);
     
-    const response_ = await axios.get("api/user/find-user");
+    console.log(`fromNumbersList: ${JSON.stringify(fromNumbersList)}`);
+
+    const response_ = await axios.get("/api/user/find-user");
     const user = await response_.data;
 
     setGroups(user.leadGroups || []);
 
-    setFromNumbers(fromNumbersList);
+    setFromNumbers(fromNumbersList || []);
     setIsLoadingFromNumbers(false);
+    console.log("Set isLoadingFromNumbers to false");
   };
 
   useEffect(() => {
@@ -114,16 +124,16 @@ const StartCampaign = () => {
     try {
       const response = await axios.post("/api/gsheets/get-headers", { url: googleSheetUrl });
       setHeaders(response.data.headers);
-      toast.success("Headers fetched successfully!");
+      toast.success(t("headersFetchedSuccessfully"));
     } catch (error) {
       console.error("Error fetching headers:", error);
-      toast.error("Failed to fetch headers from Google Sheets.");
+      toast.error(t("failedToFetchHeadersFromGoogleSheets"));
     }
   };
 
   const fetchCsvHeaders = async () => {
     if (!csvFile) {
-      toast.error("Please upload a CSV file.");
+      toast.error(t("pleaseUploadACSVFile"));
       return;
     }
 
@@ -135,17 +145,17 @@ const StartCampaign = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setHeaders(response.data.headers);
-      toast.success("Headers fetched successfully!");
+      toast.success(t("headersFetchedSuccessfully"));
     } catch (error) {
       console.error("Error fetching CSV headers:", error);
-      toast.error("Failed to fetch headers from CSV file.");
+      toast.error(t("failedToFetchHeadersFromCSVFile"));
     }
   };
 
   const fetchRows = async () => {
     try {
       if (!nameColumn || !phoneNumberColumn) {
-        toast.error("Please select both name and phone number columns.");
+        toast.error(t("pleaseSelectBothNameAndPhoneNumberColumns"));
         return;
       }
 
@@ -168,10 +178,10 @@ const StartCampaign = () => {
         setLeads(response.data.rows.map((row: any) => ({ ...row, source: "CSV", sent_messages: 0 })));
       }
 
-      toast.success("Leads fetched successfully!");
+      toast.success(t("leadsFetchedSuccessfully"));
     } catch (error) {
       console.error("Error fetching rows:", error);
-      toast.error("Failed to fetch rows.");
+      toast.error(t("failedToFetchRows"));
     }
   };
 
@@ -179,9 +189,10 @@ const StartCampaign = () => {
     try {
       const response = await axios.get("/api/leads/retrieve");
       setLeads(response.data.leads);
+      setThereAreNoLeads(response.data.leads.length === 0 || typeof response.data.leads === "undefined");
     } catch (error) {
       console.error("Error fetching leads:", error);
-      toast.error("Failed to load leads.");
+      toast.error(t("failedToLoadLeads"));
     }
   };
 
@@ -219,9 +230,9 @@ const StartCampaign = () => {
     if (step === 1) {
       return (
         <div>
-          <h2 className="text-2xl font-semibold text-center">Step 1: Import Leads</h2>
+          <h2 className="text-2xl font-semibold text-center">{t("step1")}: {t("importLeads")}</h2>
           <p className="text-center text-gray-600 mt-2">
-            Choose how you want to import your leads for the campaign.
+            {t("chooseHowYouWantToImportYourLeadsForTheCampaign")}
           </p>
           <div className="flex justify-center gap-8 mt-8">
             <div
@@ -235,7 +246,7 @@ const StartCampaign = () => {
                 alt="CSV/Excel Icon"
                 className="w-16 h-20 mx-auto mb-4"
               />
-              <p className="font-medium text-black">Upload CSV/Excel</p>
+              <p className="font-medium text-black">{t("uploadCSVExcel")}</p>
             </div>
 
             <div
@@ -249,7 +260,7 @@ const StartCampaign = () => {
                 alt="Google Sheets Icon"
                 className="w-16 h-20 mx-auto mb-4"
               />
-              <p className="font-medium text-black">Google Sheets Link</p>
+              <p className="font-medium text-black">{t("googleSheetsLink")}</p>
             </div>
 
             <div
@@ -263,13 +274,13 @@ const StartCampaign = () => {
                 alt="Existing Leads Icon"
                 className="w-20 h-20 mx-auto mb-4"
               />
-              <p className="font-medium text-black">Existing Leads</p>
+              <p className="font-medium text-black">{t("existingLeads")}</p>
             </div>
           </div>
 
           {importMethod === "csv" && (
             <div className="mt-6">
-              <label className="block text-gray-700 font-medium mb-2">Upload CSV File:</label>
+              <label className="block text-gray-700 font-medium mb-2">{t("uploadCSVFile")}:</label>
               <input
                 type="file"
                 accept=".csv,.xlsx"
@@ -280,52 +291,52 @@ const StartCampaign = () => {
                 onClick={fetchCsvHeaders}
                 className="mt-4 px-5 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition mx-auto"
               >
-                Fetch Headers
+                {t("fetchHeaders")}
               </button>
             </div>
           )}
 
           {importMethod === "googleSheets" && (
             <div className="mt-6">
-              <label className="block text-gray-700 font-medium mb-2">Google Sheets URL:</label>
+              <label className="block text-gray-700 font-medium mb-2">{t("googleSheetsURL")}:</label>
               <input
                 type="text"
                 value={googleSheetUrl}
                 onChange={(e) => setGoogleSheetUrl(e.target.value)}
                 className="w-full border p-2 rounded"
-                placeholder="Enter Google Sheets URL"
+                placeholder={t("enterGoogleSheetsURL")}
               />
               <button
                 onClick={fetchHeaders}
                 className="mt-4 px-5 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition mx-auto"
               >
-                Fetch Headers
+                {t("fetchHeaders")}
               </button>
             </div>
           )}
 
           {(importMethod === "csv" || importMethod === "googleSheets") && headers.length > 0 && (
             <div className="mt-4">
-              <label className="block text-gray-700 font-medium mb-2">Select Name Column:</label>
+              <label className="block text-gray-700 font-medium mb-2">{t("selectNameColumn")}:</label>
               <select
                 value={nameColumn}
                 onChange={(e) => setNameColumn(e.target.value)}
                 className="w-full border p-2 rounded"
               >
-                <option value="">Select a column</option>
+                <option value="">{t("selectAColumn")}</option>
                 {headers.map((header, index) => (
                   <option key={index} value={header}>
                     {header}
                   </option>
                 ))}
               </select>
-              <label className="block text-gray-700 font-medium mt-4 mb-2">Select Phone Number Column:</label>
+              <label className="block text-gray-700 font-medium mt-4 mb-2">{t("selectPhoneNumberColumn")}:</label>
               <select
                 value={phoneNumberColumn}
                 onChange={(e) => setPhoneNumberColumn(e.target.value)}
                 className="w-full border p-2 rounded"
               >
-                <option value="">Select a column</option>
+                <option value="">{t("selectAColumn")}</option>
                 {headers.map((header, index) => (
                   <option key={index} value={header}>
                     {header}
@@ -336,25 +347,25 @@ const StartCampaign = () => {
                 onClick={fetchRows}
                 className="mt-4 px-5 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition mx-auto"
               >
-                Fetch Rows
+                {t("fetchRows")}
               </button>
             </div>
           )}
 
-{leads.length > 0 && (
+{leads?.length > 0 && (
   <div className="mt-6">
-    <h3 className="text-lg font-semibold mb-4">Imported Leads</h3>
+    <h3 className="text-lg font-semibold mb-4">{t("importedLeads")}</h3>
     <div className="flex items-center mb-2">
       <input
         type="checkbox"
         checked={selectAll}
         onChange={toggleSelectAll}
       />
-      <p className="ml-2">Select All</p>
+      <p className="ml-2">{t("selectAll")}</p>
     </div>
     
     <div className="mt-4">
-    <h3 className="text-lg font-semibold mb-2">Filter by Groups:</h3>
+    <h3 className="text-lg font-semibold mb-2">{t("filterByGroups")}:</h3>
 <div className="flex flex-wrap gap-4 mb-4">
   {groups.map((group, index) => (
     <label key={index} className="flex items-center space-x-2">
@@ -373,13 +384,13 @@ const StartCampaign = () => {
   <thead>
     <tr className="bg-gray-100">
       <th className="p-2 border"></th>
-      <th className="p-2 border">Name</th>
-      <th className="p-2 border">Phone Number</th>
+      <th className="p-2 border">{t("name")}</th>
+      <th className="p-2 border">{t("phoneNumber")}</th>
       {importMethod === "existingLeads" && (
         <>
-          <th className="p-2 border">Source</th>
-          <th className="p-2 border">Group</th>
-          <th className="p-2 border">Sent Messages</th>
+          <th className="p-2 border">{t("source")}</th>
+          <th className="p-2 border">{t("group")}</th>
+          <th className="p-2 border">{t("sentMessages")}</th>
         </>
       )}
     </tr>
@@ -450,7 +461,9 @@ const StartCampaign = () => {
                 </svg>
               </button>
             ) : (
-              <p className="text-red-500 mb-4">Please <a href="/accounts" className="text-red-500 hover:text-red-600 underline text-bold">connect your account</a> to proceed.</p>
+              <p className="text-red-500 mb-4"><a className="text-red-500 underline hover:text-red-700" href={`/${currentLocale}/accounts`}>
+                {t("pleaseConnectYourAccountToProceed")}
+                </a></p>
             )}
           </div>
           <div className="mt-15">
@@ -465,16 +478,16 @@ const StartCampaign = () => {
         return (
           <>
             <img src="/static/check-icon.png" alt="Check Icon" className="w-16 h-16 mx-auto mb-4" />
-            <p className="text-center text-lg font-semibold">Congratulations your campaign has been successfully scheduled</p>
-            <button onClick={() => location.reload()} className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition mx-auto block text-center">Start Again</button>
+            <p className="text-center text-lg font-semibold">{t("congratulationsYourCampaignHasBeenSuccessfullyScheduled")}</p>
+            <button onClick={() => location.reload()} className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition mx-auto block text-center">{t("startAgain")}</button>
           </>
         );
       } else if (campaignType === "now") {
         return (
           <>
             <img src="/static/check-icon.png" alt="Check Icon" className="w-16 h-16 mx-auto mb-4" />
-            <p className="text-center text-lg font-semibold">Congratulations your campaign has been successfully started.</p>
-            <button onClick={() => location.reload()} className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition mx-auto block text-center">Start Again</button>
+            <p className="text-center text-lg font-semibold">{t("congratulationsYourCampaignHasBeenSuccessfullyStarted")}</p>
+            <button onClick={() => location.reload()} className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition mx-auto block text-center">{t("startAgain")}</button>
           </>
         );
       }

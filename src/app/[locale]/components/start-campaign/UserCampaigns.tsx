@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 interface Lead {
   name: string;
@@ -30,6 +31,8 @@ const UserCampaigns = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const t = useTranslations("campaignsHistory");
 
   // Simulate fetching campaigns from the backend
   const fetchCampaigns = async () => {
@@ -68,10 +71,10 @@ const UserCampaigns = () => {
       setCampaigns((prevCampaigns) =>
         prevCampaigns.filter((campaign) => campaign.campaignId !== campaignId)
       );
-      toast.success("Campaign deleted successfully");
+      toast.success(t("campaignDeletedSuccessfully"));
     } catch (error) {
       console.error("Error deleting campaign:", error);
-        setError("Failed to delete the campaign. Please try again.");
+        setError(t("failedToDeleteCampaign"));
       }
     }
   };
@@ -92,9 +95,9 @@ const UserCampaigns = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white border rounded shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-center">Your Campaigns</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">{t("yourCampaigns")}</h2>
       {campaigns.length === 0 ? (
-        <p>No campaigns found.</p>
+        <p>{t("noCampaignsFound")}</p>
       ) : (
         <div className="space-y-6">
           {campaigns.map((campaign) => (
@@ -105,14 +108,14 @@ const UserCampaigns = () => {
     <div>
       <h3 className="text-lg font-semibold">{campaign.campaignName}</h3>
       <p className="text-sm text-gray-600 mb-2">
-        <strong>From:</strong> {campaign.fromNumber}
+        <strong>{t("from")}:</strong> {campaign.fromNumber}
       </p>
       <p className="mb-2">
-        <strong>Message:</strong> {campaign.message}
+        <strong>{t("message")}:</strong> {campaign.message}
       </p>
       {campaign.leads.length > 0 && (
         <div className="mb-2">
-          <strong>Leads:</strong>
+          <strong>{t("leads")}:</strong>
           <ul className="list-disc ml-6">
             {campaign.leads.map((lead, index) => (
               <li key={index}>
@@ -124,7 +127,7 @@ const UserCampaigns = () => {
                     rel="noopener noreferrer"
                     className="text-blue-500 underline"
                   >
-                    Media
+                    {t("media")}
                   </a>
                 )}
               </li>
@@ -133,13 +136,13 @@ const UserCampaigns = () => {
         </div>
       )}
       <p className="text-sm text-gray-600">
-        <strong>Scheduled Time:</strong> {campaign.scheduledTimes[0]} (
+        <strong>{t("scheduledTime")}:</strong> {campaign.scheduledTimes[0]} (
         {campaign.timeZone})
       </p>
       {campaign.batchSize && campaign.batchIntervalValue !== 0 && campaign.batchIntervalUnit && (
         <p className="text-sm text-gray-600 my-2">
-          <strong>Batch Size:</strong> {campaign.batchSize}<br />
-          <strong>Batch Interval:</strong> {campaign.batchIntervalValue} {campaign.batchIntervalUnit}
+          <strong>{t("batchSize")}:</strong> {campaign.batchSize}<br />
+          <strong>{t("batchInterval")}:</strong> {campaign.batchIntervalValue} {campaign.batchIntervalUnit}
         </p>
       )}
       <p
@@ -147,14 +150,14 @@ const UserCampaigns = () => {
           campaign.completed ? "text-green-600" : "text-yellow-600"
         }`}
       >
-        Status: {campaign.completed ? "Completed" : "Pending"}
+        {t("status")}: {campaign.completed ? t("completed") : t("pending")}
       </p>
     </div>
       <button
         onClick={() => handleDeleteCampaign(campaign.campaignId)}
         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full"
       >
-        {!campaign.completed ? "Delete" : "Clear"}
+        {!campaign.completed ? t("delete") : t("clear")}
       </button>
   </div>
 ))}

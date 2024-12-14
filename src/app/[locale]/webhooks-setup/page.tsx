@@ -8,11 +8,15 @@ import FacebookTab from "@/src/app/[locale]/components/webhooks-setup/FacebookTa
 import WPFormsTab from "@/src/app/[locale]/components/webhooks-setup/WPFormsTab";
 import Tabs from "./Tabs"; // Client component for tabs
 import "./webhookSet.css";
+import { getTranslations } from "next-intl/server";
+
 
 export default async function WebhooksSetupPage() {
   // Fetch session and user details server-side
   const session = await getServerSession(authOptions);
   const userEmail = session?.user?.email || null;
+
+  const t = await getTranslations("webhooksSetup");
 
   let uniqueId = null;
   if (userEmail) {
@@ -24,10 +28,23 @@ export default async function WebhooksSetupPage() {
     <div className="dashboard-container flex">
       <Sidebar />
       <div className="main-content flex-1">
-        <Header userName={session?.user?.name || "Webhooks Setup"} />
-        <p className="font-bold text-center text-2xl mt-4 mb-4">Important!</p>
-        <p className="text-center text-lg mb-4">Include the header "x-api-key" with the value of <b><a href="/profile">your API key</a></b> in the webhook request. ({`Example: x-api-key: <your-api-key>`})</p>
-        <p className="text-center text-lg mb-8">Video Tutorials: <b><a href="https://youtu.be/KAdx6EwfhoE" target="_blank" rel="noopener noreferrer">WPForms & Facebook</a></b> | <b><a href="https://youtu.be/eIZImc-UlYY" target="_blank" rel="noopener noreferrer">Contact Form 7</a></b></p>
+        <Header userName={"Webhooks"} />
+        <p className="font-bold text-center text-2xl mt-4 mb-4">{t("important")}</p>
+        <p className="text-center text-lg mb-4">{t("includeTheHeaderXApiKeyWithTheValueOfYourApiKeyInTheWebhookRequest")}</p>
+        <p className="text-center text-lg mb-8">
+        {t('videoTutorialsTitle')}{' '}
+      <b>
+        <a href="https://youtu.be/KAdx6EwfhoE" target="_blank" rel="noopener noreferrer">
+          {t('wpforms')}
+        </a>
+      </b>{' '}
+      |{' '}
+      <b>
+        <a href="https://youtu.be/eIZImc-UlYY" target="_blank" rel="noopener noreferrer">
+          {t('contactForm7')}
+        </a>
+      </b>
+        </p>
         <Tabs uniqueId={uniqueId} />
       </div>
     </div>

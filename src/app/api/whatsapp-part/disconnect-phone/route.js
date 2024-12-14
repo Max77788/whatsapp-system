@@ -7,6 +7,8 @@ import { find_qr_id_by_phone } from '@/lib/utils';
 
 export async function POST(req) {
     try {
+        console.log("Disconnecting phone number");
+        
         const session = await getServerSession(authOptions);
 
         const user_email = session?.user?.email;

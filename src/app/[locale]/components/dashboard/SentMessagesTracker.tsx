@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export const commonStyles: React.CSSProperties = {
   width: "90%", // Set a consistent width
   maxWidth: "650px",
@@ -52,9 +54,11 @@ interface SentMessagesTrackerProps {
 }
 
 export default function SentMessagesTracker({ sentMessages }: SentMessagesTrackerProps) {
+  const t = useTranslations("dashboard");
+  
   return (
     <div style={{ ...commonStyles }}>
-      <h2 style={styles.header}>📢 Sent Messages</h2>
+      <h2 style={styles.header}>📢 {t('sentMessages')}</h2>
       <span style={styles.number}>{sentMessages}</span>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 interface PhoneNumber {
   phoneNumber: string;
@@ -23,6 +24,8 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
   const [tactics, setTactics] = useState<string[]>([]);
   const [selectedTactics, setSelectedTactics] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
+
+  const t = useTranslations("accounts");
 
   let aiIncluded = false;
 
@@ -101,14 +104,14 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
 
   const handleDelete = async (phoneNumber: string) => {
     const confirmed = window.confirm(
-      `Are you sure you want to disconnect the phone number: ${phoneNumber}?`
+      t("are_you_sure_you_want_to_disconnect_the_phone_number", {phoneNumber})
     );
     if (!confirmed) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/whatsapp-part/disconnect-phone`, {
+      const response = await fetch("/api/whatsapp-part/disconnect-phone", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber }),
@@ -116,7 +119,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
 
       if (response.ok) {
         
-        toast.success("Phone number disconnected successfully!");
+        toast.success(t("phone_number_disconnected_successfully"));
         await new Promise((resolve) => setTimeout(resolve, 2000));
           // setPhoneNumbers((prev) => prev.filter((phone) => phone.phoneNumber !== phoneNumber));
           // setSelectedTactics((prev) => {
@@ -126,11 +129,11 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
         // });
         location.reload();
       } else {
-        toast.error("Failed to disconnect phone number.");
+        toast.error(t("failed_to_disconnect_phone_number"));
       }
     } catch (error) {
       console.error("Error disconnecting phone number:", error);
-      alert("An error occurred while disconnecting the phone number.");
+      toast.error(t("an_error_occurred_while_disconnecting_the_phone_number"));
     }
   };
 
@@ -141,9 +144,6 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
       phoneNumber: phone.phoneNumber,
       tactics: selectedTactics[phone.phoneNumber] || [],
     }));
-
-    console.log(`dataToSave: ${JSON.stringify(dataToSave)}`);
-
     try {
       const response = await fetch("/api/text-tactics/save", {
         method: "POST",
@@ -152,13 +152,13 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
       });
 
       if (response.ok) {
-        alert("Tactics saved successfully!");
+        toast.success(t("tactics_saved_successfully"));
       } else {
-        alert("Failed to save tactics.");
+        toast.error(t("failed_to_save_tactics"));
       }
     } catch (error) {
       console.error("Error saving tactics:", error);
-      alert("An error occurred while saving tactics.");
+      toast.error(t("an_error_occurred_while_saving_tactics"));
     }
   };
 
@@ -171,16 +171,16 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
   return (
     <div className="mt-8 p-4 flex flex-col gap-3 items-left justify-left">
       {phoneNumbers.length === 0 ? (
-        <p>No numbers. Connect one.</p>
+        <p>{t("no_numbers_connect_one")}</p>
       ) : (
         <>
-          <h1 className="text-2xl font-semibold mb-4">Phone Number Tactics</h1>
+          <h1 className="text-2xl font-semibold mb-4">{t("phone_number_tactics")}</h1>
           <table className="min-w-full border border-gray-300 mb-4">
             <thead>
               <tr className="bg-green-600 text-white">
-                <th className="border border-gray-300 p-2 text-left">Phone Number</th>
-                <th className="border border-gray-300 p-2 text-left">Active</th>
-                <th className="border border-gray-300 p-2 text-left">Tactics</th>
+                <th className="border border-gray-300 p-2 text-left">{t("phone_number")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("active")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("tactics")}</th>
                 <th className="border border-gray-300 p-2 text-left"></th>
               </tr>
             </thead>
@@ -212,7 +212,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
                         onClick={() => handleDelete(phoneNumber.phoneNumber)}
                         className="px-5 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full mx-auto"
                       >
-                        Disconnect
+                        {t("disconnect")}
                       </button>
                     )}
                   </td>
@@ -224,7 +224,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
             onClick={() => saveData()}
             className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto block"
           >
-            Save Tactics
+            {t("save_tactics")}
           </button>
         </>
       )}

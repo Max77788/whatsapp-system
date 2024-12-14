@@ -4,13 +4,17 @@ import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
 import { SessionProvider } from "next-auth/react";
 import "./settings.css"; // Optional: Use a CSS file to customize dashboard styling.
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const userName = "Accounts"; // Replace with dynamic username from session or auth context
+
+  const t = useTranslations("accounts");
+  const userName = t("accounts"); // Replace with dynamic username from session or auth context
 
   return (
     <SessionProvider>

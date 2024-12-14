@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
-
+import { useTranslations } from "next-intl";
 type RowData = {
     type: string;
     search_term: string;
@@ -31,6 +31,8 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
     const [isLoadingInstructionSets, setIsLoadingInstructionSets] = useState(true);
     const [groups, setGroups] = useState<string[]>([]);
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+
+    const t = useTranslations("chatbotSetup");
 
     const fetchGroups = async () => {
         const response = await fetch("/api/user/find-user");
@@ -60,7 +62,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                 ? initializedTactics
                 : [
                       {
-                          name: "Custom Set Name 1",
+                          name: t("customSetName1"),
                           rows: [
                               {
                                   type: "includes",
@@ -132,7 +134,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
         } else if (row.platforms.length > 1) {
             row.platforms = row.platforms.filter((p) => p !== platform);
         } else {
-            alert("At least one platform must be selected.");
+            toast.error(t("atLeastOnePlatformMustBeSelected"));
         }
 
         setInstructionSets(updatedSets);
@@ -149,8 +151,6 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
         if (updatedSets[setIndex].rows[rowIndex].selectedGroups.length === 0) {
             updatedSets[setIndex].rows[rowIndex].selectedGroups = ["other"];
         }
-        
-        console.log(`updatedSets: ${JSON.stringify(updatedSets)}`);
 
         setInstructionSets(updatedSets);
     };
@@ -197,17 +197,17 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 location.reload();
             } else {
-                alert("Failed to save data.");
+                toast.error(t("failedToSaveData"));
             }
         } catch (error) {
             console.error("Error saving data:", error);
-            alert("An error occurred while saving data.");
+            toast.error(t("failedToSaveData"));
         }
     };
 
     return (
         <div className="p-4">
-            {!isLoadingInstructionSets && <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Message Configuration</h3>}
+            {!isLoadingInstructionSets && <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">{t("messageConfiguration")}</h3>}
             {isLoadingInstructionSets && <div className="animate-pulse flex justify-center">
                 <div className="h-20 bg-gray-300 rounded w-80"></div>
             </div>}
@@ -218,24 +218,24 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                             value={set.name}
                             onChange={(e) => handleSetNameChange(setIndex, e.target.value)}
                             className="text-lg font-medium mb-2 w-full text-black"
-                            placeholder={`Custom Set Name ${setIndex + 1}`}
+                            placeholder={`${t("customSetName")} ${setIndex + 1}`}
                         />
                         <button
                             onClick={() => deleteSet(setIndex)}
                             className="ml-2 px-5 py-3 bg-red-600 text-white rounded-full mb-2 flex items-center justify-center whitespace-nowrap"
                         >
-                            Delete Set
+                            {t("deleteSet")}
                         </button>
                     </div>
                     <table className="w-full border border-gray-300 mb-2">
                         <thead>
                             <tr className="bg-green-600">
-                                <th className="border border-gray-300 p-2 text-white">If received message</th>
-                                <th className="border border-gray-300 p-2 text-white">Custom Match</th>
-                                <th className="border border-gray-300 p-2 text-white">Send this message</th>
-                                <th className="border border-gray-300 p-2 text-white">In X seconds</th>
-                                <th className="border border-gray-300 p-2 text-white">Platforms</th>
-                                <th className="border border-gray-300 p-2 text-white">Groups</th>
+                                <th className="border border-gray-300 p-2 text-white">{t("ifReceivedMessage")}</th>
+                                <th className="border border-gray-300 p-2 text-white">{t("customMatch")}</th>
+                                <th className="border border-gray-300 p-2 text-white">{t("sendThisMessage")}</th>
+                                <th className="border border-gray-300 p-2 text-white">{t("inXSeconds")}</th>
+                                <th className="border border-gray-300 p-2 text-white">{t("platforms")}</th>
+                                <th className="border border-gray-300 p-2 text-white">{t("groups")}</th>
                                 <th className="border border-gray-300 p-2 text-white"></th>
                             </tr>
                         </thead>
@@ -250,8 +250,8 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                             }
                                             className="w-full"
                                         >
-                                            <option value="includes">Includes</option>
-                                            <option value="starts with">Starts With</option>
+                                            <option value="includes">{t("includes")}</option>
+                                            <option value="starts with">{t("startsWith")}</option>
                                         </select>
                                     </td>
                                     <td className="border border-gray-300 p-2">
@@ -261,7 +261,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                                 handleInputChange(setIndex, rowIndex, "search_term", e.target.value)
                                             }
                                             className="w-full"
-                                            placeholder="Hi"
+                                            placeholder={t("hi")}
                                         />
                                     </td>
                                     <td className="border border-gray-300 p-2">
@@ -271,7 +271,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                                 handleInputChange(setIndex, rowIndex, "message_to_send", e.target.value)
                                             }
                                             className="w-full"
-                                            placeholder="Hi, how can we help you today?"
+                                            placeholder={t("hiHowCanWeHelpYouToday")}
                                         />
                                     </td>
                                     <td className="border border-gray-300 p-2">
@@ -329,7 +329,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                             onClick={() => removeRow(setIndex, rowIndex)}
                                             className="px-3 py-2 bg-red-600 text-white rounded-full"
                                         >
-                                            Remove
+                                            {t("remove")}
                                         </button>
                                     </td>
                                 </tr>
@@ -340,16 +340,16 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                         onClick={() => addRow(setIndex)}
                         className="px-5 py-3 bg-green-600 text-white rounded-full"
                     >
-                        Add Row
+                        {t("addRow")}
                     </button>
                 </div>
             ))}
             {!isLoadingInstructionSets && <div className="mt-4">
                 <button onClick={addSet} className="px-5 py-3 bg-green-600 text-white rounded-full">
-                    Add New Set
+                    {t("addNewSet")}
                 </button>
                 <button onClick={saveData} className="ml-4 px-5 py-3 bg-green-600 text-white rounded-full">
-                    Save
+                    {t("save")}
                     </button>
                     </div>
             }

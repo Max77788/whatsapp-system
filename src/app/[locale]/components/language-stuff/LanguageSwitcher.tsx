@@ -8,7 +8,7 @@ export default function LanguageSwitcher() {
   const currentLocale = pathname.split('/')[1];
   
   return (
-    <div>
+    <div className="flex justify-center items-center mb-4">
       {locales.map((loc) => (
         <button
           key={loc}

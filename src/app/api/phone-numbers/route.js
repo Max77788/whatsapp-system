@@ -37,5 +37,7 @@ export async function GET(req) {
     }
   }
 
+  console.log(`Returning phone numbers: ${JSON.stringify(phoneNumbersList)}`)
+
   return NextResponse.json(phoneNumbersList);
 }

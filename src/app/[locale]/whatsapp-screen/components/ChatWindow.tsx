@@ -1,4 +1,10 @@
+import { useTranslations } from "next-intl";
+
 export default function ChatWindow({ chat }: { chat: any }) {
+  const t = useTranslations("waScreen");
+  
+  console.log("Chat on wa/chatId:", chat);
+  
   return (
     <div
       style={{
@@ -62,7 +68,7 @@ export default function ChatWindow({ chat }: { chat: any }) {
                 }}
               >
                 {message.body || (
-                  <span style={{ color: '#888' }}>No content</span>
+                  <span style={{ color: '#888' }}>{t("noContent")}</span>
                 )}
               </p>
               <small

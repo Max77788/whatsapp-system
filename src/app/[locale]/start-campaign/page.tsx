@@ -7,6 +7,7 @@ import { find_user } from '@/lib/utils';
 import SendMessageForm from "../components/send-message/sendMessageForm";
 import ScheduledMessagesListTable from "../components/send-message/scheduledMessagesTable";
 import StartCampaign from "../components/start-campaign/StartCampaign";
+import { getLocale } from "next-intl/server";
 
 /*
 const session = await getServerSession(authOptions);
@@ -23,9 +24,11 @@ const handleDelete = (index: number) => {
 */
 
 export default async function SendMessagePage(): Promise<JSX.Element> {
-    await loginIsRequiredServer();
-
     const session = await getServerSession(authOptions);
+
+    const currentLocale = await getLocale();
+
+    await loginIsRequiredServer(session, false, currentLocale);
     const userEmail = session?.user?.email;
     
     const user = await find_user({ email: userEmail });

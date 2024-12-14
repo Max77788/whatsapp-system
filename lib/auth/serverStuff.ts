@@ -5,9 +5,9 @@ import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import { clientPromise, dbPromise, getDb, update_user } from "../utils"; // Setup MongoDB client connection
 import { toast } from 'react-toastify';
 import { redirect } from 'next/navigation';
-import { getServerSession } from "next-auth";
+import { getServerSession, Session } from "next-auth";
 import { NextAuthOptions } from "next-auth";
-import { MongoClient } from "mongodb"; // Import MongoClient type
+import { MongoClient, ObjectId } from "mongodb"; // Import MongoClient type
 import { UserInterface } from "@/lib/models/User";
 import credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createK8sDeployment } from '@/lib/whatsAppService/kubernetes_part.mjs';
 import { nanoid } from 'nanoid'; // Generate unique keys
 import { sendVerificationEmail, sendNotificationEmailToAviv } from '@/actions/register';
+import { useLocale } from "next-intl";
 
 interface Credentials {
   name?: string;
@@ -111,8 +112,6 @@ export const authOptions: NextAuthOptions = {
       async signIn({ user, account, profile }) {
         try {
             if (account && account.provider === "google") {
-                console.log(`Entered Google sign-in`);
-    
                 // Create a unique ID for the user
                 const isLatin = (str: string) => /^[A-Za-z\s]*$/.test(str);
                 const generateRandomLatinLetters = (length: number) => {
@@ -134,20 +133,21 @@ export const authOptions: NextAuthOptions = {
                 const existingUser = await db.collection("users").findOne({ email: profile?.email });
     
                 if (existingUser) {
-                  // Automatically link the Google account
+                  // Ensure the account is linked
                   await db.collection("accounts").updateOne(
-                      { userId: existingUser.id, provider: account.provider },
-                      {
-                          $set: {
-                              providerAccountId: account.providerAccountId,
-                              type: account.type,
-                              provider: account.provider,
-                              accessToken: account.access_token,
-                              refreshToken: account.refresh_token,
-                          },
-                      },
-                      { upsert: true } // Create the entry if it doesn't exist
-                  );
+                    { provider: account.provider, providerAccountId: account.providerAccountId },
+                    {
+                        $set: {
+                            userId: existingUser._id,
+                            type: account.type,
+                            provider: account.provider,
+                            accessToken: account.access_token,
+                            refreshToken: account.refresh_token, // Store refresh token if available
+                            expiresAt: account.expires_at,
+                        },
+                    },
+                    { upsert: true } // Create the account link if it doesn't exist
+                );
                   return true;
               } else {
                     console.log(`New Google signup for email: ${profile?.email}`);
@@ -173,19 +173,22 @@ export const authOptions: NextAuthOptions = {
                     const result = await db.collection("users").insertOne(newUser);
     
                     
-                    // Link the OAuth account
+                    // Link the account to the newly created user
                     await db.collection("accounts").insertOne({
-                        userId: result.insertedId,
-                        provider: "google",
-                        providerAccountId: account.providerAccountId,
-                        accessToken: account.access_token,
-                        refreshToken: account.refresh_token,
-                    });
+                      userId: result.insertedId,
+                      provider: account.provider,
+                      providerAccountId: account.providerAccountId,
+                      type: account.type,
+                      accessToken: account.access_token,
+                      refreshToken: account.refresh_token,
+                      expiresAt: account.expires_at,
+                  });
     
-                    
-                    // await createK8sDeployment(unique_id);
-
-                    await sendNotificationEmailToAviv(user.email);
+                    if (process.env.NODE_ENV !== "development") {
+                      await createK8sDeployment(unique_id);
+                      
+                      await sendNotificationEmailToAviv(user.email);
+                    }
 
                     return true;
                 }
@@ -197,29 +200,25 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Google sign-in failed. Please try again.");
         }
     },
-      async redirect({ baseUrl }) {
-        return `${baseUrl}/dashboard`; // Otherwise, redirect to the base URL
+      async redirect({ url, baseUrl }) {
+        // const callbackUrl = new URL(url);
+        const locale = url.split('/')[1] || 'en'; // Default to 'en' if no locale
+        return `${baseUrl}/${locale}/dashboard`;
       },
     },
     debug: process.env.NODE_ENV === "development",
   };
 
-  export async function loginIsRequiredServer(loggedOut: boolean = false) {
-    const session = await getServerSession(authOptions);
 
-    console.log(`session: ${JSON.stringify(session)}`);
 
+  export function loginIsRequiredServer(session: any, loggedOut: boolean = false, currentLocale: any = "en") {
     
     if (loggedOut) {
-      return redirect("/auth/signin?notification=loggedOut");
+      return redirect(`/${currentLocale}/auth/signin?notification=loggedOut`);
     }
 
     if (!session) {
       // toast.error('You must be signed in to view this page');
-      return redirect("/auth/signin?notification=login-required");
+      return redirect(`/${currentLocale}/auth/signin?notification=login-required`);
     }
-  }
-
-  export async function fetchGoogleSheetData(url: string) {
-    console.log(`fetching google sheet data from ${url}`);
   }

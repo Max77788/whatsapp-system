@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { Dialog } from "@headlessui/react";
 import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
 
 export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConnected: number}) {
   const { data: session } = useSession();
@@ -13,7 +14,9 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
   const [fadeOut, setFadeOut] = useState(false);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const previousPhonesConnectedRef = useRef<number | null>(null); // Ref to store the previous number of connected phones
-
+  
+  const t = useTranslations("whatsapp_connection");
+  
   const togglePopup = () => {
     setIsOpen(!isOpen);
 
@@ -42,8 +45,8 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
         if (previousPhonesConnectedRef.current !== null && newNumberOfPhonesConnected !== previousPhonesConnectedRef.current) {
           const message =
             newNumberOfPhonesConnected > previousPhonesConnectedRef.current
-              ? "Your phone has been connected successfully!"
-              : "A phone has been detached successfully!";
+              ? t("phone_connected_successfully")
+              : t("phone_detached_successfully");
           toast.success(message);
   
           // Reload the page after the toast notification
@@ -73,7 +76,7 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
 
   const handleGenerateQRCode = async () => {
     if (!session) {
-      toast.error("You need to be logged in to generate a QR code.");
+      toast.error(t("you_need_to_be_logged_in_to_generate_a_qr_code"));
       return;
     }
 
@@ -96,7 +99,7 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
   return (
     <div>
       <button onClick={handleGenerateQRCode} className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full">
-        Connect a New Phone
+        {t("connect_a_new_phone")}
       </button>
 
       <Dialog open={isOpen} onClose={togglePopup} className="fixed inset-0 z-10 overflow-y-auto">
@@ -107,9 +110,9 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
           </span>
           <div className="inline-block w-full max-w-sm p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded">
             <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 text-center">
-              Scan this QR code to connect your phone
+              {t("scan_this_qr_code_to_connect_your_phone")}
               <br />
-              You have {numberOfPhonesConnected} out of {maxPhonesConnected} phones connected
+              {t("you_have_out_of_phones_connected", {numberOfPhonesConnected, maxPhonesConnected})}
             </Dialog.Title>
 
             <div className="mt-4 flex justify-center">
@@ -122,13 +125,13 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
                   }`}
                 />
               ) : (
-                <p>Generating QR code...</p>
+                <p>{t("generating_qr_code")}</p>
               )}
             </div>
 
             <div className="mt-4">
               <button onClick={togglePopup} className="px-4 py-2 bg-red-500 text-white rounded-full mx-auto block text-center">
-                Close
+                {t("close")}
               </button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import React from "react";
 
 const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) => {
@@ -9,6 +10,8 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
     "bg-white hover:bg-gray-100";
   const disabledLinkStyle =
     "bg-gray-300 cursor-not-allowed opacity-50";
+
+  const currentLocale = useLocale();
 
   return (
     <div className="w-25 p-5 bg-black mb-2 mt-2 rounded-lg">
@@ -41,7 +44,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
             strokeLinejoin="round"
           />
         </svg>
-        <a href="/dashboard" className="no-underline">
+        <a href={`/${currentLocale}/dashboard`} className="no-underline">
       
         </a>
       </div>
@@ -49,7 +52,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
         <ul className="space-y-4">
           <li>
             <a
-              href="/dashboard"
+              href={`/${currentLocale}/dashboard`}
               className={`${linkStyle} ${activeLinkStyle}`}
             >
               <svg
@@ -69,7 +72,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/profile" : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/profile` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -94,7 +97,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/accounts" : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/accounts` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -119,7 +122,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/leads" : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/leads` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -150,7 +153,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/start-campaign" : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/start-campaign` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -175,7 +178,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/chatbot-setup" : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/chatbot-setup` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -200,7 +203,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/send-message" : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/send-message` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -225,7 +228,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/webhooks-setup" : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/webhooks-setup` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -252,7 +255,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           <hr></hr>
           <li>
             <a
-              href={withKbBaseUrlLink ? "/whatsapp-screen" : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/whatsapp-screen` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}

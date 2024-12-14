@@ -2,19 +2,24 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { loginIsRequiredServer } from "../../../../lib/auth/serverStuff";
-import { authOptions } from "../../../../lib/auth/serverStuff";
+import { loginIsRequiredServer } from "@/lib/auth/serverStuff";
+import { authOptions } from "@/lib/auth/serverStuff";
 import { find_user } from "@/lib/utils";
+import { getLocale, getTranslations } from "next-intl/server";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 
 export default async function ProfilePage(): Promise<JSX.Element> {
-  await loginIsRequiredServer();
-
+  
   const session = await getServerSession(authOptions);
 
-  console.log(`session1: ${JSON.stringify(session)}`);
+  const currentLocale = await getLocale();
+  const t =  await getTranslations("profile");
+
+  const loggedOut = false;
+
+  await loginIsRequiredServer(session, loggedOut, currentLocale);
 
   const user = await find_user({ email: session?.user?.email });
   /*
@@ -41,22 +46,22 @@ export default async function ProfilePage(): Promise<JSX.Element> {
 
       <div className="profile-details text-center w-full max-w-2xl bg-white rounded-lg shadow-md p-6">
           <div className="profile-section">
-            <h2 className="text-xl font-semibold mb-4 text-black">Personal Information</h2>
+            <h2 className="text-xl font-semibold mb-4 text-black">{t("personal_information")}</h2>
             <div className="space-y-3">
               <div className="flex flex-col items-center">
-                <span className="text-black font-bold">Name</span>
+                <span className="text-black font-bold">{t("name")}</span>
                 <span className="font-medium text-black">{session?.user?.name}</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-black font-bold">Email</span>
+                <span className="text-black font-bold">{t("email")}</span>
                 <span className="font-medium text-black">{session?.user?.email}</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-black font-bold">Unique ID</span>
+                <span className="text-black font-bold">{t("unique_id")}</span>
                 <span className="font-medium text-black">{user?.unique_id}</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-black font-bold">API Key</span>
+                <span className="text-black font-bold">{t("api_key")}</span>
                 <span className="font-medium text-black">{user?.apiKey}</span></div>
           
           {/*

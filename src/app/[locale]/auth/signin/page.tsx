@@ -7,6 +7,8 @@ import Link from "next/link";
 import { GoogleSignInButton } from "../../components/signin/authButtons";
 import CredentialsForm from "../../components/signin/credentialsForm";
 import { createK8sDeployment } from "@/lib/whatsAppService/kubernetes_part.mjs";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 
 // Component to handle search parameters and show notifications
 const SearchParamsHandler = () => {
@@ -14,9 +16,11 @@ const SearchParamsHandler = () => {
   const searchParams = useSearchParams();
   const notificationProcessedRef = useRef(false); 
 
+  const currentLocale = useLocale();
+
   useEffect(() => {
     if (searchParams.toString()) {
-      router.replace("/auth/signin");
+      router.replace(`/${currentLocale}/auth/signin`);
     }
 
     const notification = searchParams.get("notification");
@@ -54,6 +58,9 @@ const SearchParamsHandler = () => {
 };
 
 const SignIn = () => {
+  const t = useTranslations('signin');  
+  const currentLocale = useLocale();
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       {/* SearchParamsHandler to manage URL params and notifications */}
@@ -68,7 +75,7 @@ const SignIn = () => {
 
             <div className="flex items-center space-x-2">
               <hr className="flex-1 border-gray-600" />
-              <span className="text-gray-400">or</span>
+              <span className="text-gray-400">{t('or')}</span>
               <hr className="flex-1 border-gray-600" />
             </div>
 
@@ -85,14 +92,14 @@ const SignIn = () => {
 
           <div className="text-center">
             <p className="">
-              Don&apos;t have an account?{" "}
-              <Link href="/auth/signup" className="hover:underline">
-                Sign up
+              {t('dontHaveAnAccount')}
+              <Link href={`/${currentLocale}/auth/signup`} className="hover:underline">
+                {t('signUp')}
               </Link>
             </p>
-            <p><Link href="/forgot-password" className="hover:underline">
-                Forgot password?
-              </Link>
+            <p><a href={`/${currentLocale}/forgot-password`} className="hover:underline">
+                {t('forgotPassword')}
+              </a>
             </p>
           </div>
         </div>

@@ -1,10 +1,10 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, JSX } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { useTranslations } from "next-intl";
 interface Props {
   fromPhones: string[]; // List of available phone numbers for "from" field
   toPhones: string[]; // List of available phone numbers for "to" field
@@ -27,7 +27,7 @@ const SendMessageForm: React.FC<Props> = ({ fromPhones, toPhones }) => {
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
-  
+  const t = useTranslations("sendMessage");
 
 const handleScheduleMessage = async () => {
   console.log(`selectedGroups: ${JSON.stringify(selectedGroups)}`);
@@ -53,19 +53,19 @@ const handleScheduleMessage = async () => {
       });
 
       if (response.ok) {
-        toast.success("Message scheduled!");
+        toast.success(t("messageScheduled"));
         await new Promise((resolve) => setTimeout(resolve, 2000));
         location.reload();
         setIsScheduleModalOpen(false);
       } else {
-        toast.error("Failed to schedule message.");
+        toast.error(t("failedToScheduleMessage"));
       }
     } catch (error) {
       console.error("Error scheduling message:", error);
-      toast.error("An error occurred while scheduling the message.");
+      toast.error(t("anErrorOccurredWhileSchedulingTheMessage"));
     }
   } else {
-    toast.error("Please fill in all fields.");
+    toast.error(t("pleaseFillInAllFields"));
   }
 };
 
@@ -78,7 +78,7 @@ const handleScheduleMessage = async () => {
       setGroups(user.leadGroups || []);
     } catch (error) {
       console.error("Error fetching groups:", error);
-      toast.error("Failed to load groups.");
+      toast.error(t("failedToLoadGroups"));
     }
   };
 
@@ -109,7 +109,7 @@ const handleScheduleMessage = async () => {
 
   const handleSelectAllToggle = () => {
     if (selectedGroups.length > 0) {
-      toast.error("Cannot use 'Select All' when groups are selected.");
+      toast.error(t("cannotUseSelectAllWhenGroupsAreSelected"));
       return;
     }
     if (selectAll) {
@@ -131,7 +131,7 @@ const handleScheduleMessage = async () => {
       }
     } catch (error) {
       console.error("Error fetching templates:", error);
-      toast.error("An error occurred while fetching templates.");
+      toast.error(t("anErrorOccurredWhileFetchingTemplates"));
     }
   };
 
@@ -146,7 +146,7 @@ const handleScheduleMessage = async () => {
 
   const saveMessageToTemplate = async () => {
     if (!templateName || !message) {
-      toast.error("Please provide a template name and message.");
+      toast.error(t("pleaseProvideATemplateNameAndMessage"));
       return;
     }
   
@@ -167,15 +167,15 @@ const handleScheduleMessage = async () => {
       });
   
       if (response.ok) {
-        toast.success("Message saved as template!");
+        toast.success(t("messageSavedAsTemplate"));
         fetchTemplates(); // Refresh the template list
         setIsSaveModalOpen(false);
       } else {
-        toast.error("Failed to save message as template.");
+        toast.error(t("failedToSaveMessageAsTemplate"));
       }
     } catch (error) {
       console.error("Error saving template:", error);
-      toast.error("An error occurred while saving the template.");
+      toast.error(t("anErrorOccurredWhileSavingTheTemplate"));
     }
   };
   
@@ -200,18 +200,18 @@ const handleScheduleMessage = async () => {
         });
 
         if (response.ok) {
-          toast.success("Message sent!");
+          toast.success(t("messageSent"));
           await new Promise((resolve) => setTimeout(resolve, 2000));
           location.reload();
         } else {
-          toast.error("Failed to send message.");
+          toast.error(t("failedToSendMessage"));
         }
       } catch (error) {
         console.error("Error sending message:", error);
-        toast.error("An error occurred while sending the message.");
+        toast.error(t("anErrorOccurredWhileSendingTheMessage"));
       }
     } else {
-      toast.error("Please fill in all fields.");
+      toast.error(t("pleaseFillInAllFields"));
     }
   };
 
@@ -225,14 +225,14 @@ const handleScheduleMessage = async () => {
     <div className="mt-8 p-4 border border-gray-300 rounded-lg">
       <div className="flex justify-between mb-4">
         <div className="flex-1 mr-2">
-          <label className="block mb-2 font-semibold">From</label>
+          <label className="block mb-2 font-semibold">{t("from")}</label>
           <select
             value={fromNumber}
             onChange={(e) => setFromNumber(e.target.value)}
             className="w-full text-black border border-gray-300 p-2 rounded"
           >
             <option value="" disabled>
-              {fromPhones.length ? "Select phone number" : "No phones"}
+              {fromPhones.length ? t("selectPhoneNumber") : t("noPhones")}
             </option>
             {fromPhones.map((phone) => (
               <option key={phone} value={phone}>
@@ -243,7 +243,7 @@ const handleScheduleMessage = async () => {
         </div>
 
         <div className="flex-1 ml-2">
-          <label className="block mb-2 font-semibold">To</label>
+          <label className="block mb-2 font-semibold">{t("to")}</label>
           <select
             multiple
             size={toPhones?.length || 5}
@@ -256,7 +256,7 @@ const handleScheduleMessage = async () => {
             disabled={selectedGroups.length > 0} // Disable dropdown if groups are selected
           >
             <option value="ALL" onClick={handleSelectAllToggle}>
-              {selectAll ? "Unselect All" : "Select All"}
+              {selectAll ? t("unselectAll") : t("selectAll")}
             </option>
             {toPhones?.length ? (
               toPhones.map((phone) => (
@@ -265,15 +265,15 @@ const handleScheduleMessage = async () => {
                 </option>
               ))
             ) : (
-              <option disabled>No phones</option>
+              <option disabled>{t("noPhones")}</option>
             )}
           </select>
-          <div className="mt-1 text-gray-400 italic">{`${toNumbers.length} numbers selected`}</div>
+          <div className="mt-1 text-gray-400 italic">{`${toNumbers.length} ${t("numbersSelected")}`}</div>
         </div>
       </div>
 
       <div className="mb-6">
-        <h3 className="text-lg font-semibold">Send to these Groups</h3>
+        <h3 className="text-lg font-semibold">{t("sendToTheseGroups")}</h3>
         <div className="flex flex-wrap gap-4 mt-2">
           {groups.map((group) => (
             <label key={group} className="flex items-center space-x-2">
@@ -290,7 +290,7 @@ const handleScheduleMessage = async () => {
       </div>
 
       <div className="mb-4">
-          <label className="block font-semibold mb-2">Media Attachment (optional)</label>
+          <label className="block font-semibold mb-2">{t("mediaAttachment")}</label>
           <input
             type="file"
             accept="image/*,.pdf"
@@ -306,24 +306,24 @@ const handleScheduleMessage = async () => {
             }}
             className="w-full border border-gray-300 p-2 rounded"
           />
-          <p className="text-gray-500 italic">*Supported file types: images, PDFs</p>
+          <p className="text-gray-500 italic">{t("supportedFileTypes")}</p>
         </div>
 
       <div className="mb-2">
-        <label className="block mb-2 font-semibold">Message</label>
+        <label className="block mb-2 font-semibold">{t("message")}</label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className="w-full h-40 text-black border border-gray-300 rounded"
-          placeholder="Enter your message here..."
+          placeholder={t("enterYourMessageHere")}
         />
-        <i className="text-black">{`*include {{name}} to insert the name of the recipient. E.g. "Hello {{name}}, how are you?"`}</i>
+        <i className="text-black">{`*${t("includeNameToPersonalizeMessages")} ${t("exampleMessage")}`}</i>
         <div className="flex gap-2 mt-2">
         <button
           onClick={openTemplateModal}
           className="px-5 py-3 mx-auto bg-purple-700 hover:bg-purple-800 text-white rounded-full"
         >
-          Load Template
+          {t("loadTemplate")}
         </button>
 
         <button
@@ -331,12 +331,12 @@ const handleScheduleMessage = async () => {
     if (message) {
       setIsSaveModalOpen(true);
     } else {
-      toast.error("Please write a message to save as a template.");
+      toast.error(t("pleaseWriteAMessageToSaveAsATemplate"));
     }
   }}
   className="px-5 py-3 mx-auto bg-yellow-600 hover:bg-yellow-700 text-white rounded-full"
 >
-          Save as Template
+          {t("saveAsTemplate")}
         </button>
         </div>
       </div>
@@ -352,10 +352,10 @@ const handleScheduleMessage = async () => {
           {isMediaPreviewVisible && mediaAttachment ? (
             <div className="flex flex-col items-center justify-center">
               <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm">
-                Media Preview
+                {t("mediaPreview")}
               </div>
               <div className="mt-4 bg-green-600 text-white rounded-lg p-2 w-full break-words">
-                {message || "Type a caption for your media..."}
+                {message || t("typeACaptionForYourMedia")}
               </div>
             </div>
           ) : (
@@ -364,7 +364,7 @@ const handleScheduleMessage = async () => {
                 U
               </div>
               <div className="bg-green-600 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
-                {message || "Type a message to see it here..."}
+                {message || t("typeAMessageToSeeItHere")}
               </div>
             </div>
           )}
@@ -374,9 +374,9 @@ const handleScheduleMessage = async () => {
         {isScheduleModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-      <h2 className="text-xl font-semibold mb-4">Schedule Message</h2>
+      <h2 className="text-xl font-semibold mb-4">{t("scheduleMessage")}</h2>
       
-      <label className="block mb-2 font-semibold">Select Time</label>
+      <label className="block mb-2 font-semibold">{t("selectTime")}</label>
       <input
         type="datetime-local"
         value={scheduleTime}
@@ -384,14 +384,14 @@ const handleScheduleMessage = async () => {
         className="w-full border border-gray-300 p-2 rounded mb-4"
       />
 
-      <label className="block mb-2 font-semibold">Select Time Zone</label>
+      <label className="block mb-2 font-semibold">{t("selectTimeZone")}</label>
       <select
         value={timeZone}
         onChange={(e) => setTimeZone(e.target.value)}
         className="w-full border border-gray-300 p-2 rounded mb-4"
       >
         <option key={'choose'} value={'choose'}>
-              Choose Time Zone
+            {t("chooseTimeZone")}
             </option>
         {Array.from({ length: 23 }, (_, i) => {
           const offset = -11 + i; // Calculate GMT offset
@@ -409,13 +409,13 @@ const handleScheduleMessage = async () => {
           onClick={() => setIsScheduleModalOpen(false)}
           className="px-4 py-2 bg-gray-300 rounded-full"
         >
-          Cancel
+          {t("cancel")}
         </button>
         <button
           onClick={handleScheduleMessage}
           className="px-4 py-2 bg-green-600 text-white rounded-full"
         >
-          Schedule
+          {t("schedule")}
         </button>
 
       </div>
@@ -504,7 +504,7 @@ const handleScheduleMessage = async () => {
           onClick={handleSendMessage}
           className="px-5 py-3 mx-auto bg-green-600 hover:bg-green-700 text-white rounded-full"
         >
-          Send Message
+          {t("sendMessage")}
         </button>
         <button
           onClick={() => {
@@ -516,7 +516,7 @@ const handleScheduleMessage = async () => {
           }}
           className="px-5 py-3 mx-auto bg-blue-600 hover:bg-blue-700 text-white rounded-full"
         >
-  Schedule Message
+          {t("scheduleMessage")}
         </button>
 
       </div>

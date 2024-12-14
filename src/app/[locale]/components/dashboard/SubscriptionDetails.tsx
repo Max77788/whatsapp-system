@@ -1,8 +1,9 @@
 // components/SubscriptionDetails.js
 "use client";
+import { useTranslations } from "next-intl";
 import { commonStyles } from "./SentMessagesTracker";
 import { useEffect, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 const styles: {
   container: React.CSSProperties;
   header: React.CSSProperties;
@@ -44,6 +45,8 @@ const styles: {
 export default function SubscriptionDetails() {
   const [plan, setPlan] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations("dashboard");
+
 
   useEffect(() => {
     async function fetchPlan() {
@@ -75,16 +78,16 @@ export default function SubscriptionDetails() {
   if (!plan) {
     return (
       <div style={{ ...commonStyles }}>
-      <h2 style={styles.header}>📜 Subscription Details</h2>
+      <h2 style={styles.header}>📜 {t('subscriptionDetails')}</h2>
       <div style={styles.details}>
         <p style={styles.detailItem}>
-          <strong>Plan:</strong>
+          <strong>{t('plan')}:</strong>
         </p>
         <p style={styles.detailItem}>
-          <strong>Status:</strong> Active
+          <strong>{t('status')}:</strong> {t('active')}
         </p>
         <p style={styles.detailItem}>
-          <strong>Renewal Date:</strong> {renewalDate.toLocaleDateString()}
+          <strong>{t('renewalDate')}:</strong> {renewalDate.toLocaleDateString()}
         </p>
       </div>
     </div>
@@ -93,16 +96,16 @@ export default function SubscriptionDetails() {
 
   return (
     <div style={{ ...commonStyles }}>
-      <h2 style={styles.header}>📜 Subscription Details</h2>
+      <h2 style={styles.header}>📜 {t('subscriptionDetails')}</h2>
       <div style={styles.details}>
         <p style={styles.detailItem}>
-          <strong>Plan:</strong> {plan.name}
+          <strong>{t('plan')}:</strong> {plan.name}
         </p>
         <p style={styles.detailItem}>
-          <strong>Status:</strong> Active
+          <strong>{t('status')}:</strong> {t('active')}
         </p>
         <p style={styles.detailItem}>
-          <strong>Renewal Date:</strong> {renewalDate.toLocaleDateString()}
+          <strong>{t('renewalDate')}:</strong> {renewalDate.toLocaleDateString()}
         </p>
       </div>
     </div>

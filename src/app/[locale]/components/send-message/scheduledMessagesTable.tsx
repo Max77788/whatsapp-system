@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { find_user } from "@/lib/utils";
 import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
 
 interface ScheduledMessage {
   fromNumber: string;
@@ -16,6 +17,8 @@ interface ScheduledMessage {
 const ScheduledMessagesListTable: React.FC = () => {
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const t  = useTranslations("sendMessage");
 
   // Fetch initial scheduled messages
   useEffect(() => {
@@ -40,7 +43,7 @@ const ScheduledMessagesListTable: React.FC = () => {
 
   // Handle delete action
   const handleDelete = async (messageIndex: number) => {
-    const confirmDelete = window.confirm("Are you sure you want to unschedule this message?");
+    const confirmDelete = window.confirm(t("areYouSureYouWantToUnscheduleThisMessage"));
     if (!confirmDelete) return;
 
     const messageToDelete = scheduledMessages[messageIndex];
@@ -52,36 +55,36 @@ const ScheduledMessagesListTable: React.FC = () => {
       });
 
       if (response.ok) {
-        toast.success("Message unscheduled successfully!");
+        toast.success(t("messageUnscheduledSuccessfully"));
         setScheduledMessages((prev) => prev.filter((_, index) => index !== messageIndex));
       } else {
-        toast.error("Failed to unschedule the message.");
+        toast.error(t("failedToUnscheduleTheMessage"));
       }
     } catch (error) {
       console.error("Error unscheduling the message:", error);
-      alert("An error occurred while unscheduling the message.");
+      toast.error(t("anErrorOccurredWhileUnschedulingTheMessage"));
     }
   };
 
   if (loading) {
-    return <p>Loading scheduled messages...</p>;
+    return <p>{t("loadingScheduledMessages")}</p>;
   }
 
   return (
     <div className="mt-8 p-4 border border-gray-300 rounded-lg">
-      <h1 className="text-2xl text-center font-semibold mb-4">Scheduled Messages</h1>
+      <h1 className="text-2xl text-center font-semibold mb-4">{t("scheduledMessages")}</h1>
       {scheduledMessages?.length === 0 ? (
-        <p className="text-gray-500 italic">No messages are scheduled.</p>
+        <p className="text-gray-500 italic">{t("noMessagesAreScheduled")}</p>
       ) : (
         <table className="min-w-full border border-gray-300">
           <thead>
             <tr className="bg-blue-500 text-white">
-              <th className="border border-gray-300 p-2 text-left">From Number</th>
-              <th className="border border-gray-300 p-2 text-left">To Numbers</th>
-              <th className="border border-gray-300 p-2 text-left">Message</th>
-              <th className="border border-gray-300 p-2 text-left">Schedule Time</th>
-              <th className="border border-gray-300 p-2 text-left">Time Zone</th>
-              <th className="border border-gray-300 p-2 text-left">Media Included</th>
+              <th className="border border-gray-300 p-2 text-left">{t("fromNumber")}</th>
+              <th className="border border-gray-300 p-2 text-left">{t("toNumbers")}</th>
+              <th className="border border-gray-300 p-2 text-left">{t("message")}</th>
+              <th className="border border-gray-300 p-2 text-left">{t("scheduleTime")}</th>
+              <th className="border border-gray-300 p-2 text-left">{t("timeZone")}</th>
+              <th className="border border-gray-300 p-2 text-left">{t("mediaIncluded")}</th>
               <th className="border border-gray-300 p-2 text-left"></th>
             </tr>
           </thead>
@@ -98,13 +101,13 @@ const ScheduledMessagesListTable: React.FC = () => {
                 <td className="border border-gray-300 p-2">{message.message}</td>
                 <td className="border border-gray-300 p-2">{message.scheduleTime.replace("T", " ").replace("Z", "")}</td>
                 <td className="border border-gray-300 p-2">{message.timeZone}</td>
-                <td className="border border-gray-300 p-2">{message.mediaURL ? "Yes" : "No"}</td>
+                <td className="border border-gray-300 p-2">{message.mediaURL ? t("yes") : t("no")}</td>
                 <td className="border border-gray-300 p-2">
                   <button
                     onClick={() => handleDelete(index)}
                     className="px-4 py-2 bg-red-500 text-white rounded"
                   >
-                    Delete
+                    {t("delete")}
                   </button>
                 </td>
               </tr>

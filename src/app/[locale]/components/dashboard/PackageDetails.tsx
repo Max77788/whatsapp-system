@@ -2,6 +2,8 @@
 "use client";
 import { commonStyles } from "./SentMessagesTracker";
 import { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 
 const styles: {
   container: React.CSSProperties;
@@ -45,6 +47,9 @@ export default function PackageDetails() {
   const [plan, setPlan] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   
+  const currentLocale = useLocale();
+  const t = useTranslations("dashboard");
+  
   useEffect(() => {
     async function fetchPlan() {
       try {
@@ -72,7 +77,7 @@ export default function PackageDetails() {
   if (error) {
     return (
       <div style={styles.container}>
-        <h2 style={styles.header}>Error</h2>
+        <h2 style={styles.header}>{t('error')}</h2>
         <p style={styles.detailItem}>{error}</p>
       </div>
     );
@@ -81,22 +86,22 @@ export default function PackageDetails() {
   if (!plan) {
     return (
       <div style={{ ...commonStyles }}>
-      <h2 style={styles.header}>📦 Package Details</h2>
+      <h2 style={styles.header}>📦 {t('packageDetails')}</h2>
       <div style={styles.details}>
         <p style={styles.detailItem}>
-          <strong>Package:</strong>
+          <strong>{t('package')}:</strong>
         </p>
         <p style={styles.detailItem}>
-          <strong>AI Included:</strong>
+          <strong>{t('aiIncluded')}:</strong>
         </p>
         <p style={styles.detailItem}>
-          <strong>Maximum WhatsApp Accounts:</strong> 
+          <strong>{t('maximumWhatsAppAccounts')}:</strong> 
         </p>
         <p style={styles.detailItem}>
-          <strong>Messages per Month:</strong> 
+          <strong>{t('messagesPerMonth')}:</strong> 
         </p>
         <p style={styles.detailItem}>
-          <strong>Price:</strong> NIS
+          <strong>{t('price')}:</strong> NIS
         </p>
       </div>
     </div>
@@ -105,22 +110,22 @@ export default function PackageDetails() {
   
   return (
     <div style={{ ...commonStyles }}>
-      <h2 style={styles.header}>📦 Package Details</h2>
+      <h2 style={styles.header}>📦 {t('packageDetails')}</h2>
       <div style={styles.details}>
         <p style={styles.detailItem}>
-          <strong>Package:</strong> {plan.name}
+          <strong>{t('package')}:</strong> {plan.name}
         </p>
         <p style={styles.detailItem}>
-          <strong>AI Included:</strong> {plan?.aiIncluded ? "Yes" : "No"}
+          <strong>{t('aiIncluded')}:</strong> {plan?.aiIncluded ? t('yes') : t('no')}
         </p>
         <p style={styles.detailItem}>
-          <strong>Maximum WhatsApp Accounts:</strong> {plan?.maxWaAccsNumber ? plan?.maxWaAccsNumber : "Unlimited"}
+          <strong>{t('maximumWhatsAppAccounts')}:</strong> {plan?.maxWaAccsNumber ? plan?.maxWaAccsNumber : t('unlimited')}
         </p>
         <p style={styles.detailItem}>
-          <strong>Messages per Month:</strong> {plan?.messageLimit ? plan?.messageLimit : "Unlimited"}
+          <strong>{t('messagesPerMonth')}:</strong> {plan?.messageLimit ? plan?.messageLimit : t('unlimited')}
         </p>
         <p style={styles.detailItem}>
-          <strong>Price:</strong> {plan.price} NIS
+          <strong>{t('price')}:</strong> {plan.price} {t('nis')}
         </p>
       </div>
     </div>

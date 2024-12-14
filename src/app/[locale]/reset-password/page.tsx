@@ -2,6 +2,8 @@
 
 import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState("");
@@ -9,9 +11,11 @@ function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const router = useRouter();
+  const currentLocale = useLocale();
+  const t = useTranslations('signin');
 
   if (!token) {
-    router.push("/auth/signin?notification=invalid-token");
+    router.push(`/${currentLocale}/auth/signin?notification=invalid-token`);
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +34,7 @@ function ResetPasswordForm() {
 
     const result = await response.text();
     if (result === "Password updated successfully") { 
-        router.push("/auth/signin?notification=password-updated");
+        router.push(`/${currentLocale}/auth/signin?notification=password-updated`);
     } else {
         setMessage(result);
     }
@@ -41,12 +45,12 @@ function ResetPasswordForm() {
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4 w-full max-w-md">
         <input
           type="text"
-          placeholder="Enter new password"
+          placeholder={t('enterNewPassword')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="p-2 border rounded text-black w-64"
         />
-        <button type="submit" className="p-2 bg-green-600 hover:bg-green-700 text-white rounded w-64">Reset Password</button>
+        <button type="submit" className="p-2 bg-green-600 hover:bg-green-700 text-white rounded w-64">{t('resetPassword')}</button>
       </form>
       {message && <p className="mt-4 text-red-500 w-64 text-center">{message}</p>}
     </div>
@@ -54,8 +58,10 @@ function ResetPasswordForm() {
 }
 
 export default function ResetPassword() {
+  const t = useTranslations('signin');
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>{t('loading')}</div>}>
       <ResetPasswordForm />
     </Suspense>
   );

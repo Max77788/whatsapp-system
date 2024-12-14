@@ -9,12 +9,15 @@ import { find_user, findPlanById, getNumberOfActivePhones } from '@/lib/utils';
 import CreateClientButton from "../components/whatsapp-connection/createClientButton";
 import PhoneNumberTacticsTable from "../components/settings/PhoneNumberTacticsTable";
 import LeadsTable from "../components/settings/LeadsTable";
-
+import { getLocale, getTranslations } from "next-intl/server";
 export default async function SettingsPage(): Promise<JSX.Element> {
-    await loginIsRequiredServer();
     
     const session = await getServerSession(authOptions);
     const userEmail = session?.user?.email;
+    const currentLocale = await getLocale();
+    const t = await getTranslations("accounts");
+
+    await loginIsRequiredServer(session, false, currentLocale);
     
     const user = await find_user({ email: userEmail });
     const uniqueId = user?.unique_id;
@@ -46,7 +49,7 @@ export default async function SettingsPage(): Promise<JSX.Element> {
               <CreateClientButton maxPhonesConnected={maxPhonesConnected} />
             ) : (
               <div className="px-5 py-3 bg-gray-400 text-white rounded-full">
-                Maximum number of phones connected
+                {t("maximum_number_of_phones_connected")}
               </div>
             )}
             <PhoneNumberTacticsTable initialTactics={initialTactics} />

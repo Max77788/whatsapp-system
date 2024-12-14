@@ -10,6 +10,7 @@ import { civicinfo } from 'googleapis/build/src/apis/civicinfo';
 import { toast } from 'react-toastify';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
+import { useTranslations, useLocale } from 'next-intl';
 
 // Define a type for the contact
 interface Contact {
@@ -20,6 +21,8 @@ interface Contact {
 
 const Sidebar = () => {
   const router = useRouter();
+  const t = useTranslations("waScreen");
+  const currentLocale = useLocale();
 
   // States
   const [selectedPhone, setSelectedPhone] = useState('');
@@ -115,7 +118,7 @@ const Sidebar = () => {
   const handleExport = async () => {
     try {
       if (selectedPhones.length === 0) {
-        alert('No phone numbers selected for export.');
+        alert(t("noPhoneNumbersSelectedForExport"));
         return;
       }
   
@@ -131,17 +134,17 @@ const Sidebar = () => {
         throw new Error(`Error: ${response.statusText}`);
       }
   
-      toast.success('Numbers exported successfully!');
+      toast.success(t("numbersExportedSuccessfully"));
     } catch (error) {
       console.error('Export error:', error);
-      toast.error('Failed to export phone numbers.');
+      toast.error(t("failedToExportPhoneNumbers"));
     }
   };
 
   const handleExportCSV = async () => {
     try {
       if (selectedPhones.length === 0) {
-        alert('No phone numbers selected for export.');
+        alert(t("noPhoneNumbersSelectedForExport"));
         return;
       }
 
@@ -155,14 +158,14 @@ const Sidebar = () => {
       saveAs(blob, "leads.csv");
     } catch (error) {
       console.error('Export error:', error);
-      toast.error('Failed to export phone numbers.');
+      toast.error(t("failedToExportPhoneNumbers"));
     }
   };
   
 
   return (
     <div style={{ padding: '1rem', backgroundColor: '#141c24' }}>
-      <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Chats</h2>
+      <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{t("chats")}</h2>
 
       {/* Error message 
       {error && (
@@ -175,14 +178,14 @@ const Sidebar = () => {
       {/* Loading indicator */}
       {loading && (
         <div style={{ marginBottom: '1rem' }}>
-          Loading...
+          {t("loading")}...
         </div>
       )}
 
       {/* Phone number dropdown */}
       {phoneNumbers.length > 0 ? <div style={{ marginBottom: '1rem' }}>
         <label htmlFor="phoneSelect" style={{ marginRight: '10px' }}>
-          Select Phone Number:
+          {t("selectPhoneNumber")}:
         </label>
         <select
           id="phoneSelect"
@@ -198,15 +201,15 @@ const Sidebar = () => {
         </select>
       </div> : !loading && (
         <div>
-          No phone numbers found.<br></br>
-          Please connect your phone number<br></br>
-          in the <a href="/accounts">Accounts page.</a><br></br><br></br>
+          {t("noPhoneNumbersFound")}<br></br>
+          {t("pleaseConnectYourPhoneNumber")}<br></br>
+          {t("inThe")} <a href="/accounts">{t("accounts")}</a> {t("page")}.<br></br><br></br>
         </div>
       )}
 
       {/* Selected phone numbers */}
       <div style={{ marginBottom: '1rem' }}>
-  <p>Export Phone Numbers:</p>
+  <p>{t("exportPhoneNumbers")}:</p>
   {isContactsLoaded ? (
   <select
   id="selectedPhoneNumbers"
@@ -243,7 +246,7 @@ const Sidebar = () => {
           setSelectedPhones(groupContacts);
         }}
       >
-        [Select All in {group.name}]
+        {t("selectAllIn")} {group.name}
       </option>
       {group.contacts.map((contact: Contact) => (
         (contact.id.split('@')[0].length <= 13 && !contact.id.split('@')[1].includes("g") && !phoneNumbers.some(phone => phone === contact.id.split('@')[0]) && contact.id.split('@')[0] !== selectedPhone) && <option
@@ -257,7 +260,7 @@ const Sidebar = () => {
   ))}
 </select>
   ) : (
-    <div>Loading...</div>
+    <div>{t("loading")}...</div>
   )}
 
 
@@ -269,7 +272,7 @@ const Sidebar = () => {
       selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black rounded-full' : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
     }`}
   >
-    Export to CRM
+    {t("exportToCrm")}
   </button>
   <button
     onClick={handleExportCSV}
@@ -278,7 +281,7 @@ const Sidebar = () => {
       selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black rounded-full' : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
     }`}
   >
-    Export to CSV
+    {t("exportToCsv")}
   </button>
   </div>
 </div>
@@ -296,7 +299,7 @@ const Sidebar = () => {
               cursor: 'pointer',
               borderBottom: '1px solid #ddd',
             }}
-            onClick={() => router.push(`/whatsapp-screen/${chat.chatId}`)}
+            onClick={() => router.push(`/${currentLocale}/whatsapp-screen/${chat.chatId}`)}
           >
             <div
               style={{

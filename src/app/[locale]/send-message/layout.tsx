@@ -3,13 +3,16 @@ import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
 import { SessionProvider } from "next-auth/react";
 import "./settings.css"; // Optional: Use a CSS file to customize dashboard styling.
+import { useTranslations } from "next-intl";
 
 export default async function SendMessageLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const userName = "Send Message"; // Replace with dynamic username from session or auth context
+
+  const t = useTranslations("sidebar");
+  const userName = t("sendMessage"); // Replace with dynamic username from session or auth context
 
   return (
     <SessionProvider>

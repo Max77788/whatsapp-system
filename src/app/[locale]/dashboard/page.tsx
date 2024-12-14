@@ -2,11 +2,10 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { loginIsRequiredServer } from "../../../../lib/auth/serverStuff";
-import { authOptions } from "../../../../lib/auth/serverStuff";
+import { loginIsRequiredServer } from "@/lib/auth/serverStuff";
+import { authOptions } from "@/lib/auth/serverStuff";
 import { cookies } from "next/headers";
 import './dashboard.css'
-import { useEffect } from "react";
 import PackageDetails from "../components/dashboard/PackageDetails";
 import SubscriptionDetails from "../components/dashboard/SubscriptionDetails";
 import Sidebar from "../components/dashboard/Sidebar";
@@ -14,6 +13,7 @@ import Header from "../components/dashboard/Header";
 import { find_user, update_user } from "@/lib/utils";
 import { retrieveK8sDeploymentUrl } from "@/lib/whatsAppService/kubernetes_part.mjs";
 import SentMessagesTracker from "../components/dashboard/SentMessagesTracker";
+import { getLocale, getTranslations } from "next-intl/server";
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -27,9 +27,11 @@ export default async function DashboardPage() {
   const cookieStore = await cookies();
   const loggedOut = cookieStore.get("loggedOut")?.value === "true";
 
-  await loginIsRequiredServer(loggedOut);
-
   const session = await getServerSession(authOptions);
+  
+  const currentLocale = await getLocale();
+  
+  await loginIsRequiredServer(session, loggedOut, currentLocale);
 
   await wait(1000);
 
@@ -68,9 +70,8 @@ export default async function DashboardPage() {
 
   const sentMessages = user?.sentMessages || 0;
   
-  const userName = 'Dashboard';
-
-  const boolToPass = withKbBaseUrlLink && isNotPaused;
+  const t = await getTranslations("dashboard");
+  const userName = t("dashboardName");
 
   // Render the dashboard content if the user is authenticated
   return (
@@ -85,8 +86,8 @@ export default async function DashboardPage() {
 
           <div className="dashboard-body">
 
-            {isNotPaused ? <h1 className="dashboard-greeting">Hello, {session?.user?.name}!</h1> : <h1 className="dashboard-greeting">Hello, {session?.user?.name}! Your account is paused.</h1>}
-            {isAdmin ? <h1 className="text-2xl font-bold text-black underline"><a href="/admin/packages">Access to admin panel</a></h1> : null}
+            {isNotPaused ? <h1 className="dashboard-greeting">{`${t("hello")}, ${session?.user?.name}!`}</h1> : <h1 className="dashboard-greeting">{`${t("hello")}, ${session?.user?.name}! ${t("yourAccountIsPaused")}`}</h1>}
+            {isAdmin ? <h1 className="text-2xl font-bold text-black underline"><a href="/admin/packages">{t("accessToAdminPanel")}</a></h1> : null}
 
             {/* Content sections */}
             <div className="dashboard-sections">

@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid';
@@ -63,6 +64,8 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
     "GMT+12:00",
   ];
 
+  const t = useTranslations("startCampaign");
+
   const handleStartCampaign = async () => {
     if (campaignName && fromNumber && message && leads.length > 0) {
       const formData = new FormData();
@@ -89,20 +92,20 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
         });
 
         if (response.ok) {
-          toast.success("Campaign started successfully!");
+          toast.success(t("campaignStartedSuccessfully"));
           axios.post("/api/campaign/execute", {
             campaignId: campaignId
           });
           goForwardStartCampaign();
         } else {
-          toast.error("Failed to start campaign.");
+          toast.error(t("failedToStartCampaign"));
         }
       } catch (error) {
         console.error("Error starting campaign:", error);
-        toast.error("An error occurred while starting the campaign.");
+        toast.error(t("anErrorOccurredWhileStartingTheCampaign"));
       }
     } else {
-      toast.error("Please fill in all fields.");
+      toast.error(t("pleaseFillInAllFields"));
     }
   };
 
@@ -113,11 +116,11 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
         const data = await response.json();
         setTemplates(data.messageTemplates);
       } else {
-        toast.error("Failed to fetch message templates.");
+        toast.error(t("failedToFetchMessageTemplates"));
       }
     } catch (error) {
       console.error("Error fetching templates:", error);
-      toast.error("An error occurred while fetching templates.");
+      toast.error(t("anErrorOccurredWhileFetchingTemplates"));
     }
   };
 
@@ -132,7 +135,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
 
   const saveMessageToTemplate = async () => {
     if (!templateName || !message) {
-      toast.error("Please provide a template name and message.");
+      toast.error(t("pleaseProvideATemplateNameAndMessage"));
       return;
     }
   
@@ -153,15 +156,15 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
       });
   
       if (response.ok) {
-        toast.success("Message saved as template!");
+        toast.success(t("messageSavedAsTemplate"));
         fetchTemplates(); // Refresh the template list
         setIsSaveModalOpen(false);
       } else {
-        toast.error("Failed to save message as template.");
+        toast.error(t("failedToSaveMessageAsTemplate"));
       }
     } catch (error) {
       console.error("Error saving template:", error);
-      toast.error("An error occurred while saving the template.");
+      toast.error(t("anErrorOccurredWhileSavingTheTemplate"));
     }
   };
 
@@ -192,18 +195,18 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
         });
 
         if (response.ok) {
-          toast.success("Campaign scheduled successfully!");
+          toast.success(t("campaignScheduledSuccessfully"));
           setIsScheduleModalOpen(false);
           goForwardScheduleCampaign();
         } else {
-          toast.error("Failed to schedule campaign.");
+          toast.error(t("failedToScheduleCampaign"));
         }
       } catch (error) {
         console.error("Error scheduling campaign:", error);
-        toast.error("An error occurred while scheduling the campaign.");
+        toast.error(t("anErrorOccurredWhileSchedulingTheCampaign"));
       }
     } else {
-      toast.error("Please fill in all fields.");
+      toast.error(t("pleaseFillInAllFields"));
     }
   };
 
@@ -221,7 +224,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           {isMediaPreviewVisible && mediaAttachment ? (
             <div className="flex flex-col items-center justify-center">
               <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm">
-                Media Preview
+                {t("mediaPreview")}
               </div>
               <div className="mt-4 bg-green-700 text-white rounded-lg p-2 w-full break-words">
                 {message || "Type a caption for your media..."}
@@ -233,7 +236,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
                 U
               </div>
               <div className="bg-green-700 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
-                {message || "Type a message to see it here..."}
+                {message || t("typeAMessageToSeeItHere")}
               </div>
             </div>
           )}
@@ -246,24 +249,24 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
 
           {/* Campaign Name */}
         <div className="mb-4">
-          <label className="block font-semibold mb-2">Campaign Name</label>
+          <label className="block font-semibold mb-2">{t("campaignName")}</label>
           <input
             type="text"
             value={campaignName}
             onChange={(e) => setCampaignName(e.target.value)}
             className="w-full border border-gray-300 p-2 rounded"
-            placeholder="Enter campaign name"
+            placeholder={t("enterCampaignName")}
             />
           </div>
 
-          <label className="block font-semibold mb-2">From</label>
+          <label className="block font-semibold mb-2">{t("from")}</label>
           <select
             value={fromNumber}
             onChange={(e) => setFromNumber(e.target.value)}
             className="w-full border border-gray-300 p-2 rounded"
           >
             <option value="" disabled>
-              Select a phone number
+              {t("selectAPhoneNumber")}
             </option>
             {fromNumbers.map((fromNumber) => (
               <option key={fromNumber} value={fromNumber}>
@@ -274,15 +277,16 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
         </div>
 
         <div className="mb-4">
-          <label className="block font-semibold mb-2">Message</label>
+          <label className="block font-semibold mb-2">{t("message")}</label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             className="w-full h-40 border border-gray-300 rounded p-2"
-            placeholder="Enter your message here..."
+            placeholder={t("enterYourMessageHere")}
           />
           <i className="text-gray-500">
-            {`*Include {{name}} to personalize messages (e.g., "Hello {{name}}, how are you?")`}
+            {`*${t("includeNameToPersonalizeMessages")}`}<br/>
+            {t("exampleMessage")}
           </i>
         </div>
 
@@ -291,7 +295,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           onClick={openTemplateModal}
           className="px-5 py-3 mx-auto bg-purple-700 hover:bg-purple-800 text-white rounded-full"
         >
-          Load Template
+          {t("loadTemplate")}
         </button>
 
         <button
@@ -299,17 +303,17 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
     if (message) {
       setIsSaveModalOpen(true);
     } else {
-      toast.error("Please write a message to save as a template.");
+      toast.error(t("pleaseWriteAMessageToSaveAsATemplate"));
     }
   }}
   className="px-5 py-3 mx-auto bg-yellow-600 hover:bg-yellow-700 text-white rounded-full"
 >
-          Save as Template
+          {t("saveAsTemplate")}
         </button>
         </div>
 
         <div className="mb-4">
-          <label className="block font-semibold mb-2">Media Attachment (optional)</label>
+          <label className="block font-semibold mb-2">{t("mediaAttachment")}</label>
           <input
             type="file"
             accept="image/*,.pdf"
@@ -325,7 +329,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
             }}
             className="w-full border border-gray-300 p-2 rounded"
           />
-          <p className="text-gray-500 italic">*Supported file types: images, PDFs</p>
+            <p className="text-gray-500 italic">*{t("supportedFileTypes")}</p>
         </div>
         
         {/* Add this section inside the return statement */}
@@ -334,20 +338,20 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
     className="cursor-pointer text-purple-600 hover:underline mb-2 font-semibold"
     onClick={() => setIsBatchingEnabled((prev) => !prev)}
   >
-    {isBatchingEnabled ? "Hide Batching Options ↑" : "Show Batching Options ↓"}
+    {isBatchingEnabled ? t("hideBatchingOptions") : t("showBatchingOptions")}
   </div>
   {isBatchingEnabled && (
     <div className="mt-4 p-4 border border-gray-300 rounded">
-      <label className="block mb-2 font-semibold">Batch Size</label>
+      <label className="block mb-2 font-semibold">{t("batchSize")}</label>
       <input
         type="number"
         min="1"
         value={batchSize}
         onChange={(e) => setBatchSize(parseInt(e.target.value, 10))}
         className="w-full mb-4 border border-gray-300 p-2 rounded"
-        placeholder="Enter number of messages per batch"
+        placeholder={t("enterNumberOfMessagesPerBatch")}
       />
-      <label className="block mb-2 font-semibold">Batch Interval</label>
+      <label className="block mb-2 font-semibold">{t("batchInterval")}</label>
       <div className="flex gap-4">
         <input
           type="number"
@@ -355,7 +359,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           value={batchIntervalValue}
           onChange={(e) => setBatchIntervalValue(parseInt(e.target.value, 10))}
           className="flex-1 border border-gray-300 p-2 rounded"
-          placeholder="Enter interval value"
+          placeholder={t("enterIntervalValue")}
         />
         <select
           value={batchIntervalUnit}
@@ -363,7 +367,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           className="flex-1 border border-gray-300 p-2 rounded"
         >
           <option value="" disabled>
-            Select interval unit
+            {t("selectIntervalUnit")}
           </option>
           {batchIntervalUnits.map((unit) => (
             <option key={unit} value={unit}>
@@ -373,7 +377,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
         </select>
       </div>
       <p className="text-gray-500 mt-2">
-        Example: "5 minutes", "2 hours", "1 day", etc.
+        {t("example")}: "5 minutes", "2 hours", "1 day", etc.
       </p>
     </div>
   )}
@@ -402,19 +406,19 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
             onClick={handleStartCampaign}
             className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
-            Start Campaign
+            {t("startCampaign")}
           </button>
           <button
             onClick={() => {
               if (campaignName && fromNumber && message && leads.length > 0) {
                 setIsScheduleModalOpen(true)
               } else {
-                toast.error("Please fill in all fields.");
+                toast.error(t("pleaseFillInAllFields"));
               }
             }}
             className="px-5 py-3 bg-blue-600 hover:bg-purple-700 text-white rounded-full mx-auto"
           >
-            Schedule Campaign
+            {t("scheduleCampaign")}
           </button>
         </div>
       </div>
@@ -422,7 +426,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
 {isTemplateModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-      <h2 className="text-xl font-semibold mb-4">Select a Message Template</h2>
+      <h2 className="text-xl font-semibold mb-4">{t("selectAMessageTemplate")}</h2>
 
       <div className="mb-4">
         <select
@@ -437,7 +441,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           }}
           className="w-full text-black border border-gray-300 p-2 rounded"
         >
-          <option value="">Select a template</option>
+          <option value="">{t("selectATemplate")}</option>
           {templates.map((template) => (
             <option key={template.template_name} value={template.template_name}>
               {template.template_name}
@@ -451,7 +455,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           onClick={() => setIsTemplateModalOpen(false)}
           className="px-4 py-2 bg-gray-300 rounded-full"
         >
-          Cancel
+          {t("cancel")}
         </button>
       </div>
     </div>
@@ -463,9 +467,9 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
     <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
       <h2 className="text-xl font-semibold mb-4">Save Message as Template</h2>
 
-      <p className="italic mb-4">Message to save: {message}</p>
+      <p className="italic mb-4">{t("messageToSave")}: {message}</p>
       
-      <label className="block mb-2 font-semibold">Template Name</label>
+      <label className="block mb-2 font-semibold">{t("templateName")}</label>
       <input
         type="text"
         value={templateName}
@@ -478,13 +482,13 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           onClick={() => setIsSaveModalOpen(false)}
           className="px-4 py-2 bg-gray-300 rounded-full"
         >
-          Cancel
+          {t("cancel")}
         </button>
         <button
           onClick={saveMessageToTemplate}
           className="px-4 py-2 bg-yellow-600 text-white rounded-full"
         >
-          Save
+          {t("save")}
         </button>
       </div>
     </div>
@@ -495,8 +499,8 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
       {isScheduleModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h3 className="text-lg font-bold mb-4">Schedule Campaign</h3>
-            <label className="block mb-2 font-semibold">Schedule Time</label>
+            <h3 className="text-lg font-bold mb-4">{t("scheduleCampaign")}</h3>
+            <label className="block mb-2 font-semibold">{t("scheduleTime")}</label>
             <input
               type="datetime-local"
               value={scheduleTime}
@@ -504,14 +508,14 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
               className="w-full mb-4 border border-gray-300 p-2 rounded"
               step="300"
             />
-            <label className="block mb-2 font-semibold">Time Zone</label>
+            <label className="block mb-2 font-semibold">{t("timeZone")}</label>
             <select
               value={timeZone}
               onChange={(e) => setTimeZone(e.target.value)}
               className="w-full mb-4 border border-gray-300 p-2 rounded"
             >
               <option value="" disabled>
-                Select Time Zone
+                {t("selectTimeZone")}
               </option>
               {timeZones.map((zone) => (
                 <option key={zone} value={zone}>
@@ -524,13 +528,13 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
                 onClick={() => setIsScheduleModalOpen(false)}
                 className="px-5 py-3 bg-gray-300 text-black rounded-full"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={handleScheduleCampaign}
                 className="px-5 py-3 bg-purple-500 text-white rounded-full"
               >
-                Schedule
+                {t("schedule")}
               </button>
             </div>
           </div>

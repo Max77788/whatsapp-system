@@ -7,6 +7,8 @@ import path from 'path';
 import fs from 'fs';
 import { SessionProvider } from "next-auth/react";
 import LanguageSwitcher from "./components/language-stuff/LanguageSwitcher";
+import { NextIntlClientProvider, useMessages } from "next-intl";
+import { getMessages } from "next-intl/server";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,9 +34,10 @@ export default async function RootLayout({
   params: { locale: string };
 }) {
   const { locale } = await params;
-
-  // Set text direction based on locale
   const dir = locale === 'he' ? 'rtl' : 'ltr';
+  const toastContainerPosition = locale === 'he' ? 'top-left' : 'top-right';
+  
+  const messages = await getMessages();
 
   return (
     <html lang={locale} dir={dir}>
@@ -45,12 +48,13 @@ export default async function RootLayout({
           color: "var(--text-color)",
         }}
       >
-        <ToastContainer 
-          position="top-right" 
-          autoClose={3000} 
-          hideProgressBar={false} 
-          newestOnTop={false} 
-          closeOnClick 
+        <NextIntlClientProvider messages={messages}>
+          <ToastContainer 
+            position={toastContainerPosition} 
+            autoClose={3000} 
+            hideProgressBar={false} 
+            newestOnTop={false} 
+            closeOnClick 
           rtl={false} 
           pauseOnFocusLoss 
           draggable 
@@ -60,6 +64,7 @@ export default async function RootLayout({
         <div className="flex justify-center mt-4">
           <LanguageSwitcher />
         </div>
+        </NextIntlClientProvider>
       </body>
       
     </html>

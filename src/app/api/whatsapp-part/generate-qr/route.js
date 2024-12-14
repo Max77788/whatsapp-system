@@ -40,7 +40,11 @@ export async function GET(req) {
     
     console.log(`keyThing: ${keyThing}`)
     
-    const qrData = user[keyThing].qrString;
+    const qrData = user[keyThing]?.qrString;
+
+    if (!qrData) {
+      return new Response(JSON.stringify({ error: "No QR code available" }), { status: 400 });
+    }
 
   try {
     // Convert the encoded string into a QR code data URL
