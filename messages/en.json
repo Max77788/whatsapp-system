@@ -111,7 +111,8 @@
         "tactics_saved_successfully": "Tactics saved successfully!",
         "failed_to_save_tactics": "Failed to save tactics.",
         "an_error_occurred_while_saving_tactics": "An error occurred while saving tactics.",
-        "are_you_sure_you_want_to_disconnect_the_phone_number": "Are you sure you want to disconnect the phone number?"
+        "are_you_sure_you_want_to_disconnect_the_phone_number": "Are you sure you want to disconnect the phone number?",
+        "active": "Active"
     },
     "whatsapp_connection": {
         "you_have_out_of_phones_connected": "You have {numberOfPhonesConnected} out of {maxPhonesConnected} phones connected",
