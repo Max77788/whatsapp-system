@@ -73,7 +73,8 @@
         "nis": "NIS",
         "dashboardName": "Dashboard",
         "hello": "Hello",
-        "yourAccountIsPaused": "Your account is paused"
+        "yourAccountIsPaused": "Your account is paused",
+        "accessToAdminPanel": "Access to Admin Panel"
     },
     "sidebar": {
         "dashboard": "Dashboard",

@@ -66,7 +66,8 @@
         "messagesPending": "הודעות שנמתחו",
         "dashboardName": "לוגאי",
         "hello": "שלום",
-        "yourAccountIsPaused": "החשבון שלך נעצר"
+        "yourAccountIsPaused": "החשבון שלך נעצר",
+        "accessToAdminPanel": "גישה לפאנל ניהול"
     },
     "sidebar": {
         "dashboard": "פרטי המנוי",

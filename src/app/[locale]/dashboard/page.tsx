@@ -87,7 +87,7 @@ export default async function DashboardPage() {
           <div className="dashboard-body">
 
             {isNotPaused ? <h1 className="dashboard-greeting">{`${t("hello")}, ${session?.user?.name}!`}</h1> : <h1 className="dashboard-greeting">{`${t("hello")}, ${session?.user?.name}! ${t("yourAccountIsPaused")}`}</h1>}
-            {isAdmin ? <h1 className="text-2xl font-bold text-black underline"><a href="/admin/packages">{t("accessToAdminPanel")}</a></h1> : null}
+            {isAdmin ? <h1 className="text-2xl font-bold text-black underline"><a href={`/${currentLocale}/admin/packages`}>{t("accessToAdminPanel")}</a></h1> : null}
 
             {/* Content sections */}
             <div className="dashboard-sections">

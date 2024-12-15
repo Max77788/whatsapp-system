@@ -17,6 +17,7 @@ export default function CredentialsForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const data = new FormData(e.target as HTMLFormElement);
 
     const signInResponse = await signIn('credentials', {
@@ -26,7 +27,7 @@ export default function CredentialsForm() {
     });
 
     if (signInResponse && !signInResponse.error) {
-      router.push('/dashboard');
+      router.push(`/${currentLocale}/dashboard`);
     } else {
         console.log("Error:", signInResponse?.error);
       setError(`${signInResponse?.error}`);
