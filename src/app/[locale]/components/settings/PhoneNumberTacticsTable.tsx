@@ -95,10 +95,10 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
         ? currentSelection.filter((t) => t !== tactic)
         : [...currentSelection.filter((t) => t !== "Do Nothing"), tactic];
 
-      return {
-        ...prev,
-        [phoneNumber]: updatedSelection,
-      };
+        return {
+          ...prev,
+          [phoneNumber]: updatedSelection.length > 0 ? updatedSelection : ["Do Nothing"],
+        };
     });
   };
 

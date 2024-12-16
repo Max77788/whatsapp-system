@@ -113,7 +113,9 @@
         "failed_to_save_tactics": "Failed to save tactics.",
         "an_error_occurred_while_saving_tactics": "An error occurred while saving tactics.",
         "are_you_sure_you_want_to_disconnect_the_phone_number": "Are you sure you want to disconnect the phone number?",
-        "active": "Active"
+        "active": "Active",
+        "phone_number": "Phone Number",
+        "tactics": "Tactics"
     },
     "whatsapp_connection": {
         "you_have_out_of_phones_connected": "You have {numberOfPhonesConnected} out of {maxPhonesConnected} phones connected",
@@ -122,7 +124,8 @@
         "close": "Close",
         "connect_a_new_phone": "Connect a new phone",
         "phone_connected_successfully": "Phone connected successfully!",
-        "phone_detached_successfully": "Phone detached successfully!"
+        "phone_detached_successfully": "Phone detached successfully!",
+        "you_need_to_be_logged_in_to_connect_a_phone": "You need to be logged in to connect a phone"
     },
     "leads": {
         "add_new_lead": "Add new lead",
@@ -155,7 +158,8 @@
         "cancel": "Cancel",
         "bulk_add_phone_numbers": "Add phone numbers in bulk",
         "export_as_csv": "Export as CSV",
-        "leads_data_saved_successfully": "Leads data saved successfully!"
+        "leads_data_saved_successfully": "Leads data saved successfully!",
+        "please_enter_a_group_name": "Please enter a group name"
     },
     "startCampaign": {
         "startCampaign": "Start Campaign",
@@ -283,7 +287,35 @@
         "failedToSaveData": "Failed to save data",
         "saveData": "Save Data",
         "customSetName": "Custom Set Name",
-        "hiHowCanWeHelpYouToday": "Hi, how can we help you today?"
+        "hiHowCanWeHelpYouToday": "Hi, how can we help you today?",
+        "greetingMessage": "Greeting Message",
+        "greetingMessageDescription": "Greeting message will be displayed to the user when they open your referral link on your platform",
+        "maxOptions": "Maximum 7 greeting options",
+        "enableGreetingMessage": "Enable Greeting Message",
+        "greetingMessageConfiguration": "Greeting Message Configuration",
+        "noteGreetingMessagePriority": "Note: Greeting message priority is higher than the Message Configuration and the AI System",
+        "header": "Header",
+        "footer": "Footer",
+        "body": "Body",
+        "addOption": "Add Option",
+        "removeOption": "Remove Option",
+        "option": "Option",
+        "response": "Response",
+        "greetingFooterPlaceholder": "Enter the footer. For example: Thank you for your business.",
+        "greetingHeaderPlaceholder": "Enter the header. For example: Hello! Welcome to our store! Choose from the following options",
+        "optionPlaceholder": "E.g. See Services, See Products, See Prices",
+        "responsePlaceholder": "E.g. I'm happy to help you with your order!",
+        "saveGreetingMessage": "Save Greeting Message",
+        "failedToSaveGreetingMessage": "Failed to save greeting message",
+        "bodyOptions": "Body Options",
+        "cannotDeleteFirstSet": "Cannot delete the first set",
+        "cannotDeleteFirstRow": "Cannot delete the first row",
+        "triggerWord": "Trigger Word",
+        "greetingTriggerWordPlaceholder": "Enter the trigger word for the greeting message. For example: Hi, Hello, Menu",
+        "greetingMessageSaved": "Greeting message saved successfully",
+        "thatsHowYourMessageWillLook": "That's how your message will look",
+        "triggerWordMessage": "Trigger Word Message",
+        "greetingTriggerWordMessagePlaceholder": "Enter the sentence preceding the trigger word. For example: To call this message again write (DO NOT USE COLON)"
     },
     "sendMessage": {
         "startCampaign": "Start Campaign",
@@ -382,7 +414,12 @@
         "sendToTheseGroups": "Send to these groups",
         "selectPhoneNumber": "Select Phone Number",
         "fromNumber": "Your Phone Number",
-        "areYouSureYouWantToUnscheduleThisMessage": "Are you sure you want to unschedule this message?"
+        "areYouSureYouWantToUnscheduleThisMessage": "Are you sure you want to unschedule this message?",
+        "messageSent": "Message sent successfully!",
+        "scheduledMessages": "Scheduled Messages",
+        "noMessagesAreScheduled": "No messages are scheduled",
+        "failedToSendMessage": "Failed to send message",
+        "loadingScheduledMessages": "Loading scheduled messages..."
     },
     "webhooksSetup": {
     "webhooks": "Webhooks",

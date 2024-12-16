@@ -11,6 +11,7 @@ import PhoneNumberTacticsTable from "../components/settings/PhoneNumberTacticsTa
 import LeadsTable from "../components/settings/LeadsTable";
 import AITurnOn from "../components/chatbot/AITurnOn";
 import { getLocale } from "next-intl/server";
+import GreetingMessage from "../components/chatbot/GreetingMessage";
 
 export default async function SettingsPage(): Promise<JSX.Element> {
     const session = await getServerSession(authOptions);
@@ -39,6 +40,7 @@ export default async function SettingsPage(): Promise<JSX.Element> {
             {/* <TablePopup initialRows={initialData} /> */}
             <AITurnOn initialInstructions={initialInstructions} initialIsOn={initialIsOn} isInPlan={isInPlan} />
             <ChatbotTable initialTactics={initialTactics} />
+            <GreetingMessage />
         </div>
     );
 };

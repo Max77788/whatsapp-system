@@ -53,8 +53,6 @@ export async function POST(req) {
         contacts: contacts
     }
 
-    // console.log(`All contacts: ${JSON.stringify(all_contacts)}`)
-
     all_contacts.push(all_contacts_object)
   return NextResponse.json({ chats, contacts, all_contacts });
 }

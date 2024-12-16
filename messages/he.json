@@ -120,7 +120,8 @@
         "close": "סגור",
         "connect_a_new_phone": "חיבור מספר חדש",
         "phone_connected_successfully": "מספר טלפון מחובר בהצלחה!",
-        "phone_detached_successfully": "מספר טלפון נפרד בהצלחה!"
+        "phone_detached_successfully": "מספר טלפון נפרד בהצלחה!",
+        "you_need_to_be_logged_in_to_connect_a_phone": "אתה צריך להתחבר כדי לחיבור מספר טלפון"
     },
     "leads": {
         "add_new_lead": "הוסף ליד",
@@ -281,7 +282,32 @@
         "failedToSaveData": "שגיאה בזמן שמירת הנתונים",
         "saveData": "שמור נתונים",
         "customSetName": "שם קבוצה מותאמת אישית",
-        "hiHowCanWeHelpYouToday": "היי, מה ניתן לעזור לך היום?"
+        "hiHowCanWeHelpYouToday": "היי, מה ניתן לעזור לך היום?",
+        "greetingMessage": "הודעת ברכה",
+        "greetingMessageDescription": "הודעת ברכה תוצג למשתמש בפתיחת הפניה לפלטפורמה שלך",
+        "maxOptions": "מקסימום 7 תגיות ברכה",
+        "enableGreetingMessage": "הפעל הודעת ברכה",
+        "greetingMessageConfiguration": "הגדרת הודעת ברכה",
+        "noteGreetingMessagePriority": "הערה: הודעת ברכה משפיעה על סדר הפעולה של ההודעות והבוט שיחה מכונה",
+        "header": "כותרת",
+        "footer": "סוף ההודעה",
+        "body": "גוף ההודעה",
+        "addOption": "הוסף תגייה",
+        "removeOption": "הסר תגייה",
+        "option": "תגייה",
+        "response": "תגובה",
+        "greetingFooterPlaceholder": "הזן סוף ההודעה. לדוגמה: תודה על שלך.",
+        "greetingHeaderPlaceholder": "הזן כותרת. לדוגמה: שלום! ברוכים הבאים לחנות שלנו! בחר מהמקום הבא",
+        "optionPlaceholder": "לדוגמה: ראה שירותים, ראה מוצרים, ראה מחירים",
+        "responsePlaceholder": "לדוגמה: אני שמח לעזור לך עם הזמנתך!",
+        "saveGreetingMessage": "שמור הודעת ברכה",
+        "cannotDeleteFirstSet": "לא ניתן למחוק את הקבוצה הראשונה",
+        "cannotDeleteFirstRow": "לא ניתן למחוק את השורה הראשונה",
+        "triggerWord": "מילת גישה",
+        "greetingTriggerWordPlaceholder": "הזן מילת גישה להודעת ברכה. לדוגמה: שלום, תודה, מה שלומך?",
+        "bodyOptions": "אפשרויות גוף ההודעה",
+        "bodyOptionsPlaceholder": "הזן אפשרויות גוף ההודעה. לדוגמה: ראה שירותים, ראה מוצרים, ראה מחירים",
+        "greetingMessageSaved": "הודעת ברכה נשמרה בהצלחה"
     },
     "sendMessage": {
         "startCampaign": "הפעל קמפיין",

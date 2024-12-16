@@ -109,6 +109,11 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
     };
 
     const deleteSet = (index: number) => {
+        if (instructionSets.length === 1) {
+            toast.error(t("cannotDeleteFirstSet"));
+            return;
+        }
+        
         setInstructionSets(instructionSets.filter((_, i) => i !== index));
     };
 
@@ -170,8 +175,15 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
     };
 
     const removeRow = (setIndex: number, rowIndex: number) => {
+        
+        if (rowIndex === 0) {
+            toast.error(t("cannotDeleteFirstRow"));
+            return;
+        }
+        
         const updatedSets = [...instructionSets];
         updatedSets[setIndex].rows = updatedSets[setIndex].rows.filter((_, i) => i !== rowIndex);
+        
         setInstructionSets(updatedSets);
     };
 

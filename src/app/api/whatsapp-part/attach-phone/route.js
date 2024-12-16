@@ -12,6 +12,12 @@ export async function POST(req) {
     for (let i = 1; i <= 5; i++) {
         let attr = `qrCode${i}`;
         if (user[attr] && user[attr].phoneNumber !== null) {
+            if (user[attr].phoneNumber === phone_number) {
+                return NextResponse.json(
+                    { error: `Phone number ${phone_number} already attached to ${unique_id}` },
+                    { status: 400, headers: { 'Content-Type': 'application/json' } }
+                );
+            }
             nonNullPhoneNumberCount++;
         }
     }

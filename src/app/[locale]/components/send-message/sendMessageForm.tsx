@@ -273,7 +273,7 @@ const handleScheduleMessage = async () => {
       </div>
 
       <div className="mb-6">
-        <h3 className="text-lg font-semibold">{t("sendToTheseGroups")}</h3>
+        {groups.length > 0 && <h3 className="text-lg font-semibold">{t("sendToTheseGroups")}</h3>}
         <div className="flex flex-wrap gap-4 mt-2">
           {groups.map((group) => (
             <label key={group} className="flex items-center space-x-2">

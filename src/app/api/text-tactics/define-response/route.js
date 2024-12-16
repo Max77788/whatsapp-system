@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
-import { find_user } from '@/lib/utils';
+import { find_user, update_user } from '@/lib/utils';
 import { generateResponse } from "@/lib/gpt_utils"
 
 export async function POST(req) {
     const { message, sender, clientId, uniqueId, message_history } = await req.json();      
 
     const senderPhoneNumber = sender.split('@')[0];
+
+    console.log(`message_history: ${message_history}`);
     
-    console.log(`senderPhoneNumber: ${senderPhoneNumber}`);
+    // console.log(`senderPhoneNumber: ${senderPhoneNumber}`);
     
     let respond_boolean = true;
     let user;
@@ -17,9 +19,38 @@ export async function POST(req) {
    
     let name_tactics_to_use = [];
     const user_phone_number = user?.[`qrCode${clientId}`]?.phoneNumber;
-    
-    
-    console.log("Starting tactic processing...");
+
+    let reply, delay=5;
+
+    if (user?.greetingMessage?.isGreetingEnabled) {
+        const formedMessage = `${user?.greetingMessage?.header}
+
+${user?.greetingMessage?.bodyOptions.map((obj, index) => `${index + 1}. ${obj.option}`).join('\n')}
+
+${user?.greetingMessage?.footer}
+${user?.greetingMessage?.triggerWordMessage}: ${user?.greetingMessage?.triggerWord}`
+
+        if (message_history && !(/\bUser:\s/.test(message_history))) {
+            reply = formedMessage;
+        } else if (message === user?.greetingMessage?.triggerWord) {
+            reply = formedMessage;
+        }
+
+        user?.greetingMessage?.bodyOptions.forEach((obj, index) => {
+            if (message === obj.option || message == index+1) {
+                reply = obj.response;
+                console.log(`reply Greeting Message: ${reply}`);
+            }
+        });
+        
+    }
+
+    if (reply) {
+        await update_user({email: user.email}, {sentMessages: user?.sentMessages || 0 + 1});
+        return NextResponse.json({reply, delay, respond_boolean: true});
+    }
+
+
     phoneNumberTactics.forEach((phoneNumberTactic) => {
         console.log(`Checking tactics for phone number: ${phoneNumberTactic.phoneNumber}`);
         if (phoneNumberTactic.phoneNumber === user_phone_number) {
@@ -37,6 +68,9 @@ export async function POST(req) {
         }
     });
 
+
+
+
     console.log("Name tactics to use:", name_tactics_to_use);
     let message_logic_list = user?.messageLogicList;
     let text_tactics_list = [];
@@ -51,9 +85,13 @@ export async function POST(req) {
         });
     });
 
+    let flat_text_tactics_list = [];
+
     console.log("Text tactics list before flattening:", text_tactics_list);
-    text_tactics_list = text_tactics_list.flatMap((tactic) => tactic.rows);
-    console.log("Text tactics list after flattening:", text_tactics_list);
+    text_tactics_list.forEach((tactic) => {
+        flat_text_tactics_list.push(tactic.rows);
+    });
+    console.log("Text tactics list after flattening:", flat_text_tactics_list);
 
     const lead_platform = user?.leads?.find((lead) => lead.phone_number.includes(senderPhoneNumber))?.source || "other";
     const lead_group = user?.leads?.find((lead) => lead.phone_number.includes(senderPhoneNumber))?.group || "other";
@@ -62,12 +100,22 @@ export async function POST(req) {
     
     let terminate_response = false;
 
-    let reply, delay=5;
-    text_tactics_list.forEach((tactic) => {
+    console.log("text_tactics_list: ", flat_text_tactics_list, "of type: ", typeof flat_text_tactics_list, "is array: ", Array.isArray(flat_text_tactics_list));
+ 
+    const stable_text_tactics_list = flat_text_tactics_list;
+
+    
+    stable_text_tactics_list.forEach((tactics) => {
+        tactics.forEach((tactic) => {
         console.log(`Checking tactic: ${JSON.stringify(tactic)}`);
+
         if (tactic.type === "includes") {
-            if (message.trim().toLowerCase().includes(tactic.search_term.trim().toLowerCase())) {
-                if (!tactic.platforms.includes(lead_platform) || !tactic.selectedGroups.includes(lead_group)) {
+            if (new RegExp(`\\b${tactic.search_term.trim().toLowerCase()}\\b`).test(message.trim().toLowerCase())) {
+                if (tactic.selectedGroups === undefined) {
+                    tactic.selectedGroups = ["other"];
+                }
+                if (!tactic.platforms.includes(lead_platform) || !tactic.selectedGroups.includes(lead_group)) 
+                {
                     console.log(`Tactic not applicable for lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
                     terminate_response = true;
                     return;
@@ -80,7 +128,7 @@ export async function POST(req) {
                 return;
             }
         } else if (tactic.type === "starts with") {
-            if (message.trim().toLowerCase().startsWith(tactic.search_term.trim().toLowerCase())) {
+            if (new RegExp(`\\b${tactic.search_term.trim().toLowerCase()}\\b`).test(message.trim().toLowerCase())) {
                 if (!tactic.platforms.includes(lead_platform) || !tactic.selectedGroups.includes(lead_group)) {
                     console.log(`Tactic not applicable for lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
                     terminate_response = true;
@@ -93,14 +141,13 @@ export async function POST(req) {
                 return;
             }
         }
-    });
+            });
+        });
 
     if (terminate_response) {
         console.log("Terminating response due to no applicable tactic");
         return NextResponse.json({reply: "Do Nothing", respond_boolean: false});
     }
-
-    console.log("message_history: ", message_history);
 
     if (!reply && name_tactics_to_use.includes("Enable AI Auto Response") && user?.aiSystemConfig.isOn) {
         const instructions = `
@@ -121,7 +168,7 @@ export async function POST(req) {
     console.log(`reply: ${reply}, delay: ${delay}, respond_boolean: ${respond_boolean}`);
 
     if (respond_boolean) {
-        await update_user({email: user.email}, {sentMessages: user.sentMessages + 1});
+        await update_user({email: user.email}, {sentMessages: user?.sentMessages || 0 + 1});
     }
 
   return NextResponse.json({reply, delay, respond_boolean: respond_boolean});
