@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
     
     if (!origin) return NextResponse.next();
 
-    const internalDomains = ['https://mom-ai-restaurant.lat', 'http://localhost:3000'];
+    const internalDomains = ['https://mom-ai-restaurant.lat', 'http://localhost:3000', 'https://www.bumby.app', 'https://bumby.app'];
     const isExternalRequest = !internalDomains.some((domain) => origin.startsWith(domain));
 
     if (isExternalRequest) {
