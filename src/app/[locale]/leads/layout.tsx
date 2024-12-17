@@ -12,7 +12,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const currentLocale = useLocale();
-  const userName = currentLocale === "he" ? "משאבי ניצחון" : "Leads"; // Replace with dynamic username from session or auth context
+  const userName = currentLocale === "he" ? "לידים" : "Leads"; // Replace with dynamic username from session or auth context
 
   return (
     <SessionProvider>

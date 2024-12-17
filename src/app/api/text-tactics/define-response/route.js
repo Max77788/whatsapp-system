@@ -133,7 +133,7 @@ ${user?.greetingMessage?.triggerWordMessage}: ${user?.greetingMessage?.triggerWo
                 return;
             }
         } else if (tactic.type === "starts with") {
-            if (new RegExp(`\\b${tactic.search_term.trim().toLowerCase()}\\b`).test(message.trim().toLowerCase())) {
+            if (message.trim().toLowerCase().startsWith(tactic.search_term.trim().toLowerCase())) {
                 if (!tactic.platforms.includes(lead_platform) || !tactic.selectedGroups.includes(lead_group)) {
                     console.log(`Tactic not applicable for lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
                     terminate_response = true;
