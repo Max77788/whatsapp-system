@@ -63,6 +63,8 @@ export async function verifyInstagramCredentials(username: string, password: str
   }
 }
 
+/*
+
 function defineResponse(message: string, previous_messages_count: number) {
   
     
@@ -239,3 +241,4 @@ ${user?.greetingMessage?.triggerWordMessage}: ${user?.greetingMessage?.triggerWo
   return NextResponse.json({reply, delay, respond_boolean: respond_boolean});
 }
 }
+*/
