@@ -107,11 +107,19 @@ export async function POST(req) {
   }
 
   const messagesLimit = plan?.messagesLimit;
+  const planActive = user?.planActive;
   
+  
+  if (planActive) {
   if (messagesLimit) {
-  if (totalMessagesSentSoFar + leads.length > plan?.messagesLimit) {
+  if (totalMessagesSentSoFar + leads.length > messagesLimit) {
+    return NextResponse.json({ message: 'You have reached the messages limit for your plan' }, { status: 400 });
+  } else {
     return NextResponse.json({ message: 'You have reached the messages limit for your plan' }, { status: 400 });
   }
+} 
+} else {
+  return NextResponse.json({ message: 'Your plan is expired' }, { status: 400 });
 }
 
   const success = session ? await update_user({email: userEmail}, {campaigns: campaignData}, "$push") : await update_user({apiKey: apiKey}, {campaigns: campaignData}, "$push");

@@ -98,8 +98,8 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
 
   return (
     <div>
-      <button onClick={handleGenerateQRCode} className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full">
-        {t("connect_a_new_phone")}
+      <button onClick={handleGenerateQRCode} className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full flex items-center gap-2">
+        {t("connect_a_new_phone")} <img src="/WhatsAppLogo.png" alt="Whatsapp Logo" className="w-8 h-8" />
       </button>
 
       <Dialog open={isOpen} onClose={togglePopup} className="fixed inset-0 z-10 overflow-y-auto">

@@ -165,6 +165,7 @@ export const authOptions: NextAuthOptions = {
                         messageLogicList: messageLogicListDefault,
                         apiKey: nanoid(32),
                         planId: "0",
+                        planActive: true,
                         startedAt: new Date(),
                         expiresAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7)
                     };

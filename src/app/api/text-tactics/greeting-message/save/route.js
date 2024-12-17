@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { update_user } from '@/lib/utils';
-import { find_user } from '@/lib/utils';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/serverStuff";
 
@@ -16,7 +15,7 @@ export async function POST(req) {
     
     try {
         // Parse the JSON body
-        const { isGreetingEnabled, header, footer, bodyOptions, triggerWord, triggerWordMessage } = await req.json();
+        const { isGreetingEnabled, header, footer, bodyOptions, triggerWord, triggerWordMessage, useWithInstagram } = await req.json();
 
         const greetingMessageArray = {
             isGreetingEnabled,
@@ -25,6 +24,7 @@ export async function POST(req) {
             bodyOptions,
             triggerWordMessage,
             triggerWord,
+            useWithInstagram,
         }
         
         const user_email = session?.user?.email;

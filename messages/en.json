@@ -115,7 +115,8 @@
         "are_you_sure_you_want_to_disconnect_the_phone_number": "Are you sure you want to disconnect the phone number?",
         "active": "Active",
         "phone_number": "Phone Number",
-        "tactics": "Tactics"
+        "tactics": "Tactics",
+        "your_plan_is_expired": "Your plan is expired"
     },
     "whatsapp_connection": {
         "you_have_out_of_phones_connected": "You have {numberOfPhonesConnected} out of {maxPhonesConnected} phones connected",
@@ -125,7 +126,8 @@
         "connect_a_new_phone": "Connect a new phone",
         "phone_connected_successfully": "Phone connected successfully!",
         "phone_detached_successfully": "Phone detached successfully!",
-        "you_need_to_be_logged_in_to_connect_a_phone": "You need to be logged in to connect a phone"
+        "you_need_to_be_logged_in_to_connect_a_phone": "You need to be logged in to connect a phone",
+        "your_plan_is_expired": "Your plan is expired"
     },
     "leads": {
         "add_new_lead": "Add new lead",
@@ -315,7 +317,8 @@
         "greetingMessageSaved": "Greeting message saved successfully",
         "thatsHowYourMessageWillLook": "That's how your message will look",
         "triggerWordMessage": "Trigger Word Message",
-        "greetingTriggerWordMessagePlaceholder": "Enter the sentence preceding the trigger word. For example: To call this message again write (DO NOT USE COLON)"
+        "greetingTriggerWordMessagePlaceholder": "Enter the sentence preceding the trigger word. For example: To call this message again write (DO NOT USE COLON)",
+        "useWithInstagram": "Use with Instagram"
     },
     "sendMessage": {
         "startCampaign": "Start Campaign",
@@ -488,5 +491,22 @@
         "export": "Export",
         "chats": "Chats",
         "numbersExportedSuccessfully": "Phone numbers exported successfully!"
+    },
+    "instagram_connection": {
+        "fetch_error": "Failed to fetch connected account",
+        "fill_credentials_error": "Please fill in all fields",
+        "save_success": "Credentials saved successfully",
+        "save_error": "Your credentials are invalid. Check them and try again.",
+        "default_error": "An error occurred",
+        "general_error": "An error occurred while saving credentials",
+        "delete_success": "Credentials deleted successfully",
+        "delete_error": "Failed to delete credentials",
+        "manage_connection": "Manage Connection",
+        "save_credentials": "Save Credentials",
+        "delete_credentials": "Delete Credentials",
+        "no_account_connected": "No account connected",
+        "connected_as": "Connected as",
+        "username_placeholder": "Username",
+        "password_placeholder": "Password"
     }
 }

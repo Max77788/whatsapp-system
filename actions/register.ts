@@ -9,6 +9,7 @@ import { obtainGoogleCloudRunURL } from "@/lib/whatsAppService/gcloud_run_thing.
 import { nanoid } from "nanoid";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_EMAIL = "contact@mom-ai-restaurant.lat";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -23,7 +24,7 @@ export const sendVerificationEmail = async (recipientEmail: string, verification
     `
 
     await resend.emails.send({
-        from: 'contact@mom-ai-restaurant.lat',
+        from: FROM_EMAIL,
         to: recipientEmail,
         subject: 'Verify your email',
         html: EMAIL_HTML,
@@ -40,7 +41,7 @@ export const sendNotificationEmailToAviv = async (newUserEmail: any) => {
     `
 
     await resend.emails.send({
-        from: 'contact@mom-ai-restaurant.lat',
+        from: FROM_EMAIL,
         to: "avivmor@gmail.com",
         subject: 'New user registered',
         html: EMAIL_HTML,
@@ -75,6 +76,7 @@ export const register = async (values: any) => {
           messageLogicList: messageLogicListDefault,
           apiKey: nanoid(32),
           planId: "0",
+          planActive: true,
           startedAt: new Date(),
           expiresAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7)
         });

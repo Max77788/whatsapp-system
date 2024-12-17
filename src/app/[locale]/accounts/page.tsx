@@ -1,5 +1,5 @@
 "use server";
-
+import { JSX } from 'react';
 import { getServerSession } from "next-auth";
 import { loginIsRequiredServer } from "../../../../lib/auth/serverStuff";
 import { authOptions } from "@/lib/auth/serverStuff";
@@ -10,6 +10,8 @@ import CreateClientButton from "../components/whatsapp-connection/createClientBu
 import PhoneNumberTacticsTable from "../components/settings/PhoneNumberTacticsTable";
 import LeadsTable from "../components/settings/LeadsTable";
 import { getLocale, getTranslations } from "next-intl/server";
+import InstaCredentialsForm from "../components/insta-connection/InstaConnectionForm";
+
 export default async function SettingsPage(): Promise<JSX.Element> {
     
     const session = await getServerSession(authOptions);
@@ -21,6 +23,8 @@ export default async function SettingsPage(): Promise<JSX.Element> {
     
     const user = await find_user({ email: userEmail });
     const uniqueId = user?.unique_id;
+
+    const planActive = user?.planActive;
 
     const plan = await findPlanById(user?.planId);
 
@@ -42,17 +46,27 @@ export default async function SettingsPage(): Promise<JSX.Element> {
         showCreateClientButton = false;
     }
 
+    if (!planActive) {
+        showCreateClientButton = false;
+    }
+
     return (
         <div className="mt-5 flex flex-col items-center gap-5">
             {/* <TablePopup initialRows={initialData} /> */}
-            {showCreateClientButton ? (
+            {showCreateClientButton ?  (
               <CreateClientButton maxPhonesConnected={maxPhonesConnected} />
+            ) : 
+            !planActive ? (
+              <div className="px-5 py-3 bg-gray-400 text-white rounded-full">
+                {t("your_plan_is_expired")}
+              </div>
             ) : (
               <div className="px-5 py-3 bg-gray-400 text-white rounded-full">
                 {t("maximum_number_of_phones_connected")}
               </div>
             )}
             <PhoneNumberTacticsTable initialTactics={initialTactics} />
+            <InstaCredentialsForm />
         </div>
     );
 };

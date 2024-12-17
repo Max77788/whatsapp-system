@@ -13,7 +13,7 @@ const GreetingMessage = () => {
     ]);
     const [triggerWord, setTriggerWord] = useState("");
     const [triggerWordMessage, setTriggerWordMessage] = useState("");
-
+    const [useWithInstagram, setUseWithInstagram] = useState(false);
     const t = useTranslations("chatbotSetup");
 
     const addBodyOption = () => {
@@ -65,6 +65,7 @@ const GreetingMessage = () => {
             setBodyOptions(greetingMessageArray.bodyOptions);
             setTriggerWord(greetingMessageArray.triggerWord);
             setTriggerWordMessage(greetingMessageArray.triggerWordMessage);
+            setUseWithInstagram(greetingMessageArray.useWithInstagram || false);
         }
     }
 
@@ -84,6 +85,7 @@ const GreetingMessage = () => {
                     bodyOptions,
                     triggerWord,
                     triggerWordMessage,
+                    useWithInstagram
                 }),
             });
 
@@ -117,6 +119,15 @@ const GreetingMessage = () => {
 
             {isGreetingEnabled && (
                 <div>
+                    <div className="mb-4">
+                        <label className="flex items-center gap-1 whitespace-nowrap mr-2">
+                            <input type="checkbox" 
+                            checked={useWithInstagram || false} 
+                            onChange={() => setUseWithInstagram(!useWithInstagram)} /> 
+                            {t("useWithInstagram")}
+                        </label>
+                    </div>
+
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             {t("header")}

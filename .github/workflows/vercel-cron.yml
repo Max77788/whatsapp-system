@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send GET request to Vercel Cron API v2
+      - name: Run scheduled messages cron job
         run: curl -X GET https://mom-ai-restaurant.lat/api/cron/scheduled-messages
-      - name: Send GET request to another API
+      - name: Run scheduled campaigns cron job
         run: curl -X GET https://mom-ai-restaurant.lat/api/cron/scheduled-campaigns
+      - name: Run check subscriptions cron job
+        run: curl -X GET https://mom-ai-restaurant.lat/api/cron/check-subscriptions
+      - name: Run insta response cron job
+        run: curl -X GET https://mom-ai-restaurant.lat/api/cron/insta-response

@@ -17,6 +17,7 @@ type RowData = {
 type InstructionSet = {
     name: string;
     rows: RowData[];
+    useWithInstagram: boolean;
 };
 
 type TablePopupProps = {
@@ -74,6 +75,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                                   selectedGroups: ["other"],
                               },
                           ],
+                          useWithInstagram: false,
                       },
                   ]
         );
@@ -104,6 +106,7 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                         selectedGroups: ["other"],
                     },
                 ],
+                useWithInstagram: false,
             },
         ]);
     };
@@ -157,6 +160,15 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
             updatedSets[setIndex].rows[rowIndex].selectedGroups = ["other"];
         }
 
+        setInstructionSets(updatedSets);
+    };
+
+    const handleUseWithInstagramChange = (setIndex: number, value: boolean) => {
+        const updatedSets = [...instructionSets];
+        
+        console.log(updatedSets[setIndex]);
+        
+        updatedSets[setIndex].useWithInstagram = value;
         setInstructionSets(updatedSets);
     };
 
@@ -232,6 +244,13 @@ const ChatbotTable: React.FC<TablePopupProps> = ({ initialTactics = [] }) => {
                             className="text-lg font-medium mb-2 w-full text-black"
                             placeholder={`${t("customSetName")} ${setIndex + 1}`}
                         />
+                        <label className="flex items-center gap-1 whitespace-nowrap mr-2 ml-2">
+                            <input 
+                            type="checkbox"
+                            checked={set?.useWithInstagram || false}
+                            onChange={(e) => handleUseWithInstagramChange(setIndex, e.target.checked)}
+                            /> {t("useWithInstagram")}
+                        </label>
                         <button
                             onClick={() => deleteSet(setIndex)}
                             className="ml-2 px-5 py-3 bg-red-600 text-white rounded-full mb-2 flex items-center justify-center whitespace-nowrap"

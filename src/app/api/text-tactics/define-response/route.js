@@ -14,6 +14,11 @@ export async function POST(req) {
     let respond_boolean = true;
     let user;
     user = await find_user({ unique_id: uniqueId })
+
+    const planActive = user?.planActive;
+    if (!planActive) {
+        return NextResponse.json({ reply: "Do Nothing", respond_boolean: false });
+    }
   
     const phoneNumberTactics = user?.phoneNumberTactics;
    
@@ -157,7 +162,7 @@ ${user?.greetingMessage?.triggerWordMessage}: ${user?.greetingMessage?.triggerWo
         ${message_history}
         `
         
-        reply = await generateResponse(message, user?.aiSystemConfig.instructions || "Respond politely to this whatsapp message.");
+        reply = await generateResponse(message, instructions || "Respond politely to this whatsapp message.");
     }
 
     if (!reply) {

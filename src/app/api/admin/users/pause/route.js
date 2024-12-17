@@ -7,7 +7,7 @@ export async function POST(req) {
     const user = await find_user({"id": userId});
     const isPausedNow = user?.isPaused || false;
 
-    await update_user({"id": userId}, {"isPaused": !isPausedNow});
+    await update_user({"id": userId}, {"isPaused": !isPausedNow, "planActive": !user?.planActive});
     
     return NextResponse.json({ success: true });
 }

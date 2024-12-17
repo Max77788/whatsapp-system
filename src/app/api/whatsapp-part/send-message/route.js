@@ -114,12 +114,20 @@ export async function POST(req) {
     }
 
     const messagesLimit = plan?.messagesLimit;
-    
-    if (messagesLimit) {
-    if (totalMessagesSentSoFar + leads.length > plan?.messagesLimit) {
-      return NextResponse.json({ message: 'You have reached the messages limit for your plan' }, { status: 400 });
+    const planActive = user?.planActive;
+  
+  
+    if (planActive) {
+      if (messagesLimit) {
+      if (totalMessagesSentSoFar + leads.length > messagesLimit) {
+        return NextResponse.json({ message: 'You have reached the messages limit for your plan' }, { status: 400 });
+      } else {
+        return NextResponse.json({ message: 'You have reached the messages limit for your plan' }, { status: 400 });
+      }
+    } 
+    } else {
+      return NextResponse.json({ message: 'Your plan is expired' }, { status: 400 });
     }
-  }
 
 
     const response = await axios.post(`${kbBaseAppUrl}/send-message`, payload, {

@@ -2,7 +2,10 @@ import { MongoClient, Db } from "mongodb";
 import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
 import axios from "axios";
+import { Resend } from "resend";
 
+export const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_EMAIL = "contact@mom-ai-restaurant.lat";
 // Database configuration
 const DATABASE_NAME = process.env.DATABASE_NAME || "whatsappSystem";
 const uri = process.env.MONGODB_URI;
@@ -248,4 +251,13 @@ export async function fetchGoogleSheetRows(url: string, nameColumn: string, phon
         console.error("Error fetching Google Sheet data:", error);
         return [];
     }
+}
+
+export const sendEmail = async (to: string, subject: string, html: string) => {
+    await resend.emails.send({
+        from: FROM_EMAIL,
+        to: to,
+        subject: subject,
+        html: html
+    });
 }
