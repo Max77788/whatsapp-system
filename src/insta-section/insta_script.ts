@@ -1,11 +1,14 @@
+import { find_user } from '@/lib/utils';
 import { IgApiClient } from 'instagram-private-api';
+import { generateResponse } from "@/lib/gpt_utils"
+import { update_user } from "@/lib/utils";
 
-export async function insta_script(IG_USERNAME: string, IG_PASSWORD: string, text_tactics: {[key: string | number]: any}[]) {
+export async function insta_script(user: any) {
   const ig = new IgApiClient();
 
   // Login to your Instagram account
-  ig.state.generateDevice(IG_USERNAME);
-  const loggedInUser = await ig.account.login(IG_USERNAME, IG_PASSWORD);
+  ig.state.generateDevice(user.instaAcc.username);
+  const loggedInUser = await ig.account.login(user.instaAcc.username, user.instaAcc.password);
 
   // Logged-in user's ID
   const loggedInUserId = loggedInUser.pk;
@@ -14,26 +17,43 @@ export async function insta_script(IG_USERNAME: string, IG_PASSWORD: string, tex
   const inbox = await ig.feed.directInbox().items();
 
   // Iterate over each message
-  for (const conversation of inbox) {
+  for (const conversation of inbox.slice(0, 2)) {
     const messages = conversation.items;
-    const messageCount = messages.length;
+    const messagesCount = messages.length;
 
-    for (const message of messages) {
-      const userId = message.user_id;
-      const text = message.text;
+    if (messages[messagesCount-1].user_id === loggedInUserId) {
+      continue;
+    }
 
-      const thread = ig.entity.directThread([userId.toString()]);
+    const message_history = messages.map((message: any) => `User ID: ${message.user_id}, Message: ${message.text}`).join('\n');
 
-      // Check for the keyword in the message
-      if (message.item_type === 'text' && text?.toLowerCase() === 'hello') {
-        console.log(`Keyword detected in message: "${message.text}"`);
+    console.log(`message_history: ${JSON.stringify(message_history)}`);
+    
+    const last_message = messages[messagesCount-1];
+    const message = last_message
 
-        // Send an automated reply
-        await thread.broadcastText('Hi there! How can I help you?');
-        console.log('Automated reply sent');
-      }
+    const userId = message.user_id;
+    const text = message.text || "";
+
+    const reply_obj = await defineResponse(text, messagesCount, message_history, user);
+
+    if (!reply_obj.respond_boolean) {
+      break;
+    } else {
+
+    const thread = ig.entity.directThread([userId.toString()]);
+
+    console.log(`Keyword detected in message: "${message.text}"`);
+
+    // Send an automated reply
+    
+    if (reply_obj.reply) {
+      await thread.broadcastText(reply_obj.reply);
+    }
     }
   }
+
+  await ig.account.logout();
 }
 
 export async function verifyInstagramCredentials(username: string, password: string) {
@@ -63,166 +83,97 @@ export async function verifyInstagramCredentials(username: string, password: str
   }
 }
 
-function defineResponse(message: string, previous_messages_count: number) {
-  
-    
-
-    console.log(`message_history: ${message_history}`);
-    
-    // console.log(`senderPhoneNumber: ${senderPhoneNumber}`);
+async function defineResponse(message: string, previous_messages_count: number, message_history: string, user: any) {
     
     let respond_boolean = true;
-    let user;
-    user = await find_user({ unique_id: uniqueId })
-
-    const planActive = user?.planActive;
-    if (!planActive) {
-        return NextResponse.json({ reply: "Do Nothing", respond_boolean: false });
-    }
-  
-    const phoneNumberTactics = user?.phoneNumberTactics;
-   
-    let name_tactics_to_use = [];
-    const user_phone_number = user?.[`qrCode${clientId}`]?.phoneNumber;
+    console.log(`Initial respond_boolean: ${respond_boolean}`);
 
     let reply, delay=5;
+    console.log(`Initial reply: ${reply}, delay: ${delay}`);
 
-    if (user?.greetingMessage?.isGreetingEnabled) {
+    if (user?.greetingMessage?.isGreetingEnabled && user?.greetingMessage?.useWithInstagram) {
+        console.log("Greeting message is enabled and configured for Instagram");
         const formedMessage = `${user?.greetingMessage?.header}
 
-${user?.greetingMessage?.bodyOptions.map((obj, index) => `${index + 1}. ${obj.option}`).join('\n')}
+${user?.greetingMessage?.bodyOptions.map((obj: any, index: number) => `${index + 1}. ${obj.option}`).join('\n')}
 
 ${user?.greetingMessage?.footer}
 ${user?.greetingMessage?.triggerWordMessage}: ${user?.greetingMessage?.triggerWord}`
 
-        if (message_history && !(/\bUser:\s/.test(message_history))) {
+        console.log(`Formed greeting message: ${formedMessage}`);
+
+        if (previous_messages_count === 1) {
+            console.log("First message from sender - sending greeting");
             reply = formedMessage;
+            return {reply, delay: 5, respond_boolean: true};
         } else if (message === user?.greetingMessage?.triggerWord) {
+            console.log("Trigger word detected - sending greeting");
             reply = formedMessage;
+            return {reply, delay: 5, respond_boolean: true};
         }
 
-        user?.greetingMessage?.bodyOptions.forEach((obj, index) => {
-            if (message === obj.option || message == index+1) {
+        user?.greetingMessage?.bodyOptions.forEach((obj: any, index: number) => {
+            console.log(`Checking option ${index + 1}: ${obj.option}`);
+            if (message === obj.option || message === (index+1).toString()) {
+                console.log(`Option match found - sending response: ${obj.response}`);
                 reply = obj.response;
-                console.log(`reply Greeting Message: ${reply}`);
+                return {reply, delay: 5, respond_boolean: true};
             }
         });
         
     }
 
-    if (reply) {
-        await update_user({email: user.email}, {sentMessages: user?.sentMessages || 0 + 1});
-        return NextResponse.json({reply, delay, respond_boolean: true});
-    }
+    console.log("Processing message logic list");
+    const text_tactics_list = user?.messageLogicList.filter((logic: any) => logic?.useWithInstagram);
+    console.log(`Filtered tactics list: ${JSON.stringify(text_tactics_list)}`);
 
-
-    phoneNumberTactics.forEach((phoneNumberTactic) => {
-        console.log(`Checking tactics for phone number: ${phoneNumberTactic.phoneNumber}`);
-        if (phoneNumberTactic.phoneNumber === user_phone_number) {
-            console.log(`Match found for user phone number: ${user_phone_number}`);
-            phoneNumberTactic.tactics.forEach((tactic) => {
-                console.log(`Evaluating tactic: ${tactic}`);
-                if (tactic === "Do Nothing") {
-                    console.log("Tactic is 'Do Nothing', setting respond_boolean to false");
-                    respond_boolean = false;
-                    return NextResponse.json({reply: "Do Nothing", respond_boolean: false});
-                }
-                name_tactics_to_use.push(tactic);
-                console.log(`Added tactic to use: ${tactic}`);
-            });
-        }
-    });
-
-
-
-
-    console.log("Name tactics to use:", name_tactics_to_use);
-    let message_logic_list = user?.messageLogicList;
-    let text_tactics_list = [];
-
-    name_tactics_to_use.forEach((name_tactic) => {
-        console.log(`Processing name tactic: ${name_tactic}`);
-        message_logic_list.forEach((message_logic) => {
-            if (message_logic.name === name_tactic) {
-                text_tactics_list.push(message_logic);
-                console.log(`Added message logic to text tactics list: ${message_logic.name}`);
-            }
-        });
-    });
-
-    let flat_text_tactics_list = [];
+    let flat_text_tactics_list: any[] = [];
 
     console.log("Text tactics list before flattening:", text_tactics_list);
-    text_tactics_list.forEach((tactic) => {
-        flat_text_tactics_list.push(tactic.rows);
+    text_tactics_list.forEach((tactic: any) => {
+        flat_text_tactics_list.push(...tactic.rows);
     });
     console.log("Text tactics list after flattening:", flat_text_tactics_list);
-
-    const lead_platform = user?.leads?.find((lead) => lead.phone_number.includes(senderPhoneNumber))?.source || "other";
-    const lead_group = user?.leads?.find((lead) => lead.phone_number.includes(senderPhoneNumber))?.group || "other";
-
-    console.log(`lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
     
-    let terminate_response = false;
-
-    console.log("text_tactics_list: ", flat_text_tactics_list, "of type: ", typeof flat_text_tactics_list, "is array: ", Array.isArray(flat_text_tactics_list));
- 
     const stable_text_tactics_list = flat_text_tactics_list;
+    console.log(`Stable text tactics list: ${JSON.stringify(stable_text_tactics_list)}`);
 
-    
-    stable_text_tactics_list.forEach((tactics) => {
-        tactics.forEach((tactic) => {
+    stable_text_tactics_list.forEach((tactic) => {
         console.log(`Checking tactic: ${JSON.stringify(tactic)}`);
 
         if (tactic.type === "includes") {
+            console.log(`Checking 'includes' match for: ${tactic.search_term}`);
             if (new RegExp(`\\b${tactic.search_term.trim().toLowerCase()}\\b`).test(message.trim().toLowerCase())) {
-                if (tactic.selectedGroups === undefined) {
-                    tactic.selectedGroups = ["other"];
-                }
-                if (!tactic.platforms.includes(lead_platform) || !tactic.selectedGroups.includes(lead_group)) 
-                {
-                    console.log(`Tactic not applicable for lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
-                    terminate_response = true;
-                    return;
-                }
-
-                
+                console.log(`'Includes' match found`);
                 reply = tactic.message_to_send;
                 delay = tactic.delay;
                 console.log(`Match found with 'includes': reply=${reply}, delay=${delay}`);
                 return;
             }
         } else if (tactic.type === "starts with") {
-            if (new RegExp(`\\b${tactic.search_term.trim().toLowerCase()}\\b`).test(message.trim().toLowerCase())) {
-                if (!tactic.platforms.includes(lead_platform) || !tactic.selectedGroups.includes(lead_group)) {
-                    console.log(`Tactic not applicable for lead_platform: ${lead_platform}, lead_group: ${lead_group}`);
-                    terminate_response = true;
-                    return;
-                }
-
+            console.log(`Checking 'starts with' match for: ${tactic.search_term}`);
+            if (message.trim().toLowerCase().startsWith(tactic.search_term.trim().toLowerCase())) {
+                console.log(`'Starts with' match found`);
                 reply = tactic.message_to_send;
                 delay = tactic.delay;
                 console.log(`Match found with 'starts with': reply=${reply}, delay=${delay}`);
                 return;
             }
         }
-            });
-        });
+    });
 
-    if (terminate_response) {
-        console.log("Terminating response due to no applicable tactic");
-        return NextResponse.json({reply: "Do Nothing", respond_boolean: false});
-    }
-
-    if (!reply && name_tactics_to_use.includes("Enable AI Auto Response") && user?.aiSystemConfig.isOn) {
+    if (!reply && user?.aiSystemConfig.isOn) {
+        console.log("No reply found, AI system is on - generating AI response");
         const instructions = `
-        You are a whatsapp bot. Here are your instructions:
+        You are an instagram bot. Here are your instructions:
         ${user?.aiSystemConfig.instructions}
         Take into account the following message history:
         ${message_history}
         `
+        console.log(`AI instructions: ${instructions}`);
         
         reply = await generateResponse(message, instructions || "Respond politely to this whatsapp message.");
+        console.log(`AI generated reply: ${reply}`);
     }
 
     if (!reply) {
@@ -230,12 +181,12 @@ ${user?.greetingMessage?.triggerWordMessage}: ${user?.greetingMessage?.triggerWo
         console.log("No match found, setting respond_boolean to false");
     }
 
-    console.log(`reply: ${reply}, delay: ${delay}, respond_boolean: ${respond_boolean}`);
+    console.log(`Final reply: ${reply}, delay: ${delay}, respond_boolean: ${respond_boolean}`);
 
     if (respond_boolean) {
+        console.log("Updating user sent messages count");
         await update_user({email: user.email}, {sentMessages: user?.sentMessages || 0 + 1});
     }
 
-  return NextResponse.json({reply, delay, respond_boolean: respond_boolean});
-}
+    return {reply, delay, respond_boolean: respond_boolean};
 }
