@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function UserCredentialsForm() {
   const [username, setUsername] = useState("");
@@ -14,6 +14,7 @@ export default function UserCredentialsForm() {
   const [isLoading, setIsLoading] = useState(true);
 
   const t = useTranslations("instagram_connection");
+  const currentLocale = useLocale();
 
   // Fetch the connected Instagram account on component mount
   useEffect(() => {
@@ -131,7 +132,7 @@ export default function UserCredentialsForm() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
+            className={`absolute top-1/2 transform -translate-y-1/2 ${currentLocale === "he" ? "left-3" : "right-3"}`}
           >
             {showPassword ? (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">

@@ -4,56 +4,90 @@ import { generateResponse } from "@/lib/gpt_utils"
 import { update_user } from "@/lib/utils";
 
 export async function insta_script(user: any) {
+  console.log('Starting insta_script for user:', user.unique_id);
   const ig = new IgApiClient();
 
+  let sent_messages = 0;
+
   // Login to your Instagram account
+  console.log('Generating device for username:', user.instaAcc.username);
   ig.state.generateDevice(user.instaAcc.username);
+  console.log('Attempting Instagram login...');
   const loggedInUser = await ig.account.login(user.instaAcc.username, user.instaAcc.password);
+  console.log('Successfully logged in as:', loggedInUser.username);
 
   // Logged-in user's ID
   const loggedInUserId = loggedInUser.pk;
+  console.log('Logged in user ID:', loggedInUserId);
 
   // Listen to incoming direct messages
+  console.log('Fetching direct inbox messages...');
   const inbox = await ig.feed.directInbox().items();
+  console.log('Number of conversations in inbox:', inbox.length);
 
-  // Iterate over each message
-  for (const conversation of inbox.slice(0, 2)) {
+  // Iterate over each chat
+  console.log('Processing first 2 conversations...');
+  for (const conversation of inbox) {
+    console.log('Processing conversation:', conversation.thread_id);
     const messages = conversation.items;
     const messagesCount = messages.length;
+    console.log('Number of messages in conversation:', messagesCount);
 
-    if (messages[messagesCount-1].user_id === loggedInUserId) {
+    if (messages[0].user_id === loggedInUserId) {
+      console.log('Last message was from logged in user, skipping conversation');
       continue;
     }
 
+    console.log('Building message history...');
     const message_history = messages.map((message: any) => `User ID: ${message.user_id}, Message: ${message.text}`).join('\n');
 
     console.log(`message_history: ${JSON.stringify(message_history)}`);
     
-    const last_message = messages[messagesCount-1];
+    console.log('Getting last message from conversation...');
+    const last_message = messages[0];
     const message = last_message
 
     const userId = message.user_id;
     const text = message.text || "";
 
+    console.log(`userId: ${userId}, text: ${text}`);
+    console.log('Generating response...');
+
     const reply_obj = await defineResponse(text, messagesCount, message_history, user);
+    console.log('Response object:', reply_obj);
 
     if (!reply_obj.respond_boolean) {
+      console.log('Response not required, breaking conversation loop');
       break;
     } else {
+      console.log('Creating direct thread for user:', userId);
+      const thread = ig.entity.directThread([userId.toString()]);
 
-    const thread = ig.entity.directThread([userId.toString()]);
+      console.log(`Keyword detected in message: "${message.text}"`);
 
-    console.log(`Keyword detected in message: "${message.text}"`);
-
-    // Send an automated reply
-    
-    if (reply_obj.reply) {
-      await thread.broadcastText(reply_obj.reply);
-    }
+      // Send an automated reply
+      if (reply_obj.reply) {
+        console.log('Sending reply:', reply_obj.reply);
+        await thread.broadcastText(reply_obj.reply);
+        console.log('Reply sent successfully');
+        sent_messages++;
+      }
     }
   }
 
+  let messagesDate =  new Date();
+
+  const previousSentMessages = user?.sentMessages || 0;
+  const updatedSentMessages = previousSentMessages + sent_messages;
+
+  await update_user({ unique_id: user.unique_id }, { sentMessages: updatedSentMessages });
+  await update_user({ unique_id: user.unique_id }, { messages_date: { date: messagesDate, count: sent_messages }}, "$push")
+
+  console.log(`sent_messages: ${sent_messages}`);
+
+  console.log('Logging out of Instagram...');
   await ig.account.logout();
+  console.log('Successfully logged out');
 }
 
 export async function verifyInstagramCredentials(username: string, password: string) {
@@ -183,11 +217,6 @@ ${user?.greetingMessage?.triggerWordMessage}: ${user?.greetingMessage?.triggerWo
     }
 
     console.log(`Final reply: ${reply}, delay: ${delay}, respond_boolean: ${respond_boolean}`);
-
-    if (respond_boolean) {
-        console.log("Updating user sent messages count");
-        await update_user({email: user.email}, {sentMessages: user?.sentMessages || 0 + 1});
-    }
 
     return {reply, delay, respond_boolean: respond_boolean};
 }

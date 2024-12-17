@@ -488,5 +488,22 @@
         "export": "ייבא",
         "chats": "שיחות",
         "numbersExportedSuccessfully": "מספרים טלפון יובאו בהצלחה!"
+    },
+    "instagram_connection": {
+        "fetch_error": "לא ניתן לשלופ חשבון מחובר",
+        "fill_credentials_error": "אנא הזן את כל השדות",
+        "save_success": "הגדרות נשמרו בהצלחה",
+        "save_error": "הגדרות שלך שגויות. בדוק אותן ונסה שנית.",
+        "default_error": "שגיאה קרה",
+        "general_error": "שגיאה קרה בזמן שמחזירה הגדרות",
+        "delete_success": "הגדרות נמחקו בהצלחה",
+        "delete_error": "לא ניתן למחוק הגדרות",
+        "manage_connection": "ניהול חיבור",
+        "save_credentials": "שמור הגדרות",
+        "delete_credentials": "מחק הגדרות",
+        "no_account_connected": "ללא חשבון מחובר",
+        "connected_as": "מחובר כ",
+        "username_placeholder": "שם משתמש",
+        "password_placeholder": "ססמה"
     }
 }

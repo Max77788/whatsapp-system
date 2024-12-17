@@ -166,9 +166,12 @@ export async function POST(req) {
         );
       }
 
+      const previousSentMessages = user?.sentMessages || 0;
+      const updatedSentMessages = previousSentMessages + sentMessages;
 
 
-      const success = session ? await update_user({ email: session?.user?.email }, { leads: userLeads, sentMessages }) : await update_user({ apiKey: apiKey }, { leads: userLeads, sentMessages });
+
+      const success = session ? await update_user({ email: session?.user?.email }, { leads: userLeads, sentMessages: updatedSentMessages }) : await update_user({ apiKey: apiKey }, { leads: userLeads, sentMessages: updatedSentMessages });
       const success2 = session ? await update_user({ email: session?.user?.email }, { messages_date: { date: messagesDate, count: countMessages } }, "$push") : await update_user({ apiKey: apiKey }, { messages_date: { date: messagesDate, count: countMessages } }, "$push");
 
       if (success && success2) {
