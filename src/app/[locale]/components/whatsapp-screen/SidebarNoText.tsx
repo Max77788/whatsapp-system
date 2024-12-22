@@ -275,7 +275,7 @@ const Sidebar = ({ withKbBaseUrlLink = true }: { withKbBaseUrlLink?: boolean }) 
           <hr></hr>
           <li>
             <a
-              href={withKbBaseUrlLink ? "http://docs.mom-ai-restaurant.lat" : "#"}
+              href={withKbBaseUrlLink ? "/api-docs" : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink ? activeLinkStyle : disabledLinkStyle
               }`}
