@@ -16,6 +16,7 @@ export default async function SettingsPage(): Promise<JSX.Element> {
     
     const session = await getServerSession(authOptions);
     const userEmail = session?.user?.email;
+    
     const currentLocale = await getLocale();
     const t = await getTranslations("accounts");
 

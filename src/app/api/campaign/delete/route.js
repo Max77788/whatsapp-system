@@ -5,7 +5,57 @@ import { authOptions } from '@/lib/auth/serverStuff';
 import { uploadFile, deleteFile } from '@/lib/google_storage/google_storage';
 import axios from 'axios';
 
-export async function POST(req) {
+
+/**
+ * @swagger
+ * /api/campaign/delete:
+ *   delete:
+ *     summary: Delete a campaign
+ *     description: Deletes a campaign for a user identified by email, API key, or unique ID
+ *     tags:
+ *       - Campaigns
+ *     security:
+ *       - apiKey: []
+ *       - session: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         schema:
+ *           type: string
+ *         description: API key for authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               campaignId:
+ *                 type: string
+ *                 description: ID of the campaign to delete
+ *     responses:
+ *       200:
+ *         description: Campaign deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Error deleting campaign
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+
+
+export async function DELETE(req) {
   const session = await getServerSession(authOptions);
   
   const userEmailSession = session?.user?.email;

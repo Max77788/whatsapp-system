@@ -5,6 +5,67 @@ import { authOptions } from '@/lib/auth/serverStuff';
 import { uploadFile, deleteFile } from '@/lib/google_storage/google_storage';
 import axios from 'axios';
 
+/**
+ * @openapi
+ * /api/whatsapp-part/send-message:
+ *   post:
+ *     summary: Send WhatsApp messages to multiple recipients
+ *     description: Sends customized WhatsApp messages with optional media attachments to specified phone numbers or groups
+ *     tags:
+ *       - Messages:Sending
+ *     security:
+ *       - apiKey: []
+ *       - session: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         schema:
+ *           type: string
+ *         description: API key for authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fromNumber:
+ *                 type: string
+ *                 description: Sender's WhatsApp number
+ *               toNumbers:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of recipient phone numbers
+ *               message:
+ *                 type: string
+ *                 description: Message text with optional {{name}} placeholder
+ *               groups:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of group names to send to
+ *               media:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional media file to attach
+ *     responses:
+ *       200:
+ *         description: Message sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Plan limit reached or invalid request
+ *       404:
+ *         description: Message not sent or lead not found
+ *       500:
+ *         description: Server error
+ */
 
 export async function POST(req) {
 

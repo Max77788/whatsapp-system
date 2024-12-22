@@ -5,6 +5,111 @@ import { authOptions } from '@/lib/auth/serverStuff';
 import { update_user, findPlanById } from '@/lib/utils';
 import { uploadFile } from '@/lib/google_storage/google_storage';
 
+
+/**
+ * @swagger
+ * /api/campaign/schedule:
+ *   post:
+ *     summary: Schedule a new WhatsApp campaign
+ *     description: Creates and schedules a new WhatsApp messaging campaign with optional media attachments and batch sending capabilities
+ *     tags:
+ *       - Campaigns
+ *     security:
+ *       - apiKey: []
+ *       - session: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         schema:
+ *           type: string
+ *         description: API key for authentication (optional if using session)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - campaignName
+ *               - fromNumber
+ *               - message
+ *               - leads
+ *               - scheduleTime
+ *               - timeZone
+ *             properties:
+ *               campaignName:
+ *                 type: string
+ *                 description: Name of the campaign
+ *               fromNumber:
+ *                 type: string
+ *                 description: Sender's WhatsApp number
+ *               message:
+ *                 type: string
+ *                 description: Message content to be sent
+ *               leads:
+ *                 type: array
+ *                 description: Array of recipient information
+ *               media:
+ *                 type: string
+ *                 format: binary
+ *                 description: Media file to be attached (optional)
+ *               scheduleTime:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Time to schedule the campaign
+ *               timeZone:
+ *                 type: string
+ *                 description: Timezone for scheduling
+ *               campaignId:
+ *                 type: string
+ *                 description: Unique identifier for the campaign
+ *               batchSize:
+ *                 type: integer
+ *                 description: Number of messages per batch
+ *               batchIntervalValue:
+ *                 type: integer
+ *                 description: Interval value between batches
+ *               batchIntervalUnit:
+ *                 type: string
+ *                 enum: [minutes, hours, days, weeks]
+ *                 description: Time unit for batch interval
+ *     responses:
+ *       200:
+ *         description: Campaign scheduled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                 campaignId:
+ *                   type: string
+ *                   description: Campaign ID (only returned for API key authentication)
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message (missing fields or plan limitations)
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ */
+
+
 export async function POST(req) {
   const session = await getServerSession(authOptions);
 

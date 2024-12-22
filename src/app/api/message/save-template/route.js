@@ -3,6 +3,67 @@ import { update_user } from '@/lib/utils';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/serverStuff";
 
+/**
+ * @openapi
+ * /api/message/save-template:
+ *   post:
+ *     summary: Save message templates for a user
+ *     description: Saves single or multiple message templates associated with a user account
+ *     tags:
+ *       - Messages:Templates
+ *     security:
+ *       - apiKey: []
+ *       - session: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         schema:
+ *           type: string
+ *         description: Optional API key for authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               messageTemplates:
+ *                 oneOf:
+ *                   - type: array
+ *                     items:
+ *                       type: object
+ *                   - type: object
+ *                 description: Message template or array of templates to save
+ *     responses:
+ *       200:
+ *         description: Templates saved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: No templates found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+
 export async function POST(req) {
     const apiKey = req.headers.get('x-api-key');
 

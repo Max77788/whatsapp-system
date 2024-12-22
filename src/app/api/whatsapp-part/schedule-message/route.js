@@ -6,6 +6,85 @@ import formidable from 'formidable';
 import axios from 'axios';
 import { uploadFile } from '@/lib/google_storage/google_storage';
 
+/**
+ * @swagger
+ * /api/whatsapp-part/schedule-message:
+ *   post:
+ *     summary: Schedule a WhatsApp message
+ *     description: Schedule a message to be sent to multiple recipients with optional media attachment
+ *     tags:
+ *       - Messages:Sending
+ *     security:
+ *       - apiKey: []
+ *       - session: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         schema:
+ *           type: string
+ *         description: API key for authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fromNumber
+ *               - message
+ *               - scheduleTime
+ *               - timeZone
+ *             properties:
+ *               fromNumber:
+ *                 type: string
+ *                 description: Sender's WhatsApp number
+ *               toNumbers:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: List of recipient phone numbers
+ *               message:
+ *                 type: string
+ *                 description: Message content to send
+ *               scheduleTime:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Scheduled time to send the message
+ *               timeZone:
+ *                 type: string
+ *                 description: Timezone for scheduling (e.g. "America/New_York")
+ *               media:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional media file attachment
+ *               groups:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Target groups to send message to
+ *     responses:
+ *       200:
+ *         description: Message scheduled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Message scheduled successfully!"
+ *       500:
+ *         description: Server error while scheduling message
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to schedule message"
+ */
+
 export async function POST(req) {
     try {
         // Parse the incoming form data

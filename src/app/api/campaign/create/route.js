@@ -6,6 +6,84 @@ import { update_user, find_user, findPlanById } from '@/lib/utils';
 import { uploadFile } from '@/lib/google_storage/google_storage';
 import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * @swagger
+ * /api/campaign/create:
+ *   post:
+ *     summary: Create a new messaging campaign
+ *     description: Creates a new campaign with message scheduling and batch processing capabilities
+ *     tags:
+ *       - Campaigns
+ *     security:
+ *       - apiKey: []
+ *       - session: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         schema:
+ *           type: string
+ *         description: API key for authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - campaignName
+ *               - fromNumber
+ *               - message
+ *               - leads
+ *             properties:
+ *               campaignName:
+ *                 type: string
+ *                 description: Name of the campaign
+ *               fromNumber:
+ *                 type: string
+ *                 description: Sender phone number
+ *               message:
+ *                 type: string
+ *                 description: Message content to be sent
+ *               leads:
+ *                 type: array
+ *                 description: Array of recipient leads
+ *               media:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional media file to attach
+ *               campaignId:
+ *                 type: string
+ *                 description: Optional custom campaign ID
+ *               batchSize:
+ *                 type: integer
+ *                 description: Number of messages per batch
+ *               batchIntervalValue:
+ *                 type: integer
+ *                 description: Interval value between batches
+ *               batchIntervalUnit:
+ *                 type: string
+ *                 enum: [minutes, hours, days, weeks]
+ *                 description: Time unit for batch interval
+ *     responses:
+ *       200:
+ *         description: Campaign created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 campaignId:
+ *                   type: string
+ *       400:
+ *         description: Bad request or validation error
+ *       401:
+ *         description: Unauthorized access
+ *       500:
+ *         description: Internal server error
+ */
+
 export async function POST(req) {
   const session = await getServerSession(authOptions);
 

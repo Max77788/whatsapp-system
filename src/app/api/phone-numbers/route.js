@@ -4,6 +4,43 @@ import { authOptions } from "@/lib/auth/serverStuff";
 import { find_user } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
+
+/**
+ * @swagger
+ * /api/phone-numbers:
+ *   get:
+ *     summary: Get user's phone numbers
+ *     description: Retrieves a list of phone numbers associated with the user, including their active status
+ *     tags:
+ *       - Phone Numbers
+ *     security:
+ *       - apiKey: []
+ *       - session: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         schema:
+ *           type: string
+ *         description: Optional API key for authentication
+ *     responses:
+ *       200:
+ *         description: List of phone numbers with their active status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   phoneNumber:
+ *                     type: string
+ *                     description: The phone number
+ *                   active:
+ *                     type: boolean
+ *                     description: Whether the phone number is currently active
+ */
+
+
 export async function GET(req) {
   const session = await getServerSession(authOptions);
 

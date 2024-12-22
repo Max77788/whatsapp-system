@@ -12,7 +12,7 @@ export async function middleware(req: NextRequest) {
         if (nextIntlResponse) {
             return nextIntlResponse;
         }
-    }
+    } 
 
     // Custom API Key validation logic
     const origin = req.headers.get('origin') || req.headers.get('referer') || '';
