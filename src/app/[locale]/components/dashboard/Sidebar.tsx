@@ -46,7 +46,7 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
           />
         </svg>
         <a href={`/${currentLocale}/dashboard`} className="no-underline">
-          <h2 className="text-xl text-white font-bold">WhatsLeads</h2>
+          <h2 className="text-xl text-white font-bold">Bumby</h2>
         </a>
       </div>
       <nav>
