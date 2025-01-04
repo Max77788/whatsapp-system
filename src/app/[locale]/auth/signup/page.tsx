@@ -51,7 +51,7 @@ const SignUp = () => {
         </div>
 
         <div className="text-center">
-          <p className="">
+          <p className="text-gray-600">
             {t('alreadyHaveAnAccount')}
             <Link href={`/${currentLocale}/auth/signin`} className="hover:underline">
               {t('signIn')}

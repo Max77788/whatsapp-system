@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { Dialog } from "@headlessui/react";
 import { toast } from "react-toastify";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConnected: number}) {
   const { data: session } = useSession();
@@ -14,6 +14,8 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
   const [fadeOut, setFadeOut] = useState(false);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const previousPhonesConnectedRef = useRef<number | null>(null); // Ref to store the previous number of connected phones
+  
+  const currentLocale = useLocale();
   
   const t = useTranslations("whatsapp_connection");
   
@@ -43,11 +45,18 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
 
         // Compare with the previous value stored in the ref
         if (previousPhonesConnectedRef.current !== null && newNumberOfPhonesConnected !== previousPhonesConnectedRef.current) {
-          const message =
-            newNumberOfPhonesConnected > previousPhonesConnectedRef.current
+          const moreNumbers = newNumberOfPhonesConnected > previousPhonesConnectedRef.current;
+          
+          const message = moreNumbers
+            
               ? t("phone_connected_successfully")
               : t("phone_detached_successfully");
           toast.success(message);
+
+          if (moreNumbers) {
+            window.location.href = `/${currentLocale}/whatsapp-screen`;
+            return;
+          }
   
           // Reload the page after the toast notification
           setTimeout(() => {

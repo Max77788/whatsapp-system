@@ -18,6 +18,8 @@ const SearchParamsHandler = () => {
 
   const currentLocale = useLocale();
 
+  const t = useTranslations('signinNotifications');
+
   useEffect(() => {
     if (searchParams.toString()) {
       router.replace(`/${currentLocale}/auth/signin`);
@@ -29,24 +31,24 @@ const SearchParamsHandler = () => {
     
     switch (notification) {
       case "login-required":
-        toast.error("You must be signed in to view this page");
+        toast.error(t('loginRequired'));
         break;
       case "loggedOut":
-        toast.info("You have been logged out");
+        toast.info(t('loggedOut'));
         document.cookie = "loggedOut=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         console.log("loggedOut cookie deleted");
         break;
       case "email-verified":
-        toast.success("Email verified successfully. Please sign in to continue.");
+        toast.success(t('emailVerified'));
         break;
       case "invalid-token":
-        toast.error("Invalid token");
+        toast.error(t('invalidToken'));
         break;
       case "password-updated":
-        toast.success("Password updated successfully. Please sign in to continue.");
+        toast.success(t('passwordUpdated'));
         break;
       case "use-google-signup":
-        toast.info("Use Google Signup");
+        toast.info(t('useGoogleSignup'));
         break;
       default:
         break;
@@ -71,6 +73,7 @@ const SignIn = () => {
   
 
           <div className="space-y-4">
+
             <GoogleSignInButton />
 
             <div className="flex items-center space-x-2">
@@ -79,6 +82,7 @@ const SignIn = () => {
               <hr className="flex-1 border-gray-600" />
             </div>
 
+            
             <CredentialsForm />
 
             {/*
@@ -91,7 +95,7 @@ const SignIn = () => {
           </div>
 
           <div className="text-center">
-            <p className="">
+            <p className="text-gray-600">
               {t('dontHaveAnAccount')}
               <Link href={`/${currentLocale}/auth/signup`} className="hover:underline">
                 {t('signUp')}

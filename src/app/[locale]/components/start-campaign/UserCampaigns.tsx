@@ -59,7 +59,7 @@ const UserCampaigns = () => {
     if (confirm("Are you sure you want to delete this campaign?")) {
     try {
       const response = await fetch(`/api/campaign/delete`, {
-        method: "POST",
+        method: "DELETE",
         body: JSON.stringify({ campaignId }),
       });
   
@@ -119,7 +119,7 @@ const UserCampaigns = () => {
           <ul className="list-disc ml-6">
             {campaign.leads.map((lead, index) => (
               <li key={index}>
-                {lead.name} ({lead.phone_number}){" "}
+                {lead.name} ({lead.phone_number.split("@")[0].length < 14 ? lead.phone_number : "group"}){" "}
                 {lead.mediaURL && (
                   <a
                     href={lead.mediaURL}

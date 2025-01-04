@@ -20,7 +20,10 @@
     "signin": {
         "email": "Email",
         "password": "Password",
+        "backToSignIn": "Back to Sign In",
         "signIn": "Sign In",
+        "signingIn": "Signing in...",
+        "signingUp": "Signing up...",
         "continueWithGoogle": "Continue with Google",
         "pleaseSignInToContinue": "Please sign in to continue.",
         "or": "Or",
@@ -46,6 +49,14 @@
         "price": "Price",
         "nis": "₪",
         "signingInWithGoogle": "Signing in with Google..."
+    },
+    "signinNotifications": {
+        "loginRequired": "Please login to continue",
+        "loggedOut": "You have been logged out",
+        "emailVerified": "Your email has been verified successfully",
+        "invalidToken": "Invalid or expired token",
+        "passwordUpdated": "Password updated successfully",
+        "useGoogleSignup": "Please use Google sign up, as you previously signed up with Google"
     },
     "dashboard": {
         "logout": "Logout",
@@ -89,7 +100,28 @@
         "docs": "Docs",
         "accounts": "Connect New Account",
         "pleaseReloadThePage": "Please, reload the page",
-        "in1Minute": "in 1 minute"
+        "in1Minute": "in 1 minute",
+        "home": "Home",
+        "templates": " Message Templates",
+        "labels": "Labels"
+    },
+    "labelManager": {
+        "labelSaved": "התווית נשמרה בהצלחה",
+        "failedToSaveLabel": "שמירת התווית נכשלה",
+        "errorSavingLabel": "אירעה שגיאה במהלך שמירת התווית",
+        "labelDeleted": "התווית נמחקה בהצלחה",
+        "areYouSureYouWantToDeleteLabel": "האם אתה בטוח שברצונך למחוק את התווית",
+        "deleteLabel": "מחק תווית",
+        "saveLabel": "שמור תווית",
+        "addNewLabel": "הוסף תווית חדשה",
+        "allLabels": "כל התוויות",
+        "existingLeads": "לידים קיימים",
+        "leadsForLabel": "לידים לתווית",
+        "noLeadsInLabel": "אין לידים בתווית",
+        "name": "שֵׁם",
+        "phone_number": "מספר טלפון",
+        "action": "פְּעוּלָה",
+        "uploadCSVOrExcel": "העלה קובץ CSV/Excel"
     },
     "profile": {
         "profile": "Profile",
@@ -127,6 +159,7 @@
         "phone_connected_successfully": "Phone connected successfully!",
         "phone_detached_successfully": "Phone detached successfully!",
         "you_need_to_be_logged_in_to_connect_a_phone": "You need to be logged in to connect a phone",
+        "you_need_to_be_logged_in_to_generate_a_qr_code": "You need to be logged in to generate a QR code",
         "your_plan_is_expired": "Your plan is expired"
     },
     "leads": {
@@ -141,7 +174,7 @@
         "name": "Name",
         "phone_number": "Phone number",
         "choose_source": "Choose source",
-        "choose_group": "Choose group",
+        "choose_group": "Choose group(s)",
         "add_lead": "Add lead",
         "paste_phone_numbers_here_separated_by_commas_or_new_lines": "Copy phone numbers here, separated by commas or new lines.",
         "leads_imported_successfully": "Leads imported successfully!",
@@ -164,7 +197,21 @@
         "please_enter_a_group_name": "Please enter a group name"
     },
     "startCampaign": {
+        "doNotDistributeToWhoHaveNotReadLastMessage": "Do not distribute to who have not read last message",
+        "doNotDistributeToRecentSends": "Do not distribute to recent sends",
+        "hours": "Hours",
+        "days": "Days",
+        "weeks": "Weeks",
+        "waGroups": "WhatsApp Groups",
         "startCampaign": "Start Campaign",
+        "leadsSelected": "Leads Selected",
+        "confirmScheduleCampaign": "Confirm Schedule Campaign",
+        "headersFetchedSuccessfully": "Headers fetched successfully",
+        "failedToFetchHeadersFromCSVFile": "Failed to fetch headers from CSV File",
+        "selectPhoneNumber": "Select Phone Number",
+        "confirm": "Confirm",
+        "confirmStartCampaign": "Confirm Start Campaign",
+        "scheduleTime": "Schedule Time",
         "startCampaignDescription": "Start a new campaign",
         "googleSheetsLink": "Google Sheets Link",
         "uploadCSVExcel": "Upload CSV/Excel File",
@@ -215,7 +262,7 @@
         "mediaAttachment": "Media Attachment (Optional)",
         "hideBatchingOptions": "Hide Batching Options",
         "showBatchingOptions": "Show Batching Options",
-        "batchSize": "Batch Size",
+        "batchSize": "Batch Size (in recipients)",
         "enterNumberOfMessagesPerBatch": "Enter number of messages per batch",
         "batchInterval": "Batch Interval",
         "enterIntervalValue": "Enter interval value",
@@ -259,7 +306,7 @@
         "leads": "Leads",
         "media": "Media",
         "scheduledTime": "Scheduled Time",
-        "batchSize": "Batch Size",
+        "batchSize": "Batch Size (in recipients)",
         "batchInterval": "Batch Interval",
         "clear": "Clear",
         "delete": "Delete",
@@ -301,8 +348,16 @@
         "body": "Body",
         "addOption": "Add Option",
         "removeOption": "Remove Option",
+        "removeRow": "Remove Row",
+        "set": "Set",
+        "rule": "Rule",
+        "type": "If Message",
+        "searchTerm": "this word/phrase",
+        "messageToSend": "Send this message",
+        "delayInSeconds": "Delay for X seconds",
         "option": "Option",
         "response": "Response",
+        "setupTheIsntructionsOfAIOnTheLeft": "Setup the instructions of AI on the left",
         "greetingFooterPlaceholder": "Enter the footer. For example: Thank you for your business.",
         "greetingHeaderPlaceholder": "Enter the header. For example: Hello! Welcome to our store! Choose from the following options",
         "optionPlaceholder": "E.g. See Services, See Products, See Prices",
@@ -315,11 +370,28 @@
         "triggerWord": "Trigger Word",
         "greetingTriggerWordPlaceholder": "Enter the trigger word for the greeting message. For example: Hi, Hello, Menu",
         "greetingMessageSaved": "Greeting message saved successfully",
+        "greetingMessagePreview": "Greeting Message Preview",
         "thatsHowYourMessageWillLook": "That's how your message will look",
         "triggerWordMessage": "Trigger Word Message",
         "greetingTriggerWordMessagePlaceholder": "Enter the sentence preceding the trigger word. For example: To call this message again write (DO NOT USE COLON)",
-        "useWithInstagram": "Use with Instagram"
+        "useWithInstagram": "Use with Instagram",
+        "enterSearchTerm": "Enter search term",
+        "enterMessageToSend": "Enter message to send",
+        "areYouSureYouWantToDeleteThisRule": "Are you sure you want to delete this rule?"
     },
+
+    "tacticDetails": {
+        "tacticDetails": "Tactic Details",
+        "ifMessage": "If message",
+        "includes": "includes",
+        "startsWith": "starts with",
+        "delayWaitFor": "Delay/Wait for",
+        "seconds": "seconds",
+        "respondWith": "Respond with",
+        "or": "or",
+        "unnamed": "Unnamed" 
+    },
+
     "sendMessage": {
         "startCampaign": "Start Campaign",
         "startCampaignDescription": "Start a new campaign",
@@ -371,7 +443,7 @@
         "mediaAttachment": "Media Attachment (Optional)",
         "hideBatchingOptions": "Hide Batching Options",
         "showBatchingOptions": "Show Batching Options",
-        "batchSize": "Batch Size",
+        "batchSize": "Batch Size (in recipients)",
         "enterNumberOfMessagesPerBatch": "Enter number of messages per batch",
         "batchInterval": "Batch Interval",
         "enterIntervalValue": "Enter interval value",
@@ -435,7 +507,7 @@
     "contactForm7": "Contact Form 7"
   },
     "fbWebhooksSetup": {
-    "goOn": "Proceed",
+    "goOn": "Proceed to",
     "andInsertTheScenarioWhichYouCanDownloadBelow": "and insert the scenario you can download below",
     "downloadFacebookMakecomScript": "Download the Facebook Make.com scenario",
     "follow": "Continue",
@@ -490,7 +562,9 @@
         "selectPhoneNumber": "Select phone number",
         "export": "Export",
         "chats": "Chats",
-        "numbersExportedSuccessfully": "Phone numbers exported successfully!"
+        "numbersExportedSuccessfully": "Phone numbers exported successfully!",
+        "typeMessage": "Type a message",
+        "messageCannotBeEmpty": "Message cannot be empty"  
     },
     "instagram_connection": {
         "fetch_error": "Failed to fetch connected account",

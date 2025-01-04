@@ -36,3 +36,8 @@ a:hover {
   background-color: #f4f4f4; /* Sidebar background color */
   padding: 20px;
 }
+
+.react-flow__attribution {
+  display: none !important;
+}
+

@@ -17,6 +17,19 @@ export type AllContactsStore = {
     all_contacts: any[]; // Adjust the type as necessary
   };
 
+  export type CurrentSenderPhoneNumberState = {
+    senderPhoneNumber: string;
+    setSenderPhoneNumber: (value: string) => void;
+  };
+  
+  export const useCurrentPhoneNumberStore = create<CurrentSenderPhoneNumberState>(
+    (set) => ({
+      senderPhoneNumber: "",
+      setSenderPhoneNumber: (value: string) =>
+        set({ senderPhoneNumber: value }),
+    })
+  );
+
 export const useChatStore = create((set) => ({
   chats: [],
   setChats: (chats: any) => set({ chats } as any),
@@ -31,6 +44,7 @@ export const useAllContactsStore = create((set) => ({
   all_contacts: [],
   setAllContacts: (all_contacts: any) => set({ all_contacts } as any),
 }));
+
 
 
 

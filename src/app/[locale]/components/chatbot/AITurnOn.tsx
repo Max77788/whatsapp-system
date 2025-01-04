@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 
 export default function AITurnOn({
@@ -15,6 +15,9 @@ export default function AITurnOn({
   const [isOn, setIsOn] = useState(initialIsOn);
   const [instructions, setInstructions] = useState(initialInstructions);
   const t = useTranslations("chatbotSetup");
+
+  // const [instructionsRef, setInstructionsRef] = useRef(initialInstructions);
+  // const [isOnRef, setIsOnRef] = useRef(initialIsOn);
 
 
   // Function to send data to the server
@@ -36,15 +39,23 @@ export default function AITurnOn({
     }
   };
 
+  const fetchConfig = async () => {
+    const response = await fetch("/api/whatsapp-part/ai-feature/retrieve-config")
+
+    const { instructions, isOn } = await response.json();
+
+    setInstructions(instructions);
+    setIsOn(isOn);
+  }
+
+  useEffect(() => {
+    fetchConfig();
+  }, []);
+
   // Effect to send data when `isOn` changes
   useEffect(() => {
     sendConfig(instructions, isOn);
-  }, [isOn]);
-
-  // Effect to send data when `instructions` changes
-  useEffect(() => {
-    sendConfig(instructions, isOn);
-  }, [instructions]);
+  }, [isOn, instructions]);
 
   if (!isInPlan) {
     return (

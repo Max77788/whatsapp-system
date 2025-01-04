@@ -11,7 +11,7 @@ interface Lead {
   name: string;
   phone_number: string;
   source: string;
-  group: string; // New group attribute
+  groups: string[]; // New group attribute
   sent_messages?: number; // Optional in case it's not always present
   handled?: boolean;
   extra_notes?: string;
@@ -41,7 +41,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     name: "",
     phone_number: "",
     source: "",
-    group: "other", // Default group is 'other'
+    groups: ["other"], // Default group is 'other'
     sent_messages: 0,
   });
   const [bulkPhoneNumbers, setBulkPhoneNumbers] = useState<string>("");
@@ -64,7 +64,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             data.map((lead) => ({
               ...lead,
               sent_messages: lead.sent_messages || 0,
-              group: lead.group || "other", // Ensure `group` defaults to 'other'
+              group: lead.groups || ["other"], // Ensure `group` defaults to 'other'
             }))
           );
         } catch (error) {
@@ -85,7 +85,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     }
 
     setLeadData((prevData) => [...prevData, newLead]);
-    setNewLead({ name: "", phone_number: "", source: "", group: "other", sent_messages: 0 });
+    setNewLead({ name: "", phone_number: "", source: "", groups: ["other"], sent_messages: 0 });
   };
 
   const sourcesList = ["facebook", "wpforms", "contactform", "other"];
@@ -120,7 +120,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       name: "", // Default name
       phone_number,
       source: "", // Default source
-      group: "other", // Default group
+      groups: ["other"], // Default group
       sent_messages: 0, // Default sent messages
     }));
 
@@ -162,11 +162,11 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       return;
     }
     
-    const updatedLeads = leadData.map(({ name, phone_number, source, group, sent_messages }) => ({
+    const updatedLeads = leadData.map(({ name, phone_number, source, groups, sent_messages }) => ({
       name,
       phone_number,
       source,
-      group,
+      groups,
       sent_messages,
     }));
 
@@ -188,11 +188,11 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         return;
       }
 
-      const leadsToSave = leadData.map(({ name, phone_number, source, group, sent_messages, handled, extra_notes }) => ({
+      const leadsToSave = leadData.map(({ name, phone_number, source, groups, sent_messages, handled, extra_notes }) => ({
         name,
         phone_number,
         source,
-        group,
+        groups,
         sent_messages,
         handled,
         extra_notes,
@@ -225,7 +225,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       name: lead.name || "", // Ensure the name is not null
       phone_number: lead.phone_number || "", // Ensure phone_number is not null
       source: lead.source || "", // Default to an empty string if no source
-      group: lead.group || "other", // Default group is 'other'
+      group: lead.groups || ["other"], // Default group is 'other'
       sent_messages: lead.sent_messages || 0, // Default sent_messages to 0
       handled: lead.handled ? "Yes" : "No", // Convert boolean to string for clarity
       extra_notes: lead.extra_notes || "", // Default extra_notes to an empty string
@@ -320,24 +320,28 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                     </select>
                   </td>
                   <td className="border border-gray-300 p-2">
-                    <select
-                      value={lead.group}
-                      onChange={(e) => {
-                        const updatedGroup = e.target.value;
-                        setLeadData((prevData) =>
-                          prevData.map((item, i) =>
-                            i === index ? { ...item, group: updatedGroup } : item
-                          )
-                        );
-                      }}
-                      className="border border-gray-300 rounded p-1"
-                    >
+                    <div className="border border-gray-300 rounded p-1 min-h-[100px]">
                       {groups.map((group) => (
-                        <option key={group} value={group}>
+                        <label key={group} className="block">
+                          <input
+                            type="checkbox"
+                            className="mr-2"
+                            checked={lead.groups?.includes(group) || false}
+                            onChange={(e) => {
+                              const updatedGroups = e.target.checked
+                                ? [...(lead.groups || []), group] // Add group if checked
+                                : (lead.groups || []).filter((g) => g !== group); // Remove group if unchecked
+                              setLeadData((prevData) =>
+                                prevData.map((item, i) =>
+                                  i === index ? { ...item, groups: updatedGroups } : item
+                                )
+                              );
+                            }}
+                          />
                           {group}
-                        </option>
+                        </label>
                       ))}
-                    </select>
+                    </div>
                   </td>
                   <td className="border border-gray-300 p-2">{lead.sent_messages || 0}</td>
                   <td className="border border-gray-300 p-2">
@@ -397,7 +401,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             className="border text-black border-gray-300 p-2 rounded"
           />
           <input
-            type="text"
+            type="number"
             value={newLead.phone_number}
             onChange={(e) =>
               setNewLead({ ...newLead, phone_number: e.target.value })
@@ -417,18 +421,43 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
               </option>
             ))}
           </select>
-          <select
-            value={newLead.group}
-            onChange={(e) => setNewLead({ ...newLead, group: e.target.value })}
-            className="border text-black border-gray-300 p-2 rounded"
-          >
-            <option value="" disabled hidden>{t("choose_group")}</option>
-            {groups.map((group) => (
-              <option key={group} value={group}>
-                {group}
-              </option>
-            ))}
-          </select>
+            {/* Replace your <select multiple> with something like this */}
+            <div className="border text-black border-gray-300 p-2 rounded min-h-[65px]" style={{ maxHeight: "65px", overflowY: "auto" }}>
+              <p>{t("choose_group")}</p>
+
+              {groups.map((group) => {
+                // Check if this group is already in newLead.groups
+                const isChecked = newLead.groups.includes(group);
+
+                return (
+                  <label key={group} className="flex items-center mt-1">
+                    <input
+                      type="checkbox"
+                      value={group}
+                      checked={isChecked}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          // Add the selected group
+                          setNewLead({
+                            ...newLead,
+                            groups: [...newLead.groups, group],
+                          });
+                        } else {
+                          // Remove the unselected group
+                          setNewLead({
+                            ...newLead,
+                            groups: newLead.groups.filter((g) => g !== group),
+                          });
+                        }
+                      }}
+                    />
+                    <span className="ml-2">{group}</span>
+                  </label>
+                );
+              })}
+            </div>
+
+
         </div>
         <button
           onClick={handleAddLead}
@@ -471,7 +500,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             const parsedData = result.data as Lead[];
             const newLeads = parsedData.map((lead) => ({
               ...lead,
-              group: lead.group || "other", // Default group
+              groups: lead.groups || ["other"], // Default group
               sent_messages: lead.sent_messages || 0, // Default sent messages
             }));
             setLeadData((prevData) => [...prevData, ...newLeads]);

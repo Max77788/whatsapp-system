@@ -69,12 +69,12 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                 />
               </svg>
-              {t("dashboard")}
+              {t("home")}
             </a>
           </li>
           <li>
             <a
-              href={withKbBaseUrlLink ? `/${currentLocale}/profile` : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/start-campaign` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -92,15 +92,16 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                  d="M12 2C10.343 2 9 3.343 9 5c0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3zm0 4c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1zm0 2c-2.21 0-4 1.79-4 4 0 1.657 1.343 3 3 3s3-1.343 3-3c0-2.21-1.79-4-4-4zm0 6c-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3z"
                 />
               </svg>
-              {t("profile")}
+              {t("startCampaign")}
             </a>
           </li>
+
           <li>
             <a
-              href={withKbBaseUrlLink ? `/${currentLocale}/accounts` : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/chatbot-setup-new` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -118,12 +119,82 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M16 11V5a1 1 0 00-1-1H9a1 1 0 00-1 1v6M5 20h14a1 1 0 001-1v-7H4v7a1 1 0 001 1z"
+                  d="M12 2a3 3 0 00-3 3v1H8a1 1 0 00-1 1v2a1 1 0 001 1h1v1a3 3 0 006 0v-1h1a1 1 0 001-1V7a1 1 0 00-1-1h-1V5a3 3 0 00-3-3zm-1 5h2v2h-2V7zm-3 4h8v1a1 1 0 01-1 1h-6a1 1 0 01-1-1v-1z"
                 />
               </svg>
-              {t("accounts")}
+              {t("chatbot")}
             </a>
           </li>
+
+          <li>
+            <a
+              href={withKbBaseUrlLink ? `/${currentLocale}/template-creator` : "#"}
+              className={`${linkStyle} ${
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+              }`}
+              onClick={(e) => {
+                if (!withKbBaseUrlLink) e.preventDefault();
+              }}
+            >
+              <svg
+                className="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M3 8h18M6 12h12M9 16h6"
+                />
+              </svg>
+
+
+              {t("templates")}
+            </a>
+          </li>
+
+
+          <li>
+            <a
+              href={withKbBaseUrlLink ? `/${currentLocale}/labels-manager` : "#"}
+              className={`${linkStyle} ${
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+              }`}
+              onClick={(e) => {
+                if (!withKbBaseUrlLink) e.preventDefault();
+              }}
+            >
+              <svg
+                className="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M3 7h14l4 4-4 4H3V7z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 10h4"
+                />
+              </svg>
+
+
+
+              {t("labels")}
+            </a>
+          </li>
+
+
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/leads` : "#"}
@@ -156,9 +227,12 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
               {t("leads")} | {t("crm")}
             </a>
           </li>
+
+
+          
           <li>
             <a
-              href={withKbBaseUrlLink ? `/${currentLocale}/start-campaign` : "#"}
+              href={withKbBaseUrlLink ? `/${currentLocale}/accounts` : "#"}
               className={`${linkStyle} ${
                 withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
               }`}
@@ -176,38 +250,13 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M12 2C10.343 2 9 3.343 9 5c0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3zm0 4c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1zm0 2c-2.21 0-4 1.79-4 4 0 1.657 1.343 3 3 3s3-1.343 3-3c0-2.21-1.79-4-4-4zm0 6c-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3z"
+                  d="M16 11V5a1 1 0 00-1-1H9a1 1 0 00-1 1v6M5 20h14a1 1 0 001-1v-7H4v7a1 1 0 001 1z"
                 />
               </svg>
-              {t("startCampaign")}
+              {t("accounts")}
             </a>
           </li>
-          <li>
-            <a
-              href={withKbBaseUrlLink ? `/${currentLocale}/chatbot-setup` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
-              onClick={(e) => {
-                if (!withKbBaseUrlLink) e.preventDefault();
-              }}
-            >
-              <svg
-                className="w-5 h-5 mr-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 2a3 3 0 00-3 3v1H8a1 1 0 00-1 1v2a1 1 0 001 1h1v1a3 3 0 006 0v-1h1a1 1 0 001-1V7a1 1 0 00-1-1h-1V5a3 3 0 00-3-3zm-1 5h2v2h-2V7zm-3 4h8v1a1 1 0 01-1 1h-6a1 1 0 01-1-1v-1z"
-                />
-              </svg>
-              {t("chatbot")}
-            </a>
-          </li>
+          
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/send-message` : "#"}
@@ -234,6 +283,34 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
               {t("sendMessage")}
             </a>
           </li>
+
+          <li>
+            <a
+              href={withKbBaseUrlLink ? `/${currentLocale}/profile` : "#"}
+              className={`${linkStyle} ${
+                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+              }`}
+              onClick={(e) => {
+                if (!withKbBaseUrlLink) e.preventDefault();
+              }}
+            >
+              <svg
+                className="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                />
+              </svg>
+              {t("profile")}
+            </a>
+          </li>
+
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/webhooks-setup` : "#"}

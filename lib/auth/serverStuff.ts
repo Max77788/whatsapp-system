@@ -202,8 +202,13 @@ export const authOptions: NextAuthOptions = {
         }
     },
       async redirect({ url, baseUrl }) {
-        // const callbackUrl = new URL(url);
-        const locale = url.split('/')[1] || 'en'; // Default to 'en' if no locale
+
+        // If you want to parse out the locale, just split the path:
+        const callbackUrlObj = new URL(url, baseUrl);
+        const pathSegments = callbackUrlObj.pathname.split('/');
+        const locale = pathSegments[1] || 'en';
+
+        // Now you can build a new redirect or just return the `url` as is
         return `${baseUrl}/${locale}/dashboard`;
       },
     },

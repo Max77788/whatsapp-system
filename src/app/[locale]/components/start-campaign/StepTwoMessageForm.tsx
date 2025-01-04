@@ -1,11 +1,13 @@
 "use client";
 
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { set } from "lodash";
+import { UseSessionOptions } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import React, { use, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid';
+
 
 interface Props {
   leads: { name: string; phone_number: string }[]; // Leads passed from state as recipients
@@ -13,10 +15,11 @@ interface Props {
   goForwardStartCampaign: () => void; // Function to go forward to the next step
   goForwardScheduleCampaign: () => void; // Function to go forward to the next step
   fromNumbers: string[];
+  waGroupNumber: string;
 }
 
-const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCampaign, goForwardScheduleCampaign, fromNumbers }) => {
-  const [fromNumber, setFromNumber] = useState("");
+const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCampaign, goForwardScheduleCampaign, fromNumbers, waGroupNumber }) => {
+  const [fromNumber, setFromNumber] = useState(waGroupNumber);
   const [message, setMessage] = useState("");
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -33,6 +36,90 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
   const [templates, setTemplates] = useState<{ template_name: string; message: string }[]>([]);
+  const [leadsWithReadStatuses, setLeadsWithReadStatuses] = useState<{ name: string; phone_number: string; wasLastMessageRead: boolean }[]>([]);
+  const [checkedFinalLeads, setCheckedFinalLeads] = useState<{ name: string; phone_number: string }[]>([]);
+
+  const [doNotDistributeToWhoHaveNotReadLastMessage, setDoNotDistributeToWhoHaveNotReadLastMessage] = useState(false);
+  const [doNotDistributeForRecent, setDoNotDistributeForRecent] = useState(false);
+  const [doNotDistributeForRecentUnit, setDoNotDistributeForRecentUnit] = useState("hours");
+  const [doNotDistributeForRecentSize, setDoNotDistributeForRecentSize] = useState(0);
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<"start" | "schedule">("start");
+
+  console.log("leads:", JSON.stringify(leads));
+  console.log("leadsWithReadStatuses:", JSON.stringify(leadsWithReadStatuses));
+
+  useEffect(() => {
+    console.log(JSON.stringify(leadsWithReadStatuses));
+  }, [leadsWithReadStatuses]);
+
+
+  useEffect(() => {
+      async function fetchLeadsStatusesComplete() {
+      
+        
+        const phone_numbers = [];
+
+        if (waGroupNumber) {
+          phone_numbers.push(waGroupNumber)
+        } else {
+          for (let fromNumber of fromNumbers) {
+            phone_numbers.push(fromNumber)
+          }
+        }
+
+        const statusLeadsLists: any[] = [];
+        
+        await Promise.all(
+          phone_numbers.map(async (phone_number) => {
+              const results = await Promise.all(
+                  leads.map(async (lead) => {
+
+                    const response = await fetch("/api/whatsapp-part/get-particular-chat", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        phoneNumber: phone_number,
+                        chatId: lead.phone_number,
+                      }),
+                    });
+                    const { wasLastMessageRead } = await response.json();
+
+                      return { ...lead, wasLastMessageRead };
+                  
+                  
+                    })
+              );
+  
+              statusLeadsLists.push(...results);
+          })
+      );
+
+      // Merge and deduplicate the list
+      const mergedList = statusLeadsLists.reduce((acc, current) => {
+        const existingEntry = acc.find((item: any) => item.phone_number === current.phone_number);
+
+        if (existingEntry) {
+          // Update wasLastMessageRead to true if any entry has it as true
+          existingEntry.wasLastMessageRead = existingEntry.wasLastMessageRead || current.wasLastMessageRead;
+        } else {
+          // Add new entry if not already present
+          acc.push(current);
+        }
+
+        return acc;
+      }, [] as any[]);
+        
+      setLeadsWithReadStatuses(mergedList);
+    
+    }
+    fetchLeadsStatusesComplete();
+    console.log("leadsWithReadStatuses:", JSON.stringify(leadsWithReadStatuses));
+  }, []);
+  
   
   const batchIntervalUnits = ["minutes", "hours", "days", "weeks"];
 
@@ -66,17 +153,88 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
 
   const t = useTranslations("startCampaign");
 
+  useEffect(() => {
+    console.log("Checked final leads:", JSON.stringify(checkedFinalLeads));
+  }, [checkedFinalLeads]);
+
+  const openConfirmationModal = (action: "start" | "schedule") => {
+    setIsScheduleModalOpen(false);
+
+    if (!doNotDistributeToWhoHaveNotReadLastMessage) {
+      setCheckedFinalLeads(
+          leadsWithReadStatuses.map((lead) => ({
+              name: lead.name,
+              phone_number: lead.phone_number,
+          }))
+      );
+  } else {
+      setCheckedFinalLeads(
+          leadsWithReadStatuses
+              .filter(
+                  (lead) =>
+                      lead.wasLastMessageRead !== false &&
+                      lead.wasLastMessageRead !== undefined
+              )
+              .map((lead) => ({
+                  name: lead.name,
+                  phone_number: lead.phone_number,
+              }))
+      );
+  }
+  
+    
+    if (campaignName && fromNumber && message && leads.length > 0) {
+      setConfirmAction(action);
+      setIsConfirmModalOpen(true);
+    } else {
+      toast.error(t("pleaseFillInAllFields"));
+    }
+  };
+
+  // Handle checkbox change
+  const handleFinalScreenCheckboxChange = (lead: any, isChecked: any) => {
+    console.log("Lead in handle checkbox change final:", lead, "and isChecked:", isChecked);
+    
+    setCheckedFinalLeads((prev: any) => {
+      if (isChecked) {
+        // Add lead to the list
+        return [...prev, { name: lead.name, phone_number: lead.phone_number }];
+      } else {
+        // Remove lead from the list
+        return prev.filter((l: any) => l.phone_number !== lead.phone_number);
+      }
+    });
+  };
+
+  const handleOpenScheduleConfirmModal = () => {
+    if (campaignName && fromNumber && message && leads.length > 0 && scheduleTime && timeZone) {
+      setIsScheduleModalOpen(false);
+      setConfirmAction("schedule");
+      setIsConfirmModalOpen(true);
+    } else {
+      toast.error(t("pleaseFillInAllFields"));
+    }
+  }
+
   const handleStartCampaign = async () => {
     if (campaignName && fromNumber && message && leads.length > 0) {
       const formData = new FormData();
       formData.append("campaignName", campaignName);
       formData.append("fromNumber", fromNumber);
       formData.append("message", message);
-      formData.append("leads", JSON.stringify(leads));
+      
+      formData.append("leads", JSON.stringify(checkedFinalLeads));
+          
       formData.append("batchSize", batchSize.toString());
       formData.append("batchIntervalValue", batchIntervalValue.toString());
       formData.append("batchIntervalUnit", batchIntervalUnit);
+      
+      formData.append("doNotDistributeToWhoHaveNotReadLastMessage", doNotDistributeToWhoHaveNotReadLastMessage.toString());
+      formData.append("doNotDistributeForRecent", doNotDistributeForRecent.toString());
+      formData.append("doNotDistributeForRecentUnit", doNotDistributeForRecentUnit.toString());
+      formData.append("doNotDistributeForRecentSize", doNotDistributeForRecentSize.toString());
 
+      
       const campaignId = campaignName.toLowerCase().replace(/\s+/g, '-') + '-' + uuidv4().slice(-4);
       
       formData.append("campaignId", campaignId);
@@ -133,6 +291,10 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
     setMessage(templateMessage);
   };
 
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
+
   const saveMessageToTemplate = async () => {
     if (!templateName || !message) {
       toast.error(t("pleaseProvideATemplateNameAndMessage"));
@@ -142,6 +304,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
     const payload = {
       messageTemplates: [
         {
+          id: templateName+"-"+uuidv4().slice(-4),
           template_name: templateName,
           message,
         },
@@ -174,13 +337,20 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
       formData.append("campaignName", campaignName);
       formData.append("fromNumber", fromNumber);
       formData.append("message", message);
-      formData.append("leads", JSON.stringify(leads));
+      
+      formData.append("leads", JSON.stringify(checkedFinalLeads));
+
       formData.append("scheduleTime", scheduleTime);
       formData.append("timeZone", timeZone);
       formData.append("batchSize", batchSize.toString());
       formData.append("batchIntervalValue", batchIntervalValue.toString());
       formData.append("batchIntervalUnit", batchIntervalUnit);
 
+      formData.append("doNotDistributeToWhoHaveNotReadLastMessage", doNotDistributeToWhoHaveNotReadLastMessage.toString());
+      formData.append("doNotDistributeForRecent", doNotDistributeForRecent.toString());
+      formData.append("doNotDistributeForRecentUnit", doNotDistributeForRecentUnit.toString());
+      formData.append("doNotDistributeForRecentValue", doNotDistributeForRecentSize.toString());
+      
       const campaignId = campaignName.toLowerCase().replace(/\s+/g, '-') + '-' + uuidv4().slice(-4);
       formData.append("campaignId", campaignId);
 
@@ -259,21 +429,34 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
             />
           </div>
 
-          <label className="block font-semibold mb-2">{t("from")}</label>
-          <select
-            value={fromNumber}
-            onChange={(e) => setFromNumber(e.target.value)}
-            className="w-full border border-gray-300 p-2 rounded"
-          >
-            <option value="" disabled>
-              {t("selectAPhoneNumber")}
-            </option>
-            {fromNumbers.map((fromNumber) => (
-              <option key={fromNumber} value={fromNumber}>
-                {fromNumber}
-              </option>
-            ))}
-          </select>
+          <div className="mb-4">
+  <label className="block font-semibold mb-2">{t("from")}</label>
+  <select
+    value={fromNumber}
+    onChange={(e) => setFromNumber(e.target.value)}
+    className="w-full border border-gray-300 p-2 rounded"
+  >
+    {waGroupNumber && waGroupNumber.trim() !== "" ? (
+      // Single option with waGroupNumber
+      <option value={waGroupNumber}>
+        {waGroupNumber}
+      </option>
+    ) : (
+      // List of all phone numbers if waGroupNumber is not provided
+      <>
+        <option value="" disabled>
+          {t("selectAPhoneNumber")}
+        </option>
+        {fromNumbers.map((number) => (
+          <option key={number} value={number}>
+            {number}
+          </option>
+        ))}
+      </>
+    )}
+  </select>
+</div>
+
         </div>
 
         <div className="mb-4">
@@ -289,6 +472,42 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
             {t("exampleMessage")}
           </i>
         </div>
+
+        <label className="block font-semibold mb-2">{t("doNotDistributeToWhoHaveNotReadLastMessage")}</label>
+        <input
+        type="checkbox"
+        onChange={(e) => setDoNotDistributeToWhoHaveNotReadLastMessage(e.target.checked)}
+        >
+        </input>
+
+        <label className="block font-semibold mb-2">{t("doNotDistributeToRecentSends")}</label>
+        <input
+        type="checkbox"
+        onChange={(e) => setDoNotDistributeForRecent(e.target.checked)}
+        >
+        </input>
+
+        <label className="block font-semibold mb-2">{t("timeLimit")}</label>
+        <div className="flex items-center gap-4">
+          <input
+            type="number"
+            onChange={(e) => setDoNotDistributeForRecentSize(Number(e.target.value))} 
+            className="border border-gray-300 p-2 rounded"
+            disabled={!doNotDistributeForRecent}
+          />
+          <select 
+            value={doNotDistributeForRecentUnit} 
+            onChange={(e) => setDoNotDistributeForRecentUnit(e.target.value)} 
+            className="w-full border border-gray-300 p-2 rounded"
+            disabled={!doNotDistributeForRecent}
+          >
+            <option value="hours">{t("hours")}</option>
+            <option value="days">{t("days")}</option>
+            <option value="weeks">{t("weeks")}</option>
+            <option value="months">{t("months")}</option>
+          </select>
+        </div>
+
 
         <div className="flex gap-2 my-4">
         <button
@@ -403,7 +622,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           </svg>
           </button>
           <button
-            onClick={handleStartCampaign}
+            onClick={() => openConfirmationModal("start")}
             className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
             {t("startCampaign")}
@@ -531,7 +750,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
                 {t("cancel")}
               </button>
               <button
-                onClick={handleScheduleCampaign}
+                onClick={handleOpenScheduleConfirmModal}
                 className="px-5 py-3 bg-purple-500 text-white rounded-full"
               >
                 {t("schedule")}
@@ -540,6 +759,94 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           </div>
         </div>
       )}
+
+{/* Confirmation Modal */}
+{isConfirmModalOpen && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-[100%] max-w-[977px]">
+      <h2 className="text-xl font-semibold mb-4">
+        {confirmAction === "start" ? t("confirmStartCampaign") : t("confirmScheduleCampaign")}
+      </h2>
+      
+      <p className="mb-4">{t("leadsSelected")}:</p>
+      <div className="mb-4 max-h-32 overflow-y-auto border p-2 rounded">
+        <table className="w-full">
+          <thead>
+        <tr className="border-b">
+          <th className="text-left p-2 w-1/3">Name</th>
+          <th className="text-left p-2 w-1/3">Phone</th>
+          <th className="text-left p-2 w-1/3">Message Preview</th>
+        </tr>
+          </thead>
+          
+          <tbody>
+        {doNotDistributeToWhoHaveNotReadLastMessage ? ( leadsWithReadStatuses.map((lead, index) => (
+          <tr key={index} className={`border-b ${lead.wasLastMessageRead === false || lead.wasLastMessageRead === undefined ? 'bg-gray-200' : ''}`}>
+            <td className="p-2">
+              <input 
+                type="checkbox"
+                checked={lead.wasLastMessageRead === false || lead.wasLastMessageRead === undefined ? false : checkedFinalLeads.some((l: any) => l.phone_number === lead.phone_number)}
+                disabled={lead.wasLastMessageRead === false || lead.wasLastMessageRead === undefined}
+                className="mr-2"
+                onChange={(e) => handleFinalScreenCheckboxChange(lead, e.target.checked)}
+                    />
+              {lead.name}
+            </td>
+            <td className="p-2">{lead.phone_number.split("@")[0].length < 14 ? lead.phone_number : "group"}</td>
+            <td className="p-2">{lead.phone_number.split("@")[0].length < 14 ? message.replace("{{name}}", lead.name) : message.replace("{{name}}", "")}</td>
+          </tr>
+        ))
+      ) : (
+          leadsWithReadStatuses.map((lead, index) => (
+            <tr key={index} className="border-b">
+              <td className="p-2">
+                <input 
+                  type="checkbox"
+                  checked={checkedFinalLeads.some((l: any) => l.phone_number === lead.phone_number)}
+                  className="mr-2"
+                  onChange={(e) => handleFinalScreenCheckboxChange(lead, e.target.checked)}
+                      />
+                {lead.name}
+              </td>
+              <td className="p-2">{lead.phone_number.split("@")[0].length < 14 ? lead.phone_number : "group"}</td>
+              <td className="p-2">{lead.phone_number.split("@")[0].length < 14 ? message.replace("{{name}}", lead.name) : message.replace("{{name}}", "")}</td>
+            </tr>
+          )
+        ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-end gap-4">
+      {doNotDistributeToWhoHaveNotReadLastMessage && <p>*{t("greyLeadsHaveNotReadTheLastMessage")}</p>}
+        
+        <button
+          onClick={() => setIsConfirmModalOpen(false)}
+          className="px-4 py-2 bg-gray-300 rounded-full"
+        >
+          {t("cancel")}
+        </button>
+        <button
+          onClick={() => {
+            if (checkedFinalLeads.length !== 0) {
+            setIsConfirmModalOpen(false);
+            toast.info(t("settingUpCampaign"), {
+              autoClose: 5000, // Toast will display for 5 seconds
+            });
+            confirmAction === "start" ? handleStartCampaign() : handleScheduleCampaign();
+            } else {
+              toast.error(t("pleaseSelectAtLeastOneLead"));
+            }
+          }}
+          className="px-4 py-2 bg-green-600 text-white rounded-full"
+        >
+          {t("confirm")}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

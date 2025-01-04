@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChatStore, useContactStore, useAllContactsStore, getPhoneNumbersFromStore,
-  getPhoneGroupsFromStore, getContactsForGroup
- } from '@/lib/store/chatStore'; // Example of Zustand global store
+  getPhoneGroupsFromStore, getContactsForGroup,
+  useCurrentPhoneNumberStore, CurrentSenderPhoneNumberState } from '@/lib/store/chatStore'; // Example of Zustand global store
 import { ChatStore, ContactStore, AllContactsStore } from '@/lib/store/chatStore';
 import { civicinfo } from 'googleapis/build/src/apis/civicinfo';
 import { toast } from 'react-toastify';
@@ -24,8 +24,14 @@ const Sidebar = () => {
   const t = useTranslations("waScreen");
   const currentLocale = useLocale();
 
+  const senderPhoneNumber = useCurrentPhoneNumberStore(
+    (state) => state.senderPhoneNumber
+  );
+
+  console.log("Sender phone number on Sidebar:", senderPhoneNumber);
+  
   // States
-  const [selectedPhone, setSelectedPhone] = useState('');
+  const [selectedPhone, setSelectedPhone] = useState(senderPhoneNumber);
   
   const [selectedPhones, setSelectedPhones] = useState<string[]>([]);
 
@@ -41,8 +47,13 @@ const Sidebar = () => {
   const { setChats } = useChatStore() as ChatStore; // Type assertion
   const { setContacts } = useContactStore() as ContactStore; // Type assertion
   const { setAllContacts } = useAllContactsStore() as AllContactsStore; // Type assertion
-
+  const { setSenderPhoneNumber } = useCurrentPhoneNumberStore() as CurrentSenderPhoneNumberState; // Type assertion
   
+
+  const handlePhoneSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPhone(e.target.value);
+    setSenderPhoneNumber(e.target.value);
+  }
 
   // Fetch phone numbers on component mount
   useEffect(() => {
@@ -59,7 +70,16 @@ const Sidebar = () => {
 
         if (filteredPhoneData.length > 0) {
           setPhoneNumbers(filteredPhoneData);
+          
+
+          console.log("Sender phone number on Sidebar:", senderPhoneNumber);
+          if (!senderPhoneNumber) {
           setSelectedPhone(filteredPhoneData[0].phoneNumber); // Set the first phone number as the default
+          setSenderPhoneNumber(filteredPhoneData[0].phoneNumber); // Set the first phone number as the default
+          } else {
+            setSelectedPhone(senderPhoneNumber);
+            setSenderPhoneNumber(senderPhoneNumber); // Set the first phone number as the default
+          }
         } else {
           throw new Error('No active phone numbers found.');
         }
@@ -190,7 +210,7 @@ const Sidebar = () => {
         <select
           id="phoneSelect"
           value={selectedPhone}
-          onChange={(e) => setSelectedPhone(e.target.value)}
+          onChange={(e) => handlePhoneSelect(e)}
           style={{ padding: '5px', fontSize: '16px', color: '#000000' }}
         >
           {phoneNumbers.map((phoneObj: any, index: number) => (

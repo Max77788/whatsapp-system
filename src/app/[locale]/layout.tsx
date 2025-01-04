@@ -10,6 +10,7 @@ import LanguageSwitcher from "./components/language-stuff/LanguageSwitcher";
 import { NextIntlClientProvider, useMessages } from "next-intl";
 import { getMessages } from "next-intl/server";
 
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",

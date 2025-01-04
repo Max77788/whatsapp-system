@@ -21,6 +21,9 @@
         "email": "אימייל",
         "password": "ססמה",
         "signIn": "התחבר",
+        "signingIn": "מתחבר...",
+        "signingUp": "מרשם...",
+        "backToSignIn": "חזור להתחברות",
         "continueWithGoogle": "המשך עם Google",
         "pleaseSignInToContinue": "אנא התחבר כדי להמשיך.",
         "or": "או",
@@ -40,6 +43,14 @@
         "sendResetLink": "שלח קישור שחזור",
         "error": "שגיאה",
         "signingInWithGoogle": "התחברות עם Google..."
+    },
+    "signinNotifications": {
+        "loginRequired": "אנא התחבר כדי להמשיך",
+        "loggedOut": "התנתקת מהמערכת",
+        "emailVerified": "האימייל שלך אומת בהצלחה",
+        "invalidToken": "טוקן לא חוקי או שפג תוקפו",
+        "passwordUpdated": "הסיסמה עודכנה בהצלחה",
+        "useGoogleSignup": "אנא השתמש בהתחברות באמצעות Google, מכיוון שנרשמת בעבר באמצעות Google"
     },
     "dashboard": {
         "logout": "התנתק",
@@ -82,8 +93,12 @@
         "docs": "Docs",
         "accounts": "חיבור חשבון חדש",
         "pleaseReloadThePage": "אנא טען שוב את הדף",
-        "in1Minute": "בעוד דקה"
+        "in1Minute": "בעוד דקה",
+        "home": "בית",
+        "templates": "תבניות הודעות",
+        "labels": "תוויות"
     },
+    
     "profile": {
         "profile": "פרופיל",
         "personal_information": "מידע אישי",
@@ -98,6 +113,7 @@
         "phone_number_tactics": "טכניקות טלפונים",
         "no_numbers_connect_one": "אין מספרים. חיבור מספר אחד.",
         "disconnect": "הפרד",
+        "your_plan_is_expired": "התוכנית שלך פגה",
         "save_tactics": "שמור טכניקות",
         "phone_number_disconnected_successfully": "מספר טלפון נפרד בהצלחה!",
         "failed_to_disconnect_phone_number": "שגיאה בזמן ניתוק מספר טלפון.",
@@ -121,7 +137,8 @@
         "connect_a_new_phone": "חיבור מספר חדש",
         "phone_connected_successfully": "מספר טלפון מחובר בהצלחה!",
         "phone_detached_successfully": "מספר טלפון נפרד בהצלחה!",
-        "you_need_to_be_logged_in_to_connect_a_phone": "אתה צריך להתחבר כדי לחיבור מספר טלפון"
+        "you_need_to_be_logged_in_to_connect_a_phone": "אתה צריך להתחבר כדי לחיבור מספר טלפון",
+        "you_need_to_be_logged_in_to_generate_a_qr_code": "אתה צריך להתחבר כדי ליצור קוד QR"    
     },
     "leads": {
         "add_new_lead": "הוסף ליד",
@@ -157,6 +174,12 @@
         "leads_data_saved_successfully": "נתוני לידים נשמרו בהצלחה!"
     },
     "startCampaign": {
+        "doNotDistributeToWhoHaveNotReadLastMessage": "אל תפיצו למי שלא קראו את ההודעה האחרונה",
+        "doNotDistributeToRecentSends": "אל תפיצו למי ששלחו בזמן האחרון",
+        "hours": "שעות",
+        "days": "ימים",
+        "weeks": "שבועות",
+        "waGroups": "WhatsApp קבוצות",
         "startCampaign": "הפעל קמפיין",
         "startCampaignDescription": "הפעל קמפיין חדש",
         "googleSheetsLink": "קישור לגול שטים",
@@ -309,6 +332,18 @@
         "bodyOptionsPlaceholder": "הזן אפשרויות גוף ההודעה. לדוגמה: ראה שירותים, ראה מוצרים, ראה מחירים",
         "greetingMessageSaved": "הודעת ברכה נשמרה בהצלחה"
     },
+
+    "tacticDetails": {
+        "tacticDetails": "Tactic Details",
+        "ifMessage": "If message",
+        "includes": "includes",
+        "startsWith": "starts with",
+        "delayWaitFor": "Delay/Wait for",
+        "seconds": "seconds",
+        "respondWith": "Respond with",
+        "or": "or"
+    },
+
     "sendMessage": {
         "startCampaign": "הפעל קמפיין",
         "startCampaignDescription": "הפעל קמפיין חדש",
@@ -419,6 +454,7 @@
         "messageUnscheduledSuccessfully": "ההודעה נבטלה בהצלחה!",
         "yes": "כן",
         "no": "לא",
+        "messageSent": "ההודעה נשלחה בהצלחה!",
         "areYouSureYouWantToUnscheduleThisMessage": "האם אתה בטוח שאתה רוצה לבטל ההודעה הזאת?"
     },
     "webhooksSetup": {
@@ -487,7 +523,9 @@
         "selectPhoneNumber": "בחר מספר טלפון",
         "export": "ייבא",
         "chats": "שיחות",
-        "numbersExportedSuccessfully": "מספרים טלפון יובאו בהצלחה!"
+        "numbersExportedSuccessfully": "מספרים טלפון יובאו בהצלחה!",
+        "typeMessage": "הקלד הודעה",
+        "messageCannotBeEmpty": "ההודעה לא יכולה להיות ריקה"
     },
     "instagram_connection": {
         "fetch_error": "לא ניתן לשלופ חשבון מחובר",

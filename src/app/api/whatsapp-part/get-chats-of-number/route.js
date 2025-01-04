@@ -54,7 +54,7 @@ export async function POST(req) {
     }
 
     all_contacts.push(all_contacts_object)
-  return NextResponse.json({ chats, contacts, all_contacts });
+  return NextResponse.json({ chats, contacts, all_contacts, group_contacts });
 }
 
 

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from 'next-auth/react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/serverStuff';
-import { update_user, findPlanById } from '@/lib/utils';
+import { update_user, findPlanById, find_user } from '@/lib/utils';
 import { uploadFile } from '@/lib/google_storage/google_storage';
 
 
@@ -128,6 +128,11 @@ export async function POST(req) {
   const batchIntervalValue = parseInt(formData.get('batchIntervalValue') || 0);
   const batchIntervalUnit = formData.get('batchIntervalUnit');
   
+  const doNotDistributeToWhoHaveNotReadLastMessage = formData.get('doNotDistributeToWhoHaveNotReadLastMessage') === 'true';
+  const doNotDistributeForRecent = formData.get('doNotDistributeForRecent') === 'true';
+  const doNotDistributeForRecentValue = parseInt(formData.get('doNotDistributeForRecentValue'));
+  const doNotDistributeForRecentUnit = formData.get('doNotDistributeForRecentUnit');
+
   if (!campaignName || !fromNumber || !message || !leads || !scheduleTime || !timeZone) {
     return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
   }
@@ -185,6 +190,10 @@ export async function POST(req) {
     batchSize,
     batchIntervalValue,
     batchIntervalUnit,
+    doNotDistributeToWhoHaveNotReadLastMessage,
+    doNotDistributeForRecent,
+    doNotDistributeForRecentValue,
+    doNotDistributeForRecentUnit,
     totalNumberOfRuns: numberOfRuns,
     numberOfRunsExecuted: 0,
     completed: false,

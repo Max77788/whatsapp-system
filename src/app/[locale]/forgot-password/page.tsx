@@ -41,6 +41,7 @@ export default function ForgotPassword() {
         />
         <button type="submit" className="p-2 bg-green-600 hover:bg-green-700 text-white rounded">{t('sendResetLink')}</button>
       </form>
+      <a href={`/${currentLocale}/auth/signin`} className="hover:underline">{t('backToSignIn')}</a>
       {message && <p className="mt-4 text-center">{message}</p>}
     </div>
   )

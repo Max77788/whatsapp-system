@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { find_user, find_qr_id_by_phone, update_user, findPlanById } from '@/lib/utils';
+import { find_user, find_qr_id_by_phone, update_user, findPlanById, checkIsraeliPhoneNumber } from '@/lib/utils';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/serverStuff';
 import { uploadFile, deleteFile } from '@/lib/google_storage/google_storage';
@@ -98,7 +98,7 @@ export async function POST(req) {
     
     const groups = JSON.parse(formData.get('groups') || '[]');
 
-    let toNumbersValue = toNumbers;
+    let toNumbersValue = toNumbers.map((toNumber) => { return checkIsraeliPhoneNumber(toNumber) });
     
     if (groups.length > 0) {
       const leads = user.leads;
@@ -170,8 +170,6 @@ export async function POST(req) {
     let totalMessagesSentSoFar = 0;
     if (user?.messages_date) {
       totalMessagesSentSoFar = user?.messages_date?.filter(message => message.date >= subscriptionStartDate).reduce((acc, message) => acc + message.count, 0);
-    } else {
-      totalMessagesSentSoFar = 0;
     }
 
     const messagesLimit = plan?.messagesLimit;
@@ -227,9 +225,7 @@ export async function POST(req) {
         );
       }
 
-      const previousSentMessages = user?.sentMessages || 0;
-      const updatedSentMessages = previousSentMessages + sentMessages;
-
+      const updatedSentMessages = sentMessages;
 
 
       const success = session ? await update_user({ email: session?.user?.email }, { leads: userLeads, sentMessages: updatedSentMessages }) : await update_user({ apiKey: apiKey }, { leads: userLeads, sentMessages: updatedSentMessages });

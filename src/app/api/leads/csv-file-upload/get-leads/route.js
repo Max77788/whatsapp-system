@@ -24,8 +24,8 @@ export async function POST(req) {
 
         const filteredRecords = records.map(record => {
             return {
-                [nameColumn]: record[nameColumn] || null,
-                [phoneNumberColumn]: record[phoneNumberColumn] || null
+                ["name"]: record[nameColumn] || null,
+                ["phone_number"]: record[phoneNumberColumn] || null
             };
         });
 

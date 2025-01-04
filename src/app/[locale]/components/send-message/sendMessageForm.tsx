@@ -5,6 +5,7 @@ import React, { useState, useEffect, JSX } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
+import { v4 } from "uuid";
 interface Props {
   fromPhones: string[]; // List of available phone numbers for "from" field
   toPhones: string[]; // List of available phone numbers for "to" field
@@ -153,6 +154,7 @@ const handleScheduleMessage = async () => {
     const payload = {
       messageTemplates: [
         {
+          id: templateName+"-"+v4().slice(-4),
           template_name: templateName,
           message,
         },
@@ -413,7 +415,7 @@ const handleScheduleMessage = async () => {
         </button>
         <button
           onClick={handleScheduleMessage}
-          className="px-4 py-2 bg-green-600 text-white rounded-full"
+          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full"
         >
           {t("schedule")}
         </button>

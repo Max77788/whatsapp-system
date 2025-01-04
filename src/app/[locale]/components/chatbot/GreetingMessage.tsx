@@ -4,7 +4,13 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
 
-const GreetingMessage = () => {
+type GreetingMessageProps = {
+    onMessageChange: (message: string) => void;
+}
+
+const GreetingMessage: React.FC<GreetingMessageProps> = ({
+    onMessageChange
+}) => {
     const [isGreetingEnabled, setIsGreetingEnabled] = useState(false);
     const [header, setHeader] = useState("");
     const [footer, setFooter] = useState("");
@@ -51,6 +57,12 @@ const GreetingMessage = () => {
         setIsGreetingEnabled(value);
     };
 
+    useEffect(() => {
+        onMessageChange(
+            `${header}\n${bodyOptions.map((option, index) => `${index + 1}. ${option.option}\n(${t("response")}: ${option.response})`).join("\n")}\n${footer}\n${triggerWordMessage}: ${triggerWord}`
+        );
+    }, [header, bodyOptions, footer, triggerWordMessage, triggerWord, onMessageChange]);
+
 
     const getGreetingMessage = async () => {
         const response = await fetch("/api/user/find-user");
@@ -91,9 +103,11 @@ const GreetingMessage = () => {
 
             if (response.ok) {
                 toast.success(t("greetingMessageSaved"));
+                location.reload();
             } else {
                 toast.error(t("failedToSaveGreetingMessage"));
             }
+            
         } catch (error) {
             console.error("Error saving greeting message:", error);
             toast.error(t("failedToSaveGreetingMessage"));
@@ -225,6 +239,7 @@ const GreetingMessage = () => {
                         </button>
                     </div>
 
+                    {/*}
                     <div className="mt-4">
                         <p className="text-sm text-gray-600 mb-4">{t("thatsHowYourMessageWillLook")}</p>
                         <div className="flex flex-col gap-2 bg-color-red-100 p-2 rounded-md">
@@ -240,6 +255,7 @@ const GreetingMessage = () => {
                             </div>
                         </div>
                     </div>
+                    */}
                 </div>
             )}
         </div>

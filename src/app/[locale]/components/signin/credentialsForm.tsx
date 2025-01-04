@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
+import { toast } from 'react-toastify';
 
 export default function CredentialsForm() {
   const router = useRouter();
@@ -17,6 +18,8 @@ export default function CredentialsForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    toast.info(t("signingIn"));
 
     const data = new FormData(e.target as HTMLFormElement);
 

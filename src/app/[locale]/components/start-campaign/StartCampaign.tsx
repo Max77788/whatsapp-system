@@ -6,15 +6,20 @@ import axios from "axios";
 import StepTwoMessageForm from "./StepTwoMessageForm";
 import UserCampaigns from "./UserCampaigns";
 import { useLocale, useTranslations } from "next-intl";
+import { set } from "lodash";
 
-type Lead = { name: string; phone_number: string; source: string; sent_messages: number; group?: string };
+type Lead = { name: string; 
+  phone_number: string; 
+  source: string; 
+  sent_messages: number; 
+  groups: string[] };
 
 const StartCampaign = () => {
   const t = useTranslations("startCampaign");
   
 
   const [step, setStep] = useState<number>(1);
-  const [importMethod, setImportMethod] = useState<"csv" | "googleSheets" | "existingLeads" | null>(null);
+  const [importMethod, setImportMethod] = useState<"csv" | "googleSheets" | "existingLeads" | "waGroups" | null>(null);
   const [googleSheetUrl, setGoogleSheetUrl] = useState("");
   const [headers, setHeaders] = useState<string[]>([]);
   const [nameColumn, setNameColumn] = useState("");
@@ -29,6 +34,9 @@ const StartCampaign = () => {
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
   const [thereAreNoLeads, setThereAreNoLeads] = useState(false);
+  const [waGroups, setWaGroups] = useState<Record<string, Array<{ name: string; id: string }>>>(() => ({}));
+
+  const [waGroupsSelectedPhone, setWaGroupsSelectedPhone] = useState("");
 
   const sendCampaign = async () => {
     const response = await axios.post("/api/campaign/create", {
@@ -40,7 +48,11 @@ const StartCampaign = () => {
 
   const filteredLeads = selectedGroups.length === 0 
   ? leads // Show all leads if no group is selected
-  : leads.filter((lead) => selectedGroups.includes(lead.group || "other"));
+  : leads.filter((lead) => {
+    let leadGroups = lead.groups || ["other"];
+    return leadGroups.some((group) => selectedGroups.includes(group))
+}
+);
 
   
   const goForwardStartCampaign = () => {
@@ -66,29 +78,38 @@ const StartCampaign = () => {
 
   const toggleGroupSelection = (group: string) => {
     setSelectedGroups((prevSelectedGroups) => {
-      let updatedSelectedGroups;
-  
-      if (prevSelectedGroups.includes(group)) {
-        // If already selected, remove the group
-        updatedSelectedGroups = prevSelectedGroups.filter((g) => g !== group);
-      } else {
-        // Otherwise, add the group
-        updatedSelectedGroups = [...prevSelectedGroups, group];
-      }
-  
-      // Filter leads based on the updated selected groups
-      const filteredLeads = leads.filter((lead) =>
-        updatedSelectedGroups.includes(lead.group || "other")
-      );
-  
-      // Set the filtered leads as selected
+      // Determine the updated selected groups
+      const updatedSelectedGroups = prevSelectedGroups.includes(group)
+        ? prevSelectedGroups.filter((g) => g !== group) // Remove if already selected
+        : [...prevSelectedGroups, group]; // Add if not selected
+
+      console.log("updatedSelectedGroups: ", updatedSelectedGroups);
+      
+        // Filter leads based on updated selected groups
+      const filteredLeads =
+        updatedSelectedGroups.length === 0
+          ? leads // Show all leads if no group is selected
+          : leads.filter((lead) =>
+            (lead.groups || ["other"]).some((group) =>
+              updatedSelectedGroups.includes(group)
+            )
+          );
+
+        console.log("filteredLeads: ", filteredLeads);
+
+      // Update the selected leads with filtered data
       setSelectedLeads(
-        filteredLeads.map((lead) => ({ name: lead.name, phone_number: lead.phone_number }))
+        filteredLeads.map((lead) => ({
+          name: lead.name,
+          phone_number: lead.phone_number,
+        }))
       );
-  
+
+      // Return the updated selected groups for state update
       return updatedSelectedGroups;
     });
   };
+
   
   
 
@@ -105,6 +126,7 @@ const StartCampaign = () => {
 
     setFromNumbers(fromNumbersList || []);
     setIsLoadingFromNumbers(false);
+    setWaGroupsSelectedPhone(fromNumbersList[0]);
     console.log("Set isLoadingFromNumbers to false");
   };
 
@@ -112,11 +134,16 @@ const StartCampaign = () => {
     fetchFromNumbersAndGroups();
   }, []);
 
-  const handleImportMethodChange = (method: "csv" | "googleSheets" | "existingLeads") => {
+  const handleImportMethodChange = (method: "csv" | "googleSheets" | "existingLeads" | "waGroups") => {
     resetStates();
     setImportMethod(method);
     if (method === "existingLeads") {
       fetchExistingLeads();
+    }
+    if (method === "waGroups") {
+      fetchWaGroups();
+    } else {
+      setWaGroupsSelectedPhone("");
     }
   };
 
@@ -175,7 +202,9 @@ const StartCampaign = () => {
         const response = await axios.post("/api/leads/csv-file-upload/get-leads", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        setLeads(response.data.rows.map((row: any) => ({ ...row, source: "CSV", sent_messages: 0 })));
+
+        console.log(`response.data.rows: ${JSON.stringify(response.data.rows)}`);
+        setLeads(response.data.rows.slice(0,100).map((row: any) => ({ ...row, source: "CSV", sent_messages: 0 })));
       }
 
       toast.success(t("leadsFetchedSuccessfully"));
@@ -196,11 +225,94 @@ const StartCampaign = () => {
     }
   };
 
+  const fetchWaGroups = async () => {
+
+    const group_contacts_total: { [key: string]: Array<{ name: string; id: string }> } = {};
+
+    for (const fromNumber of fromNumbers) {
+
+    console.log(`fromNumber: ${fromNumber}`);
+    const { group_contacts } = await fetch("/api/whatsapp-part/get-chats-of-number", {
+      method: "POST",
+      body: JSON.stringify({ phoneNumber: fromNumber }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => res.json());
+
+    const group_contacts_minimized = group_contacts
+    .map((group: any) => { return { name: group?.name, id: group?.id } })
+    .filter((group: any) => 
+      group.name !== "All Contacts" && 
+      !(group.name.length > 14 && /^\d+$/.test(group.name))
+  );
+    
+     group_contacts_total[fromNumber] = group_contacts_minimized;
+
+     
+    }
+
+    console.log(`group_contacts_total: ${JSON.stringify(group_contacts_total)}`);
+
+    setWaGroups(group_contacts_total);
+
+    console.log(`waGroups: ${JSON.stringify(waGroups)}`);
+  }
+
+  useEffect(() => {
+      fetchWaGroups();
+  }, []);
+
+  useEffect(() => {
+    fetchWaGroups();
+}, [importMethod]);
+
+  useEffect(() => {
+    if (selectedGroups.length === 0) {
+      setSelectedLeads([]); // Clear all selected leads
+      setSelectAll(false);  // Uncheck "Select All"
+    }
+  }, [selectedGroups]);
+
+  /*
+  useEffect(() => {
+    if (importMethod === "waGroups") {
+      fetchWaGroups();
+    }
+  }, [importMethod]);
+  */
+
+  // Handle checkbox change
+  const handleWaGroupCheckboxChange = (groupName: string, groupId: string) => {
+    const groupToAdd = { name: groupName, phone_number: groupId };
+    
+    console.log(`groupToAdd: ${JSON.stringify(groupToAdd)}`);
+    
+    setSelectedLeads((prevSelectedLeads) => {
+      // Check if the lead is already selected
+      const isSelected = prevSelectedLeads.some((lead) => lead.phone_number === groupId);
+      
+      if (isSelected) {
+        console.log(leads);
+        // Remove the lead if already selected
+        return prevSelectedLeads.filter((lead) => lead.phone_number !== groupId);
+      } else {
+        console.log(leads);
+        // Add the lead to the selectedLeads array
+        return [...prevSelectedLeads, groupToAdd];
+      }
+      });
+  };
+
   const toggleSelectAll = () => {
     if (selectAll) {
       setSelectedLeads([]); // Clear selection
     } else {
-      setSelectedLeads(leads.map((lead) => ({ name: lead.name, phone_number: lead.phone_number }))); // Select all leads
+      if (importMethod !== "waGroups") {
+        setSelectedLeads(filteredLeads.map((lead) => ({ name: lead.name, phone_number: lead.phone_number }))); // Select all leads
+      } else {
+        setSelectedLeads(waGroups[waGroupsSelectedPhone]?.map((group) => ({ name: group.name, phone_number: group.id })) || []); // Select all leads
+      }
     }
     setSelectAll(!selectAll);
   };
@@ -209,7 +321,7 @@ const StartCampaign = () => {
     setSelectedLeads((prevSelectedLeads) => {
       // Check if the lead is already selected
       const isSelected = prevSelectedLeads.some((lead) => lead.phone_number === phoneNumber);
-      console.log(`Selected leads: ${JSON.stringify(prevSelectedLeads)}`);
+      
       if (isSelected) {
         // Remove the lead if already selected
         return prevSelectedLeads.filter((lead) => lead.phone_number !== phoneNumber);
@@ -224,6 +336,11 @@ const StartCampaign = () => {
       }
     });
   };
+
+  const handleWaGroupsPhoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    resetStates();
+    setWaGroupsSelectedPhone(e.target.value);
+  }
   
 
   const renderStep = () => {
@@ -234,49 +351,63 @@ const StartCampaign = () => {
           <p className="text-center text-gray-600 mt-2">
             {t("chooseHowYouWantToImportYourLeadsForTheCampaign")}
           </p>
-          <div className="flex justify-center gap-8 mt-8">
-            <div
-              className={`cursor-pointer text-center border rounded-lg p-4 w-48 ${
-                importMethod === "csv" ? "bg-blue-100 border-blue-500" : "bg-gray-50"
-              } hover:shadow-lg transition`}
-              onClick={() => handleImportMethodChange("csv")}
-            >
-              <img
-                src="/static/excel-logo.png"
-                alt="CSV/Excel Icon"
-                className="w-16 h-20 mx-auto mb-4"
-              />
-              <p className="font-medium text-black">{t("uploadCSVExcel")}</p>
-            </div>
+          <div className="grid grid-cols-2 gap-8 mt-8">
+  <div
+    className={`cursor-pointer text-center border rounded-lg p-4 w-48 ${
+      importMethod === "csv" ? "bg-blue-100 border-blue-500" : "bg-gray-50"
+    } hover:shadow-lg transition`}
+    onClick={() => handleImportMethodChange("csv")}
+  >
+    <img
+      src="/static/excel-logo.png"
+      alt="CSV/Excel Icon"
+      className="w-16 h-20 mx-auto mb-4"
+    />
+    <p className="font-medium text-black">{t("uploadCSVExcel")}</p>
+  </div>
 
-            <div
-              onClick={() => handleImportMethodChange("googleSheets")}
-              className={`cursor-pointer text-center border rounded-lg p-4 w-48 ${
-                importMethod === "googleSheets" ? "bg-blue-100 border-blue-500" : "bg-gray-50"
-              } hover:shadow-lg transition`}
-            >
-              <img
-                src="/static/Google_Sheets_Logo.png"
-                alt="Google Sheets Icon"
-                className="w-16 h-20 mx-auto mb-4"
-              />
-              <p className="font-medium text-black">{t("googleSheetsLink")}</p>
-            </div>
+  <div
+    onClick={() => handleImportMethodChange("googleSheets")}
+    className={`cursor-pointer text-center border rounded-lg p-4 w-48 ${
+      importMethod === "googleSheets" ? "bg-blue-100 border-blue-500" : "bg-gray-50"
+    } hover:shadow-lg transition`}
+  >
+    <img
+      src="/static/Google_Sheets_Logo.png"
+      alt="Google Sheets Icon"
+      className="w-16 h-20 mx-auto mb-4"
+    />
+    <p className="font-medium text-black">{t("googleSheetsLink")}</p>
+  </div>
 
-            <div
-              onClick={() => handleImportMethodChange("existingLeads")}
-              className={`cursor-pointer text-center border rounded-lg p-4 w-48 ${
-                importMethod === "existingLeads" ? "bg-blue-100 border-blue-500" : "bg-gray-50"
-              } hover:shadow-lg transition`}
-            >
-              <img
-                src="/static/leads-icon.png"
-                alt="Existing Leads Icon"
-                className="w-20 h-20 mx-auto mb-4"
-              />
-              <p className="font-medium text-black">{t("existingLeads")}</p>
-            </div>
-          </div>
+  <div
+    onClick={() => handleImportMethodChange("existingLeads")}
+    className={`cursor-pointer text-center border rounded-lg p-4 w-48 ${
+      importMethod === "existingLeads" ? "bg-blue-100 border-blue-500" : "bg-gray-50"
+    } hover:shadow-lg transition`}
+  >
+    <img
+      src="/static/leads-icon.png"
+      alt="Existing Leads Icon"
+      className="w-20 h-20 mx-auto mb-4"
+    />
+    <p className="font-medium text-black">{t("existingLeads")}</p>
+  </div>
+
+  <div
+    onClick={() => handleImportMethodChange("waGroups")}
+    className={`cursor-pointer text-center border rounded-lg p-4 w-48 ${
+      importMethod === "waGroups" ? "bg-blue-100 border-blue-500" : "bg-gray-50"
+    } hover:shadow-lg transition`}
+  >
+    <img
+      src="/WhatsAppLogo.png"
+      alt="WhatsApp Groups Icon"
+      className="w-20 h-20 mx-auto mb-4"
+    />
+    <p className="font-medium text-black">{t("waGroups")}</p>
+  </div>
+</div>
 
           {importMethod === "csv" && (
             <div className="mt-6">
@@ -352,6 +483,87 @@ const StartCampaign = () => {
             </div>
           )}
 
+        {importMethod === "waGroups" && (
+            <div className="mt-6 gap-4">
+              
+            
+
+
+            <div>
+      {/* Dropdown for Selecting Phone Number */}
+      <div className="mb-4">
+        <label htmlFor="phone-number-select" className="text-gray-500 font-medium mb-2 block">
+          {t("selectPhoneNumber")}:
+        </label>
+        <select
+          id="phone-number-select"
+          className="w-full border border-gray-300 p-2 rounded"
+          value={waGroupsSelectedPhone || ""}
+          onChange={handleWaGroupsPhoneChange}
+        >
+          {fromNumbers.map((phoneNumber, index) => {
+            return (
+              <option key={index} value={phoneNumber}>
+                {phoneNumber}
+              </option>
+            );
+          })}
+        </select>
+      </div>
+
+      {/* Render Groups for Selected Phone Number */}
+      <div>
+        <h3 className="text-gray-500 text-xl font-semibold mb-4">
+          {waGroupsSelectedPhone} Groups
+        </h3>
+        <div className="flex items-center mb-2">
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={toggleSelectAll}
+              />
+              <p className="ml-2">{t("selectAll")}</p>
+            </div>
+        {waGroups ? (waGroups[waGroupsSelectedPhone]?.map((group: any, groupIndex) => (
+          
+          
+          
+          <div
+            key={groupIndex}
+            className="flex items-center justify-between p-4 bg-gray-800 rounded-lg shadow-md mb-2 transition"
+          >
+            {/* Left Section with Checkbox and Profile Icon */}
+            <div className="flex items-center gap-4">
+              <input
+                type="checkbox"
+                checked={selectedLeads.some(
+                  (selectedLead) => selectedLead.phone_number === group.id
+                )}
+                className="form-checkbox w-5 h-5 text-blue-500 bg-gray-600 rounded"
+                onChange={() =>
+                  handleWaGroupCheckboxChange(group.name, group.id)
+                }
+              />
+              <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center text-white text-xl">
+                <span>{group.name[0]}</span>
+              </div>
+
+              {/* Group Name */}
+              <p className="text-white text-lg font-medium">{group.name}</p>
+            </div>
+          </div>
+        ))) : (
+          <p className="text-gray-500">{t("waitABitGroupsWillPopUpIfTheyExist")}</p>
+        )
+      }
+      </div>
+    </div>
+
+
+
+            </div>
+          )}
+
 {leads?.length > 0 && (
   <div className="mt-6">
     <h3 className="text-lg font-semibold mb-4">{t("importedLeads")}</h3>
@@ -422,7 +634,7 @@ const StartCampaign = () => {
         {importMethod === "existingLeads" && (
           <>
             <td className="p-2 border">{lead.source}</td>
-            <td className="p-2 border">{lead.group || "other"}</td>
+            <td className="p-2 border">{lead.groups.filter((group) => group != "other").join(", ") || "other"}</td>
             <td className="p-2 border">{lead.sent_messages}</td>
           </>
         )}
@@ -445,7 +657,7 @@ const StartCampaign = () => {
               <button
                 onClick={() => setStep(2)}
                 className="px-6 py-3 mb-4 bg-green-600 text-white rounded-full hover:bg-green-700 transition mx-auto"
-                disabled={selectedLeads.length === 0}
+                disabled={selectedLeads?.length === 0}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -472,7 +684,7 @@ const StartCampaign = () => {
         </div>
       );
     } else if (step === 2) {
-      return <StepTwoMessageForm leads={selectedLeads} goBack={() => setStep(1)} fromNumbers={fromNumbers} goForwardStartCampaign={goForwardStartCampaign} goForwardScheduleCampaign={goForwardScheduleCampaign} />;
+      return <StepTwoMessageForm leads={selectedLeads} goBack={() => setStep(1)} fromNumbers={fromNumbers} goForwardStartCampaign={goForwardStartCampaign} goForwardScheduleCampaign={goForwardScheduleCampaign} waGroupNumber={waGroupsSelectedPhone} />;
     } else if (step === 3) {
       if (campaignType === "scheduled") {
         return (

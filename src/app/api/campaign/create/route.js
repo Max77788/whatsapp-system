@@ -104,6 +104,12 @@ export async function POST(req) {
   const batchIntervalValue = parseInt(formData.get('batchIntervalValue'));
   const batchIntervalUnit = formData.get('batchIntervalUnit');
 
+  const doNotDistributeToWhoHaveNotReadLastMessage = formData.get('doNotDistributeToWhoHaveNotReadLastMessage') === 'true';
+  const doNotDistributeForRecent = formData.get('doNotDistributeForRecent') === 'true';
+  const doNotDistributeForRecentValue = parseInt(formData.get('doNotDistributeForRecentValue'));
+  const doNotDistributeForRecentUnit = formData.get('doNotDistributeForRecentUnit');
+  
+  
   if (!campaignId) {
     campaignId = campaignName.toLowerCase().replace(/\s+/g, '-') + '-' + uuidv4().slice(-4);
   }
@@ -161,6 +167,10 @@ export async function POST(req) {
     batchSize,
     batchIntervalValue,
     batchIntervalUnit,
+    doNotDistributeToWhoHaveNotReadLastMessage,
+    doNotDistributeForRecent,
+    doNotDistributeForRecentValue,
+    doNotDistributeForRecentUnit,
     totalNumberOfRuns: numberOfRuns,
     numberOfRunsExecuted: 0,
     completed: false

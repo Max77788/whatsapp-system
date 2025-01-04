@@ -17,6 +17,8 @@ export default function CredentialsRegistrationForm() {
   const t = useTranslations('signin');
 
   const handleSubmit = async (formData: FormData) => {
+    toast.info(t("signingUp"));
+    
     const r = await register({
         email: formData.get("email"),
         password: formData.get("password"),
