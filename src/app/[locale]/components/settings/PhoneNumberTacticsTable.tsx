@@ -61,6 +61,8 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
             const assignedTactics = initialTactics.find(
               (tactic) => tactic.phoneNumber === phone.phoneNumber
             )?.tactics;
+
+            console.log(`Assigned Tactics ${JSON.stringify(assignedTactics)} for ${phone.phoneNumber}`)
   
             // If tactics exist, use them; otherwise, default to ["Do Nothing"]
             acc[phone.phoneNumber] = assignedTactics || ["Do Nothing"];
@@ -77,7 +79,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
     };
   
     fetchData();
-  }, [initialTactics]);
+  }, []);
   
 
   const handleTacticChange = (phoneNumber: string, tactic: string) => {
@@ -97,7 +99,9 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
 
         return {
           ...prev,
-          [phoneNumber]: updatedSelection.length > 0 ? updatedSelection : ["Do Nothing"],
+          [phoneNumber]: updatedSelection.length > 0 ? 
+          updatedSelection 
+          : ["Do Nothing"],
         };
     });
   };
@@ -111,15 +115,22 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
     }
 
     try {
-      const response = await fetch("/api/whatsapp-part/disconnect-phone", {
+      fetch("/api/whatsapp-part/disconnect-phone", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber }),
       });
 
-      if (response.ok) {
+      
         
-        toast.success(t("phone_number_disconnected_successfully"));
+        toast.success(t("phone_number_disconnected_successfully"),
+      {
+        autoClose: 7000
+      });
+        toast.success(t("PLEASE_WAIT_FOR_A_MINUTE_BEFORE_CONNECTING_A_NEW_NUMBER"),
+          {
+            autoClose: 7000
+          });
         await new Promise((resolve) => setTimeout(resolve, 2000));
           // setPhoneNumbers((prev) => prev.filter((phone) => phone.phoneNumber !== phoneNumber));
           // setSelectedTactics((prev) => {
@@ -128,9 +139,9 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
           // return newTactics;
         // });
         location.reload();
-      } else {
-        toast.error(t("failed_to_disconnect_phone_number"));
-      }
+      // } else {
+        //toast.error(t("failed_to_disconnect_phone_number"));
+      // }
     } catch (error) {
       console.error("Error disconnecting phone number:", error);
       toast.error(t("an_error_occurred_while_disconnecting_the_phone_number"));
