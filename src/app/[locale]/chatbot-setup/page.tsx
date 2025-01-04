@@ -35,12 +35,16 @@ export default async function SettingsPage(): Promise<JSX.Element> {
     const initialInstructions = user?.aiSystemConfig?.instructions || "";
     const initialIsOn = user?.aiSystemConfig?.isOn || false;
 
+    const skuff = (message: string) => {
+        console.log("You were SKUFFed");
+    }
+
     return (
         <div className="mt-5 flex flex-col items-center gap-5">
             {/* <TablePopup initialRows={initialData} /> */}
             <AITurnOn initialInstructions={initialInstructions} initialIsOn={initialIsOn} isInPlan={isInPlan} />
             <ChatbotTable initialTactics={initialTactics} />
-            <GreetingMessage />
+            <GreetingMessage onMessageChange={skuff}/>
         </div>
     );
 };
