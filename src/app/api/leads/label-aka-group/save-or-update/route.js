@@ -42,15 +42,20 @@ export async function POST(req) {
         leads.forEach((lead) => {
           if (userLead.phone_number === lead.phone_number) {
             phoneMatches = true;
+            
+            if (userLead.groups) {
             if (!userLead.groups.includes(labelName)) {
               userLead.groups.push(labelName);
             }
           }
+          }
         });
 
+        if (userLead.groups) {
         if (!phoneMatches && userLead.groups.includes(labelName)) {
           userLead.groups = userLead.groups.filter((g) => g !== labelName);
         }
+      }
 
         return userLead;
       });

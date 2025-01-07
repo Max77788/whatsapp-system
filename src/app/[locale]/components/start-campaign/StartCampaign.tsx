@@ -48,7 +48,7 @@ const StartCampaign = () => {
 
   const filteredLeads = selectedGroups.length === 0 
   ? leads // Show all leads if no group is selected
-  : leads.filter((lead) => {
+  : leads?.filter((lead) => {
     let leadGroups = lead.groups || ["other"];
     return leadGroups.some((group) => selectedGroups.includes(group))
 }
@@ -80,7 +80,7 @@ const StartCampaign = () => {
     setSelectedGroups((prevSelectedGroups) => {
       // Determine the updated selected groups
       const updatedSelectedGroups = prevSelectedGroups.includes(group)
-        ? prevSelectedGroups.filter((g) => g !== group) // Remove if already selected
+        ? prevSelectedGroups?.filter((g) => g !== group) // Remove if already selected
         : [...prevSelectedGroups, group]; // Add if not selected
 
       console.log("updatedSelectedGroups: ", updatedSelectedGroups);
@@ -89,7 +89,7 @@ const StartCampaign = () => {
       const filteredLeads =
         updatedSelectedGroups.length === 0
           ? leads // Show all leads if no group is selected
-          : leads.filter((lead) =>
+          : leads?.filter((lead) =>
             (lead.groups || ["other"]).some((group) =>
               updatedSelectedGroups.includes(group)
             )
@@ -115,7 +115,7 @@ const StartCampaign = () => {
 
   const fetchFromNumbersAndGroups = async () => {
     const response = await axios.get("/api/phone-numbers");
-    const fromNumbersList = response.data.filter((number: { active: boolean }) => number.active).map((number: { phoneNumber: string }) => number.phoneNumber);
+    const fromNumbersList = response.data?.filter((number: { active: boolean }) => number.active).map((number: { phoneNumber: string }) => number.phoneNumber);
     
     console.log(`fromNumbersList: ${JSON.stringify(fromNumbersList)}`);
 
@@ -242,7 +242,7 @@ const StartCampaign = () => {
 
     const group_contacts_minimized = group_contacts
     .map((group: any) => { return { name: group?.name, id: group?.id } })
-    .filter((group: any) => 
+    ?.filter((group: any) => 
       group.name !== "All Contacts" && 
       !(group.name.length > 14 && /^\d+$/.test(group.name))
   );
@@ -295,7 +295,7 @@ const StartCampaign = () => {
       if (isSelected) {
         console.log(leads);
         // Remove the lead if already selected
-        return prevSelectedLeads.filter((lead) => lead.phone_number !== groupId);
+        return prevSelectedLeads?.filter((lead) => lead.phone_number !== groupId);
       } else {
         console.log(leads);
         // Add the lead to the selectedLeads array
@@ -324,7 +324,7 @@ const StartCampaign = () => {
       
       if (isSelected) {
         // Remove the lead if already selected
-        return prevSelectedLeads.filter((lead) => lead.phone_number !== phoneNumber);
+        return prevSelectedLeads?.filter((lead) => lead.phone_number !== phoneNumber);
       } else {
         // Find the lead in the original leads array
         const leadToAdd = leads.find((lead) => lead.phone_number === phoneNumber);
@@ -634,7 +634,7 @@ const StartCampaign = () => {
         {importMethod === "existingLeads" && (
           <>
             <td className="p-2 border">{lead.source}</td>
-            <td className="p-2 border">{lead.groups.filter((group) => group != "other").join(", ") || "other"}</td>
+            <td className="p-2 border">{lead.groups?.filter((group) => group != "other").join(", ") || "other"}</td>
             <td className="p-2 border">{lead.sent_messages}</td>
           </>
         )}

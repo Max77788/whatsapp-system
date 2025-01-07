@@ -98,7 +98,24 @@
         "templates": "תבניות הודעות",
         "labels": "תוויות"
     },
-    
+    "labelManager": {
+        "labelSaved": "התווית נשמרה בהצלחה",
+        "failedToSaveLabel": "שמירת התווית נכשלה",
+        "errorSavingLabel": "אירעה שגיאה במהלך שמירת התווית",
+        "labelDeleted": "התווית נמחקה בהצלחה",
+        "areYouSureYouWantToDeleteLabel": "האם אתה בטוח שברצונך למחוק את התווית",
+        "deleteLabel": "מחק תווית",
+        "saveLabel": "שמור תווית",
+        "addNewLabel": "הוסף תווית חדשה",
+        "allLabels": "כל התוויות",
+        "existingLeads": "לידים קיימים",
+        "leadsForLabel": "לידים לתווית",
+        "noLeadsInLabel": "אין לידים בתווית",
+        "name": "שֵׁם",
+        "phone_number": "מספר טלפון",
+        "action": "פְּעוּלָה",
+        "uploadCSVOrExcel": "העלה קובץ CSV/Excel"
+    },
     "profile": {
         "profile": "פרופיל",
         "personal_information": "מידע אישי",

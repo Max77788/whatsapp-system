@@ -120,8 +120,6 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber }),
       });
-
-      
         
         toast.success(t("phone_number_disconnected_successfully"),
       {
@@ -131,14 +129,16 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
           {
             autoClose: 7000
           });
-        await new Promise((resolve) => setTimeout(resolve, 2000));
           // setPhoneNumbers((prev) => prev.filter((phone) => phone.phoneNumber !== phoneNumber));
           // setSelectedTactics((prev) => {
           // const newTactics = { ...prev };
           // delete newTactics[phoneNumber];
           // return newTactics;
         // });
-        location.reload();
+
+      await new Promise(resolve => setTimeout(resolve, 7000));
+
+      location.reload();
       // } else {
         //toast.error(t("failed_to_disconnect_phone_number"));
       // }

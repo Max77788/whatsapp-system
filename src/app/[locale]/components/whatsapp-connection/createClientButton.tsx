@@ -138,6 +138,8 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
               )}
             </div>
 
+            <p className="text-black text-center font-bold italic">*{t("please_wait_a_bit_after_successfully_scanning_the_code")}</p>
+
             <div className="mt-4">
               <button onClick={togglePopup} className="px-4 py-2 bg-red-500 text-white rounded-full mx-auto block text-center">
                 {t("close")}

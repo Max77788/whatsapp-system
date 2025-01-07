@@ -109,7 +109,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     const phoneNumbers = bulkPhoneNumbers
       .split(/[\n,]+/) // Split by new lines or commas
       .map((number) => number.trim()) // Remove whitespace
-      .filter((number) => number); // Remove empty entries
+      .filter((number) => number && Number.isInteger(Number(number))); // Remove empty entries
 
     if (phoneNumbers.length === 0) {
       alert(t("no_valid_phone_numbers_found"));
@@ -154,8 +154,13 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
   };
 
   const handleDeleteLead = async (index: number) => {
-    setLeadData((prevData) => prevData.filter((_, i) => i !== index));
+    if (leadData.length === 1) {
+      toast.error(t("cant_delete_the_last_lead"))
+      return;
+    }
     
+    setLeadData((prevData) => prevData.filter((_, i) => i !== index));
+
     const userEmail = session?.user?.email;
     if (!userEmail) {
       alert(t("user_email_not_found"));

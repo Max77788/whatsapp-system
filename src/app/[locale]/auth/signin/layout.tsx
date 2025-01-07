@@ -1,11 +1,18 @@
-"use server";
+"use client";
 
 import { useLocale, useTranslations } from 'next-intl';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const SignInLayout = ({ children }: { children: React.ReactNode }) => {
   const t = useTranslations('signin');
   const currentLocale = useLocale();
+
+  // Reset load state if the language/locale changes
+  useEffect(() => {
+    setImageIsLoaded(false);
+  }, [currentLocale]);
+
+  const [isImageLoaded, setImageIsLoaded] = useState(false);
 
   return (
     <div className="flex h-screen">
@@ -54,8 +61,13 @@ const SignInLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
       
       {/* Right Section - Image */}
-      <div className="hidden md:flex flex-1 bg-teal-500 items-center justify-center">
-        <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('/static/green-black-background.jpeg')" }}></div>
+
+      <div className="hidden md:flex flex-1 bg-black items-center justify-center">
+        { /* {!isImageLoaded && <div className="w-full h-full bg-gray-200 animate-pulse"></div>} */}
+        <div
+          className={`w-full h-full bg-cover bg-center transition-opacity duration-500`}
+          style={{ backgroundImage: "url('/static/green-black-background.jpeg')" }}
+        ></div>
       </div>
 
       

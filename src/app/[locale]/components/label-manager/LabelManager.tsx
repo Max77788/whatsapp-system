@@ -26,7 +26,7 @@ const showToast = (message: string) => {
 
 const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
   const [labelsList, setLabelsList] = useState<string[]>([]);
-  const [selectedLabel, setSelectedLabel] = useState<string>('New Label');
+  const [selectedLabel, setSelectedLabel] = useState<string>('');
   
   // "existingLeads" = all leads fetched from the backend (not necessarily assigned to a label yet)
   const [existingLeads, setExistingLeads] = useState<Lead[]>([]);
@@ -65,7 +65,11 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
       const currentLabelLeads = userLeads.filter((lead: Lead) => lead?.groups.includes(userLabels[0])) || [];
       setLabelLeads(currentLabelLeads);
 
-      setSelectedLabel(userLabels[0] || 'New Label 1');
+      const labelToSelect = userLabels[0] === "other" ? (!!userLabels[1] ? userLabels[1] : "NewLabel") : "NewLabel"
+      
+      if (labelToSelect !== "NewLabel") {
+      setSelectedLabel(labelToSelect);
+      }
     }
     fetchLabelsAndLeads();
   }, []);
@@ -131,7 +135,7 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
 
   // Add a new label
   const handleAddNewLabel = () => {
-    const newLabel = `NewLabel${labelsList.length + 1}`;
+    const newLabel = `NewLabel${labelsList.filter((label) => label !== "other").length + 1}`;
     setLabelsList((prevList) => [...prevList, newLabel]);
     setNewLabels((prevNew) => [...prevNew, newLabel]);
     setSelectedLabel(newLabel);
@@ -321,7 +325,9 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
       >
         <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem' }}>{t("allLabels")}</h3>
         <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
-        {labelsList.map((label) => (
+        {labelsList
+        .filter((label) => label !== "other")
+        .map((label) => (
             <li key={label} style={{ marginBottom: '0.8rem' }}>
 
             <button
@@ -330,6 +336,7 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
     ${selectedLabel === label ? "bg-gray-300 text-gray hover:bg-gray-500" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
   `}
               onClick={() => handleLabelClick(label)}
+              disabled={labelsList.filter((label) => label !== "other").length === 1}
             >
               <img src="/static/redLabel.png" alt="label" className="w-10 mr-2" />
               {label}
@@ -352,6 +359,7 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
       </div>
 
       {/* Right Column: Selected Label Management (75% width) */}
+      {selectedLabel ? (
       <div style={{ width: '75%', padding: '1rem', overflowY: 'auto' }}>
         
         {/* Save or Delete Label */}
@@ -434,7 +442,8 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
             </table>
           ) : (
             <p>No leads in this label</p>
-          )}
+          )
+          }
         </div>
 
 
@@ -462,12 +471,21 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
             </tbody>
           </table>
         ) : (
-            <p>{t("noExistingLeadsAvailable")}</p>
+            <p>{t("noMoreLeadsAvailable")}</p>
         )}
 
         
       </div>
+      ) : (
+          <div className="mt-16 ml-4">
+            <p className='text-center'>{t("pleasePressAddLabelButtonOnTheLeft")}</p>
+          </div>
+
+      )
+    }      
     </div>
+
+  
   );
 };
 
