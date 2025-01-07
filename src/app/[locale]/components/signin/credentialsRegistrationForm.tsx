@@ -1,12 +1,15 @@
 "use client";
 
 import { signIn } from 'next-auth/react';
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register } from "@/actions/register";
 import { toast } from 'react-toastify';
 import { useLocale, useTranslations } from 'next-intl';
+
+import { useLocation } from "react-router-dom";
+
 
 export default function CredentialsRegistrationForm() {
   const router = useRouter();
@@ -16,9 +19,20 @@ export default function CredentialsRegistrationForm() {
   const currentLocale = useLocale();
   const t = useTranslations('signin');
 
+  const location = useLocation();
+  const toastId = "SignUpToast";
+
+  useEffect(() => {
+      // Dismiss the toast when the location changes
+      return () => {
+        toast.dismiss(toastId);
+      };
+    }, [location]);
+
   const handleSubmit = async (formData: FormData) => {
     toast.info(t("signingUp"), {
       autoClose: 6500,
+      toastId
     });
     
     const r = await register({

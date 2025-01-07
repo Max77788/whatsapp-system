@@ -6,9 +6,23 @@ import { toast } from 'react-toastify';
 import { useLocale } from "next-intl";
 import { useTranslations } from "next-intl";
 
+import { useEffect } from "react"
+
+import { useLocation } from "react-router-dom";
+
 export function GoogleSignInButton() {
     const currentLocale = useLocale();
     const t = useTranslations('signin');
+
+    const toastId = "googleSignInToast"; // Unique toast ID
+    const location = useLocation();
+
+    useEffect(() => {
+        // Dismiss the toast when the location changes
+        return () => {
+            toast.dismiss(toastId);
+        };
+    }, [location]);
 
     const handleClick = () => {
         signIn('google', {
@@ -16,6 +30,7 @@ export function GoogleSignInButton() {
         });
         toast.info(t('signingInWithGoogle'), {
             autoClose: 6500,
+            toastId
         });
     }
     
