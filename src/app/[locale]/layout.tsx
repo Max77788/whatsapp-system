@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
 import path from 'path';
 import fs from 'fs';
+import Head from 'next/head';
 import { SessionProvider } from "next-auth/react";
 import LanguageSwitcher from "./components/language-stuff/LanguageSwitcher";
 import { NextIntlClientProvider, useMessages } from "next-intl";

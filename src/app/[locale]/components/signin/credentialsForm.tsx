@@ -19,7 +19,9 @@ export default function CredentialsForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    toast.info(t("signingIn"));
+    toast.info(t("signingIn"), {
+      autoClose: 8000,
+    });
 
     const data = new FormData(e.target as HTMLFormElement);
 

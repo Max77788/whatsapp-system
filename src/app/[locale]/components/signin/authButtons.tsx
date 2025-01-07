@@ -15,7 +15,7 @@ export function GoogleSignInButton() {
             callbackUrl: `/${currentLocale}/dashboard`,
         });
         toast.info(t('signingInWithGoogle'), {
-            autoClose: 5000,
+            autoClose: 8000,
         });
     }
     
