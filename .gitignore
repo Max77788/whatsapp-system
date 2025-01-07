@@ -59,3 +59,5 @@ storage-access-credentials.json
 all-capturing-acc-credentials.json
 
 aviv*
+
+createK8sDeployment.mjs
