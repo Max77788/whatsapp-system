@@ -2,7 +2,7 @@
 
 import { signIn } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
@@ -19,15 +19,16 @@ export default function CredentialsForm() {
   const t = useTranslations('signin');
   const currentLocale = useLocale();
 
-  const location = useLocation();
   const toastId = "SignInToast";
 
+  const pathname = usePathname(); // Get the current path
+
   useEffect(() => {
-    // Dismiss the toast when the location changes
+    // Dismiss the toast when the pathname changes
     return () => {
       toast.dismiss(toastId);
     };
-  }, [location]);
+  }, [pathname]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -203,6 +203,7 @@ export async function fetchGoogleSheetHeaders(url: string): Promise<string[]> {
 
         // Fetch data from the API
         const response = await axios.get(apiUrl);
+        
         const { values } = response.data;
 
         if (!values || values.length === 0) {
@@ -214,7 +215,7 @@ export async function fetchGoogleSheetHeaders(url: string): Promise<string[]> {
 
         return headers;
     } catch (error) {
-        console.error("Error fetching Google Sheet headers:", error);
+        console.error("Error fetching Google Sheet headers:", JSON.stringify(error));
         return [];
     }
 }

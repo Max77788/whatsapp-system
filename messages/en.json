@@ -245,6 +245,7 @@
         "step3": "Step 3",
         "step4": "Step 4",
         "step5": "Step 5",
+        "pleaseEnsureYourSpreadsheetIsPubliclyAvailable": "Please, ensure your spreadsheet is publicly available",
         "uploadCSVFile": "Upload CSV/Excel File",
         "pleaseUploadACSVFile": "Please upload a CSV/Excel file",
         "googleSheetsURL": "Google Sheets URL",

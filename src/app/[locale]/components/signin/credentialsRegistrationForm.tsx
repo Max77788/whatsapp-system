@@ -2,13 +2,13 @@
 
 import { signIn } from 'next-auth/react';
 import { FormEvent, useRef, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { register } from "@/actions/register";
 import { toast } from 'react-toastify';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { useLocation } from "react-router-dom";
+import { BrowserRouter, Router, useLocation } from "react-router-dom";
 
 
 export default function CredentialsRegistrationForm() {
@@ -19,15 +19,16 @@ export default function CredentialsRegistrationForm() {
   const currentLocale = useLocale();
   const t = useTranslations('signin');
 
-  const location = useLocation();
   const toastId = "SignUpToast";
 
+  const pathname = usePathname(); // Get the current path
+
   useEffect(() => {
-      // Dismiss the toast when the location changes
-      return () => {
-        toast.dismiss(toastId);
-      };
-    }, [location]);
+    // Dismiss the toast when the pathname changes
+    return () => {
+      toast.dismiss(toastId);
+    };
+  }, [pathname]);
 
   const handleSubmit = async (formData: FormData) => {
     toast.info(t("signingUp"), {
@@ -51,6 +52,7 @@ export default function CredentialsRegistrationForm() {
       }
 };
 return(
+  <BrowserRouter>
   <form 
   ref={ref}
   className="flex flex-col items-center justify-center w-full max-w-md mt-5 p-0 shadow-md mx-auto"
@@ -85,5 +87,6 @@ return(
   </div>
     <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full">{t('signUp')}</button>
   </form>
+  </BrowserRouter>
   )
 }

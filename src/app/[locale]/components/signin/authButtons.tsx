@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { toast } from 'react-toastify';
+import { useRouter, usePathname } from 'next/navigation';
 import { useLocale } from "next-intl";
 import { useTranslations } from "next-intl";
 
@@ -15,14 +16,15 @@ export function GoogleSignInButton() {
     const t = useTranslations('signin');
 
     const toastId = "googleSignInToast"; // Unique toast ID
-    const location = useLocation();
+
+    const pathname = usePathname(); // Get the current path
 
     useEffect(() => {
-        // Dismiss the toast when the location changes
+        // Dismiss the toast when the pathname changes
         return () => {
             toast.dismiss(toastId);
         };
-    }, [location]);
+    }, [pathname]);
 
     const handleClick = () => {
         signIn('google', {

@@ -429,6 +429,7 @@ const StartCampaign = () => {
 
           {importMethod === "googleSheets" && (
             <div className="mt-6">
+              <p className="font-bold italic mb-4">*{t("pleaseEnsureYourSpreadsheetIsPubliclyAvailable")}</p>
               <label className="block text-gray-700 font-medium mb-2">{t("googleSheetsURL")}:</label>
               <input
                 type="text"
