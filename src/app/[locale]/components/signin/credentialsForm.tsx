@@ -20,7 +20,7 @@ export default function CredentialsForm() {
     e.preventDefault();
 
     toast.info(t("signingIn"), {
-      autoClose: 8000,
+      autoClose: 6500,
     });
 
     const data = new FormData(e.target as HTMLFormElement);

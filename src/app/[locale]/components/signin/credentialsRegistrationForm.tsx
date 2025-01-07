@@ -18,7 +18,7 @@ export default function CredentialsRegistrationForm() {
 
   const handleSubmit = async (formData: FormData) => {
     toast.info(t("signingUp"), {
-      autoClose: 8000,
+      autoClose: 6500,
     });
     
     const r = await register({
