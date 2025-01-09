@@ -274,7 +274,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
         const data = await response.json();
         setTemplates(data.messageTemplates);
       } else {
-        toast.error(t("failedToFetchMessageTemplates"));
+        // toast.error(t("failedToFetchMessageTemplates"));
       }
     } catch (error) {
       console.error("Error fetching templates:", error);

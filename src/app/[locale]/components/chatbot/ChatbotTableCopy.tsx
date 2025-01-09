@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
+
+import { buttonBigStyle, buttonSmallStyle } from "@/lib/classNames"
+
 type RowData = {
     type: string;
     search_term: string;
@@ -229,7 +232,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
             });
 
             if (response.ok) {
-                toast.success("Data saved successfully!");
+                toast.success(t("savedSuccessfully"));
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 location.reload();
             } else {
@@ -243,11 +246,19 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
 
     return (
         <div className="p-4 h-screen flex flex-col overflow-y-auto">
-            {!isLoadingInstructionSets && <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">{t("messageConfiguration")}</h3>}
+            {!isLoadingInstructionSets && <h3 className="text-lg font-medium leading-6 text-gray-900">{t("messageConfiguration")}</h3>}
             
-            <button onClick={saveData} className="ml-4 mb-4 px-5 py-3 bg-green-600 text-white rounded-full">
-                {t("save")}
-            </button>
+            {!isLoadingInstructionSets && <div className="mt-1">
+                <button onClick={addSet} className={buttonSmallStyle("green")}>
+                    {t("addNewSet")}
+                </button>
+                <button onClick={saveData} className={buttonSmallStyle("green", "mx-5")}>
+                    {t("save")}
+                </button>
+                <p className="mb-4 mt-4 font-bold italic">*{t("scrollDownToSeeNewlyAddedSet")}</p>
+            </div>
+            }
+
             {isLoadingInstructionSets && <div className="animate-pulse flex justify-center">
                 <div className="h-20 bg-gray-300 rounded w-80"></div>
             </div>}
@@ -277,7 +288,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                         <div>
                             <button
                                 onClick={() => deleteSet(setIndex)}
-                                className="px-5 py-3 bg-red-600 text-white rounded-full flex items-center justify-center"
+                                className={buttonSmallStyle("red")}
                             >
                                 {t("deleteSet")}
                             </button>
@@ -404,7 +415,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                 {/* Remove Row Button */}
                                 <button
                                     onClick={() => removeRow(setIndex, rowIndex)}
-                                    className="px-3 py-2 bg-red-600 text-white rounded-full mt-2"
+                                    className={buttonSmallStyle("red")}
                                 >
                                     {t("removeRow")}
                                 </button>
@@ -413,7 +424,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
 
                         <button
                             onClick={() => addRow(setIndex)}
-                            className="px-5 py-3 bg-green-600 text-white rounded-full mt-3"
+                            className={buttonSmallStyle()}
                         >
                             {t("addRow")}
                         </button>
@@ -421,11 +432,11 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                 </div>
             ))}
 
-            {!isLoadingInstructionSets && <div className="mt-4">
-                <button onClick={addSet} className="px-5 py-3 bg-green-600 text-white rounded-full mb-2">
+            {!isLoadingInstructionSets && <div className="">
+                <button onClick={addSet} className={buttonSmallStyle()} >
                     {t("addNewSet")}
                 </button>
-                <button onClick={saveData} className="ml-4 px-5 py-3 bg-green-600 text-white rounded-full">
+                <button onClick={saveData} className={buttonSmallStyle("green", "mx-5")}>
                     {t("save")}
                     </button>
                     </div>

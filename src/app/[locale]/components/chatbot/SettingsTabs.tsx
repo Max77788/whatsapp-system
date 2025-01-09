@@ -23,20 +23,57 @@ export default function SettingsTabs({
   const [selectedSet, setSelectedSet] = useState(null); 
   const [greetingMessage, setGreetingMessage] = useState(""); // New state for greeting message
   
+  const [leftPanelWidth, setLeftPanelWidth] = useState(35); // width in percentage
+  const [isDragging, setIsDragging] = useState(false);
+
   // ^ for storing whichever set is clicked
 
   const t = useTranslations("chatbotSetup");
 
   const tabs = [
-    { id: "ai", label: "AI Settings" },
-    { id: "tactics", label: "Tactics" },
-    { id: "greet_message", label: "Greeting Message" },
+    { id: "ai", label: t("aiSettings") },
+    { id: "tactics", label: t("tactics") },
+    { id: "greet_message", label: t("greetingMessage") },
   ];
 
   // This function will be passed down to ChatbotTableCopy
   const handleSelectSet = (set: any) => {
     setSelectedSet(set);
   };
+
+  const handleMouseDown = () => {
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e: any) => {
+    if (!isDragging) return;
+
+    // Calculate new width as a percentage
+    const newWidth = (e.clientX / window.innerWidth) * 100;
+
+    // Set limits for the width (e.g., min 10%, max 50%)
+    if (newWidth >= 35 && newWidth <= 45) {
+      setLeftPanelWidth(newWidth);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    } else {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
 
   // Optionally, set the initial selected set when component mounts or initialTactics changes
   useEffect(() => {
@@ -48,7 +85,10 @@ export default function SettingsTabs({
   return (
     <div className="flex flex-row w-full">
       {/* Left Panel */}
-      <div className="flex flex-col w-1/4 border-r border-gray-200"> 
+      <div className="flex flex-col border-r border-gray-200"
+        style={{ width: `${leftPanelWidth}%`,
+          minWidth: "350px",
+         }}> 
         {/* Tabs */}
         <div className="flex flex-row border-b border-gray-200 mb-4">
           {tabs.map((tab) => (
@@ -85,6 +125,12 @@ export default function SettingsTabs({
         </div>
       </div>
 
+      {/* Draggable Divider */}
+      <div
+        className="w-1 cursor-col-resize bg-gray-300"
+        onMouseDown={handleMouseDown}
+      ></div>
+
       {/* Right Panel - Details */}
       <div className="w-3/4">
       {activeTab === "tactics" && (
@@ -109,7 +155,7 @@ export default function SettingsTabs({
         
         {activeTab === "ai" && (
           <div className="flex items-center justify-center mt-40">
-             <p>⬅️{t("setupTheIsntructionsOfAIOnTheLeft")}</p>
+             <p>{t("setupTheIsntructionsOnTheSideTab")}</p>
           </div>
         )}
 

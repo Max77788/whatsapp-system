@@ -103,7 +103,8 @@
         "in1Minute": "in 1 minute",
         "home": "Home",
         "templates": " Message Templates",
-        "labels": "Labels"
+        "labels": "Labels",
+        "leadsFetchedSuccessfully": "Leads Fetched Successfully"
     },
     "labelManager": {
         "labelSaved": "Label saved successfully",
@@ -115,6 +116,7 @@
         "saveLabel": "Save label",
         "addNewLabel": "Add new label",
         "allLabels": "All labels",
+        "labelNameCantBeEmpty":"Label Name Cannot Be Empty",
         "existingLeads": "Existing leads",
         "leadsForLabel": "Leads for label",
         "noLeadsInLabel": "No leads in label",
@@ -123,7 +125,9 @@
         "action": "Action",
         "uploadCSVOrExcel": "Upload CSV/Excel file",
         "noMoreLeadsAvailable": "No more leads available",
-        "pleasePressAddLabelButtonOnTheLeft": "Please, press button on the left"
+        "pleasePressAddLabelButtonOnTheLeft": "Please, press button on the left",
+        "pleasePressAddLabelButton": "Please, press 'Add Label' button",
+        "labelNameMustBeFrom1To20CharactersLong": "Label name must be from 1 to 20 characters long"
     },
     "profile": {
         "profile": "Profile",
@@ -166,6 +170,17 @@
         "your_plan_is_expired": "Your plan is expired",
         "please_wait_a_bit_after_successfully_scanning_the_code": "Please, wait a bit after successfully scanning the code"
     },
+    "templateManager": {
+       "selectCreateATemplateToViewOrEditItsDetails": "Select/create a template to view or edit its details",
+       "templateSaved": "Template Saved",
+       "templateNotSaved": "Template Not Saved",
+       "addNewTemplate": "Add New Template",
+       "deleteTemplate": "Delete Template",
+       "saveTemplate": "Save Template",
+       "allTemplates": "All templates",
+       "templateName": "Template Name",
+       "templateMessage": "Template Message"
+    },
     "leads": {
         "add_new_lead": "Add new lead",
         "add_group": "Add group",
@@ -176,9 +191,11 @@
         "yes": "Yes",
         "no": "No",
         "name": "Name",
+        "label": "Label",        
         "phone_number": "Phone number",
         "choose_source": "Choose source",
         "choose_group": "Choose group(s)",
+        "choose_label": "Choose label(s)",
         "add_lead": "Add lead",
         "paste_phone_numbers_here_separated_by_commas_or_new_lines": "Copy phone numbers here, separated by commas or new lines.",
         "phone_numbers_added_successfully":"Phone numbers added successfully",
@@ -279,6 +296,7 @@
         "selectAMessageTemplate": "Select a Message Template",
         "messageToSave": "Message to Save",
         "templateName": "Template Name",
+        "templateMessage": "Template Message",
         "timeZone": "Time Zone",
         "selectTimeZone": "Select Time Zone",
         "schedule": "Schedule",
@@ -332,6 +350,7 @@
         "ifReceivedMessage": "If received message",
         "customMatch": "Custom Match",
         "sendThisMessage": "Send this message",
+        "setupTheIsntructionsOnTheSideTab": "Setup the instructions on the side tab",
         "hi": "Hi",
         "remove": "Remove",
         "groups": "Groups",
@@ -342,6 +361,9 @@
         "messageConfiguration": "Message Configuration",
         "failedToSaveData": "Failed to save data",
         "saveData": "Save Data",
+        "aiSettings": "AI Settings",
+        "tactics": "Tactics",
+        "scrollDownToSeeNewlyAddedSet": "Scroll Down to See Newly Added Set",
         "customSetName": "Custom Set Name",
         "hiHowCanWeHelpYouToday": "Hi, how can we help you today?",
         "greetingMessage": "Greeting Message",
@@ -364,6 +386,8 @@
         "delayInSeconds": "Delay for X seconds",
         "option": "Option",
         "response": "Response",
+        "savedSuccessfully": "Saved Successfully",
+        "atLeastOnePlatformMustBeSelected": "At least one platform must be selected",
         "setupTheIsntructionsOfAIOnTheLeft": "Setup the instructions of AI on the left",
         "greetingFooterPlaceholder": "Enter the footer. For example: Thank you for your business.",
         "greetingHeaderPlaceholder": "Enter the header. For example: Hello! Welcome to our store! Choose from the following options",

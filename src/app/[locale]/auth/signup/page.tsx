@@ -37,9 +37,9 @@ const SignUp = () => {
         <div className="space-y-4">
           <GoogleSignInButton />
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-1">
             <hr className="flex-1 border-gray-600" />
-            <span className="text-gray-400">or</span>
+            <span className="text-gray-400">{t("or")}</span>
             <hr className="flex-1 border-gray-600" />
           </div>
 

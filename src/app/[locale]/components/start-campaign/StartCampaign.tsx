@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import StepTwoMessageForm from "./StepTwoMessageForm";
 import UserCampaigns from "./UserCampaigns";
 import { useLocale, useTranslations } from "next-intl";
 import { set } from "lodash";
+import { buttonBigStyle, buttonSmallStyle } from "@styles"
 
 type Lead = { name: string; 
   phone_number: string; 
@@ -252,11 +253,11 @@ const StartCampaign = () => {
      
     }
 
-    console.log(`group_contacts_total: ${JSON.stringify(group_contacts_total)}`);
+    // console.log(`group_contacts_total: ${JSON.stringify(group_contacts_total)}`);
 
     setWaGroups(group_contacts_total);
 
-    console.log(`waGroups: ${JSON.stringify(waGroups)}`);
+    setWaGroupsSelectedPhone(fromNumbers[0])
   }
 
   useEffect(() => {
@@ -420,7 +421,7 @@ const StartCampaign = () => {
               />
               <button
                 onClick={fetchCsvHeaders}
-                className="mt-4 px-5 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition mx-auto"
+                className={buttonSmallStyle("blue")}
               >
                 {t("fetchHeaders")}
               </button>
@@ -440,7 +441,7 @@ const StartCampaign = () => {
               />
               <button
                 onClick={fetchHeaders}
-                className="mt-4 px-5 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition mx-auto"
+                className={buttonSmallStyle("blue")}
               >
                 {t("fetchHeaders")}
               </button>
@@ -477,7 +478,7 @@ const StartCampaign = () => {
               </select>
               <button
                 onClick={fetchRows}
-                className="mt-4 px-5 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition mx-auto"
+                className={buttonSmallStyle("blue")}
               >
                 {t("fetchRows")}
               </button>

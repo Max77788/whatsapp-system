@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { saveAs } from 'file-saver'; // Import file-saver for exporting files
 import { useTranslations } from "next-intl";
 
+import { buttonSmallStyle } from "@styles";
+
 interface Lead {
   name: string;
   phone_number: string;
@@ -254,7 +256,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         <>
           <button
             onClick={exportToCSV}
-            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto mb-4 mr-4"
+            className={buttonSmallStyle("yellow")}
           >
             {t("export_as_csv")}
           </button>
@@ -264,7 +266,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                 <th className="border border-gray-300 p-2 text-left">{t("name")}</th>
                 <th className="border border-gray-300 p-2 text-left">{t("phone_number")}</th>
                 <th className="border border-gray-300 p-2 text-left">{t("source")}</th>
-                <th className="border border-gray-300 p-2 text-left">{t("group")}</th>
+                <th className="border border-gray-300 p-2 text-left">{t("label")}</th>
                 <th className="border border-gray-300 p-2 text-left">{t("sent_messages")}</th>
                 <th className="border border-gray-300 p-2 text-left">{t("handled")}</th>
                 <th className="border border-gray-300 p-2 text-left">{t("extra_notes")}</th>
@@ -327,10 +329,9 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                   <td className="border border-gray-300 p-2">
                     <div className="border border-gray-300 rounded p-1 min-h-[100px]">
                       {groups.map((group) => (
-                        <label key={group} className="block">
+                        <label key={group} className="block flex items-center space-x-2 gap-1">
                           <input
                             type="checkbox"
-                            className="mr-2"
                             checked={lead.groups?.includes(group) || false}
                             onChange={(e) => {
                               const updatedGroups = e.target.checked
@@ -376,7 +377,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                   <td className="border border-gray-300 p-2">
                     <button
                       onClick={() => handleDeleteLead(index)}
-                      className="px-5 py-3 bg-red-500 hover:bg-red-700 text-white rounded-full mx-auto"
+                      className={buttonSmallStyle("red")}
                     >
                       {t("delete")}
                     </button>
@@ -428,14 +429,14 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
           </select>
             {/* Replace your <select multiple> with something like this */}
             <div className="border text-black border-gray-300 p-2 rounded min-h-[65px]" style={{ maxHeight: "65px", overflowY: "auto" }}>
-              <p>{t("choose_group")}</p>
+              <p>{t("choose_label")}</p>
 
               {groups.map((group) => {
                 // Check if this group is already in newLead.groups
                 const isChecked = newLead.groups.includes(group);
 
                 return (
-                  <label key={group} className="flex items-center mt-1">
+                  <label key={group} className="flex items-center mt-1 gap-1">
                     <input
                       type="checkbox"
                       value={group}
@@ -466,7 +467,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         </div>
         <button
           onClick={handleAddLead}
-          className="mt-4 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
+          className={buttonSmallStyle()}
         >
           {t("add_lead")}
         </button>
@@ -483,7 +484,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
   />
   <button
     onClick={handleBulkAdd}
-    className="mt-4 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
+          className={buttonSmallStyle()}
   >
     {t("add_bulk_phone_numbers")}
         </button>
@@ -522,7 +523,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
   />
       </div>  
 
-      {/* Add New Group */}
+      {/*
       <div className="mt-6 p-4 border border-gray-300 rounded">
         <h2 className="text-xl font-semibold mb-4">{t("add_new_group")}</h2>
         <div className="flex items-center space-x-4">
@@ -535,9 +536,9 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
           />
           <button
             onClick={handleAddGroup}
-            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mr-2 ml-2"
+            className={buttonSmallStyle("yellow")}
           >
-            {t("add_group")}
+            ➕
           </button>
           <div className="mt-4 flex flex-wrap gap-2">
           {groups.map((group) => (
@@ -559,6 +560,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
           </div>
         </div>
       </div>
+      */}
     </div>
   );
 };

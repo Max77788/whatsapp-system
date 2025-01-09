@@ -1,6 +1,6 @@
 "use client";
 import { NextPage } from 'next';
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { useLocale, useTranslations } from 'next-intl';
 // If you're using CSV files, install 'papaparse' (npm install papaparse).
@@ -36,7 +36,9 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
 
   const [newLabels, setNewLabels] = useState<string[]>([]);
 
+  const labelRef = useRef<string>('');
 
+  const [tempLabelName, setTempLabelName] = useState(selectedLabel);
 
   const t = useTranslations("labelManager");
 
@@ -50,8 +52,8 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
       const userLabels = user?.leadGroups || [];
 
       setLabelsList(userLabels);
-
       console.log(`User Leads: ${JSON.stringify(userLeads)}`);
+      console.log(`User Labels ${JSON.stringify(userLabels)}`)
 
       const updatedLeads = userLeads.map((lead: Lead) => {
         if (!lead.groups) {
@@ -65,7 +67,13 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
       const currentLabelLeads = userLeads.filter((lead: Lead) => lead?.groups.includes(userLabels[0])) || [];
       setLabelLeads(currentLabelLeads);
 
-      const labelToSelect = userLabels[0] === "other" ? (!!userLabels[1] ? userLabels[1] : "NewLabel") : "NewLabel"
+      let labelToSelect = "NewLabel";
+
+      if (userLabels.length !== 0) {
+      labelToSelect = userLabels[0] === "other" ? (!!userLabels[1] ? userLabels[1] : "NewLabel") : userLabels[0]
+      }
+
+      console.log(`Label to select ${labelToSelect}`)
       
       if (labelToSelect !== "NewLabel") {
       setSelectedLabel(labelToSelect);
@@ -119,14 +127,24 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
   };
 
   // When the user clicks on a label in the left column
-  const handleLabelClick = (label: string) => {
+  const handleLabelClick = async (label: string) => {
     setSelectedLabel(label);
+
+    console.log(`Obtained argument: ${label}`)
+    
+    labelRef.current = label.replace("\u200B", "")
+
+    console.log(`Selected Label ${label} of length ${label.length}`)
 
     // Example scenario if you store which leads belong to which label in your DB:
     // - You’d fetch from the server or filter from existingLeads.
     // For the sake of example, we’ll clear or reassign them here:
 
-    const currentLabelLeads = existingLeads.filter((lead) => lead?.groups.includes(label)) || []
+    console.log(`Existing Leads: ${JSON.stringify(existingLeads)}`)
+    
+    const leadsToParse = [...existingLeads, ...labelLeads]
+    
+    const currentLabelLeads = leadsToParse.filter((lead) => lead?.groups.includes(label.replace("\u200B", ""))) || []
     
     console.log(`Current Label Leads: ${JSON.stringify(currentLabelLeads)}`);
     
@@ -135,7 +153,8 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
 
   // Add a new label
   const handleAddNewLabel = () => {
-    const newLabel = `NewLabel${labelsList.filter((label) => label !== "other").length + 1}`;
+    const hiddenChar = "\u200B";
+    const newLabel = `${hiddenChar}NewLabel${labelsList.filter((label) => label !== "other").length + 1}`;
     setLabelsList((prevList) => [...prevList, newLabel]);
     setNewLabels((prevNew) => [...prevNew, newLabel]);
     setSelectedLabel(newLabel);
@@ -144,6 +163,13 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
 
   const handleLabelNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value.trim();
+
+    labelRef.current = newName;
+
+    if (newName.length > 20 || newName.length < 1) {
+      toast.error(t("labelNameMustBeFrom1To20CharactersLong"));
+      return;
+    }
 
 
     if (newLabels.includes(selectedLabel)) {
@@ -277,13 +303,18 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
       return;
     }
 
+    if (selectedLabel === "\u200B") {
+      toast.error(t("labelNameCantBeEmpty"));
+      return;
+    }
+
     try {
       const response = await fetch('/api/leads/label-aka-group/save-or-update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ labelName: selectedLabel, leads: labelLeads }),
+        body: JSON.stringify({ labelName: selectedLabel.replace("\u200B", ""), leads: labelLeads }),
       });
 
       if (response.ok) {
@@ -321,6 +352,7 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
           display: 'flex',
           flexDirection: 'column',
           overflowY: 'auto',
+          minWidth: "300px"
         }}
       >
         <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem' }}>{t("allLabels")}</h3>
@@ -352,9 +384,9 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
         {/* Add New Label Button (at the bottom) */}
         <button
           onClick={handleAddNewLabel}
-          className="bg-blue-500 text-white p-2 cursor-pointer rounded-full"
+          className="bg-blue-600 text-white p-2 max-w-sm cursor-pointer rounded-full"
         >
-          {t("addNewLabel")}
+          + {t("addNewLabel")}
         </button>
       </div>
 
@@ -399,11 +431,11 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
 
 
         {/* File Upload */}
-        <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white mb-4 rounded-full mx-auto block">
+        <button className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white mb-4 rounded-full mx-auto block">
           <label style={{ cursor: 'pointer' }}>
             {t("uploadCSVOrExcel")}
             <input
-              type="file"
+              type="file" 
               accept=".csv, .xlsx, .xls"
               style={{ display: 'none' }}
               onChange={handleFileUpload}
@@ -441,7 +473,7 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
               </tbody>
             </table>
           ) : (
-            <p>No leads in this label</p>
+            <p>{t("noLeadsInLabel")}</p>
           )
           }
         </div>
@@ -478,7 +510,7 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
       </div>
       ) : (
           <div className="mt-16 ml-4">
-            <p className='text-center'>{t("pleasePressAddLabelButtonOnTheLeft")}</p>
+            <p className='text-center font-bold italic'>{t("pleasePressAddLabelButton")}</p>
           </div>
 
       )

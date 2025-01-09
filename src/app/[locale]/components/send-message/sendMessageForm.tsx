@@ -244,7 +244,7 @@ const handleScheduleMessage = async () => {
           </select>
         </div>
 
-        <div className="flex-1 ml-2">
+        <div className="flex-1 mx-2">
           <label className="block mb-2 font-semibold">{t("to")}</label>
           <select
             multiple
@@ -278,14 +278,14 @@ const handleScheduleMessage = async () => {
         {groups.length > 0 && <h3 className="text-lg font-semibold">{t("sendToTheseGroups")}</h3>}
         <div className="flex flex-wrap gap-4 mt-2">
           {groups.map((group) => (
-            <label key={group} className="flex items-center space-x-2">
+            <label key={group} className="flex items-center space-x-2 gap-1">
               <input
                 type="checkbox"
                 checked={selectedGroups.includes(group)}
                 onChange={() => toggleGroupSelection(group)}
                 className="form-checkbox"
               />
-              <span>{group}</span>
+              {group}
             </label>
           ))}
         </div>
@@ -320,7 +320,7 @@ const handleScheduleMessage = async () => {
           placeholder={t("enterYourMessageHere")}
         />
         <i className="text-black">{`*${t("includeNameToPersonalizeMessages")} ${t("exampleMessage")}`}</i>
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-2 my-4">
         <button
           onClick={openTemplateModal}
           className="px-5 py-3 mx-auto bg-purple-700 hover:bg-purple-800 text-white rounded-full"
@@ -365,7 +365,7 @@ const handleScheduleMessage = async () => {
               <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs p-3">
                 U
               </div>
-              <div className="bg-green-600 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
+              <div className="bg-green-800 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
                 {message || t("typeAMessageToSeeItHere")}
               </div>
             </div>

@@ -204,17 +204,19 @@ const Sidebar = () => {
 
       {/* Phone number dropdown */}
       {phoneNumbers.length > 0 ? <div style={{ marginBottom: '1rem' }}>
-        <label htmlFor="phoneSelect" style={{ marginRight: '10px' }}>
+        <label htmlFor="phoneSelect">
           {t("selectPhoneNumber")}:
         </label>
         <select
           id="phoneSelect"
           value={selectedPhone}
           onChange={(e) => handlePhoneSelect(e)}
-          style={{ padding: '5px', fontSize: '16px', color: '#000000' }}
+          className="block w-full p-2 border border-gray-300 rounded-md text-black text-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+          
         >
           {phoneNumbers.map((phoneObj: any, index: number) => (
-            <option key={index} value={phoneObj.phoneNumber}>
+            <option key={index} value={phoneObj.phoneNumber}
+              className="text-gray-700 bg-white hover:bg-gray-100">
               {phoneObj.phoneNumber}
             </option>
           ))}
@@ -252,6 +254,7 @@ const Sidebar = () => {
     width: '100%',
     height: '200px', // Adjusted height for better grouping visibility
     color: '#000000',
+    marginTop: '8px'
   }}
 >
 
@@ -327,11 +330,10 @@ const Sidebar = () => {
                 height: '40px',
                 backgroundColor: '#fff',
                 borderRadius: '50%',
-                marginRight: '10px',
                 flexShrink: 0
               }}
             ><img src="/static/default-icon.png" alt="User Icon" /></div>
-            <span>{chat.name}</span>
+            <span className='mx-2'>{chat.name}</span>
           </li>
         ))}
       </ul>

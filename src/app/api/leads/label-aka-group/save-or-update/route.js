@@ -13,6 +13,8 @@ export async function POST(req) {
   try {
     let { labelName, leads } = await req.json();
 
+    // console.log(`Received Label Name ${labelName} of length ${labelName.length}`)
+
     if (!labelName || !leads) {
       return new Response(
         JSON.stringify({ message: "Label name and leads are required" }),

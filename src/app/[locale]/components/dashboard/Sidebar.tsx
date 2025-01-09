@@ -57,7 +57,7 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
               className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle}`}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -69,21 +69,21 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                 />
               </svg>
-              {t("home")}
+              <p className="mx-2">{t("home")}</p>
             </a>
           </li>
+
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/start-campaign` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -95,22 +95,21 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   d="M12 2C10.343 2 9 3.343 9 5c0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3zm0 4c-.552 0-1-.448-1-1s.448-1 1-1 1 .448 1 1-.448 1-1 1zm0 2c-2.21 0-4 1.79-4 4 0 1.657 1.343 3 3 3s3-1.343 3-3c0-2.21-1.79-4-4-4zm0 6c-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3z"
                 />
               </svg>
-              {t("startCampaign")}
+              <p className="mx-2">{t("startCampaign")}</p>
             </a>
           </li>
 
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/chatbot-setup-new` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -122,91 +121,66 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   d="M12 2a3 3 0 00-3 3v1H8a1 1 0 00-1 1v2a1 1 0 001 1h1v1a3 3 0 006 0v-1h1a1 1 0 001-1V7a1 1 0 00-1-1h-1V5a3 3 0 00-3-3zm-1 5h2v2h-2V7zm-3 4h8v1a1 1 0 01-1 1h-6a1 1 0 01-1-1v-1z"
                 />
               </svg>
-              {t("chatbot")}
+              <p className="mx-2">{t("chatbot")}</p>
             </a>
           </li>
 
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/template-creator` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 8h18M6 12h12M9 16h6"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8h18M6 12h12M9 16h6" />
               </svg>
-
-
-              {t("templates")}
+              <p className="mx-2">{t("templates")}</p>
             </a>
           </li>
-
 
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/labels-manager` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 7h14l4 4-4 4H3V7z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M7 10h4"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7h14l4 4-4 4H3V7z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 10h4" />
               </svg>
-
-
-
-              {t("labels")}
+              <p className="mx-2">{t("labels")}</p>
             </a>
           </li>
-
 
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/leads` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -215,7 +189,7 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 001.066-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
                 />
                 <path
                   strokeLinecap="round"
@@ -224,51 +198,44 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   d="M3 3h18v18H3V3zm2 2v14h14V5H5zm4 4h6v2H9V9zm0 4h6v2H9v-2z"
                 />
               </svg>
-              {t("leads")} | {t("crm")}
+              <p className="mx-2">
+                {t("leads")} | {t("crm")}
+              </p>
             </a>
           </li>
 
-
-          
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/accounts` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M16 11V5a1 1 0 00-1-1H9a1 1 0 00-1 1v6M5 20h14a1 1 0 001-1v-7H4v7a1 1 0 001 1z"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V5a1 1 0 00-1-1H9a1 1 0 00-1 1v6M5 20h14a1 1 0 001-1v-7H4v7a1 1 0 001 1z" />
               </svg>
-              {t("accounts")}
+              <p className="mx-2">{t("accounts")}</p>
             </a>
           </li>
-          
+
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/send-message` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -280,22 +247,21 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   d="M2.5 19.5L21 12 2.5 4.5 2.5 10.5 17 12 2.5 13.5z"
                 />
               </svg>
-              {t("sendMessage")}
+              <p className="mx-2">{t("sendMessage")}</p>
             </a>
           </li>
 
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/profile` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -307,83 +273,80 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
                   d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
                 />
               </svg>
-              {t("profile")}
+              <p className="mx-2">{t("profile")}</p>
             </a>
           </li>
 
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/webhooks-setup` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-5.37 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
               </svg>
-              {t("webhooks")}
+              <p className="mx-2">{t("webhooks")}</p>
             </a>
           </li>
-          <hr></hr>
+
+          <hr />
+
           <li>
             <a
               href={withKbBaseUrlLink ? `/${currentLocale}/whatsapp-screen` : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12c0 2.12.55 4.11 1.52 5.85L0 24l6.15-1.52A11.93 11.93 0 0012 24c6.63 0 12-5.37 12-12 0-3.18-1.23-6.09-3.48-8.52zM12 22c-1.85 0-3.58-.5-5.08-1.37L2 22l1.37-4.92C2.5 15.58 2 13.85 2 12 2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10zm-1.2-6.4c-2.2 0-4.2-1.2-5.4-3.2-.2-.3-.2-.7 0-1l1.2-1.6c.2-.3.5-.4.8-.3l1.8.7c.3.1.6 0 .8-.2l.8-1c.2-.3.1-.6-.1-.8l-1.2-1.2c-.2-.2-.3-.5-.2-.8l.4-1.8c.1-.3.3-.6.6-.7l1.6-1.2c.3-.2.7-.2 1 0 2 1.2 3.2 3.2 3.2 5.4 0 3.6-2.8 6.4-6.4 6.4z" />
               </svg>
-              {t("whatsappScreen")}
+              <p className="mx-2">{t("whatsappScreen")}</p>
             </a>
           </li>
-          <hr></hr>
+
+          <hr />
+
           <li>
             <a
               href={withKbBaseUrlLink ? "/api-docs" : "#"}
-              className={`${linkStyle} ${
-                withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
-              }`}
+              className={`${linkStyle} ${withKbBaseUrlLink && !isPaused ? activeLinkStyle : disabledLinkStyle
+                }`}
               onClick={(e) => {
                 if (!withKbBaseUrlLink) e.preventDefault();
               }}
               target="_blank"
             >
               <svg
-                className="w-5 h-5 mr-3"
+                className="w-5 h-5"
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path d="M21 4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h1V4h-1zm-2 0H7c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12V4zm-2 2v12H7V6h10zM3 4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h1V4H3z" />
               </svg>
-              {t("docs")}
+              <p className="mx-2">{t("docs")}</p>
             </a>
           </li>
         </ul>
       </nav>
+
       {isPaused ? (<p className="text-white text-center mt-5">{t("yourAccountIsPaused")}</p>) : !withKbBaseUrlLink ? (<p className="text-white text-center mt-5">{t("pleaseReloadThePage")}<br></br>{t("in1Minute")}</p>
       ) : (
         <></>

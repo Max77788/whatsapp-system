@@ -30,7 +30,8 @@
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ],
+      "@styles": ["./lib/classNames.js"]
     }
   },
   "include": [

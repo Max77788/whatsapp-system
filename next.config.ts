@@ -8,8 +8,11 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   webpack: (config) => {
     // Add the alias for "@/..."
-    config.resolve.alias['@'] = path.resolve(__dirname);
-
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@': path.resolve(__dirname),
+      '@styles': path.resolve(__dirname, "lib/classNames.js")
+    }
     return config;
   }
   /* other config options here */

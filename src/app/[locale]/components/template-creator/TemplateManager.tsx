@@ -107,7 +107,7 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
         // Optionally, refresh the templates list or handle state accordingly
         location.reload(); // Refresh the page after saving
       } else {
-        toast.error('Failed to save the template.');
+        toast.error(t("templateNotSaved"));
       }
     } catch (error) {
       console.error(error);
@@ -165,12 +165,13 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
           display: 'flex',
           flexDirection: 'column',
           overflowY: 'auto',
+          minWidth: '200px'
         }}
       >
-        <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem' }}>All Templates</h3>
+        <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem' }}>{t("allTemplates")}</h3>
         <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
           {templatesList.map((template) => (
-            <li key={template.id} style={{ marginBottom: '0.8rem' }}>
+            <li key={template.id} className='mb-3'>
               <button
                 style={{
                   display: 'flex',
@@ -186,6 +187,7 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
                   transition: 'all 0.2s ease',
                   cursor: 'pointer',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                  minWidth: '150px'
                 }}
                 onClick={() => handleTemplateClick(template)}
                 onMouseEnter={(e) => {
@@ -198,7 +200,7 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
                 }}
               >
                 <img src="/static/templateIcon.png" alt="template" style={{ width: '40px', marginRight: '0.5rem' }} />
-                {template.template_name}
+                <p className="mx-1">{template.template_name}</p>
               </button>
             </li>
           ))}
@@ -209,7 +211,7 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
           onClick={handleAddNewTemplate}
           className="bg-blue-500 text-white p-2 cursor-pointer rounded-full"
         >
-          + Add New Template
+          + {t("addNewTemplate")}
         </button>
       </div>
 
@@ -223,7 +225,7 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
               name="template_name"
               value={selectedTemplate.template_name}
               onChange={handleTemplateChange}
-              placeholder="Template Name"
+              placeholder={t("templateName")}
               style={{
                 width: '100%',
                 padding: '0.5rem',
@@ -239,7 +241,7 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
               name="message"
               value={selectedTemplate.message}
               onChange={handleTemplateChange}
-              placeholder="Template Message"
+              placeholder={t("templateMessage")}
               rows={10}
               style={{
                 width: '100%',
@@ -258,18 +260,18 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
                 onClick={handleDeleteTemplate}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full"
               >
-                Delete Template
+                {t("deleteTemplate")}
               </button>
               <button
                 onClick={handleSaveTemplate}
                 className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full"
               >
-                Save Template
+                {t("saveTemplate")}
               </button>
             </div>
           </>
         ) : (
-          <p>Select a template to view or edit its details.</p>
+            <p className="font-bold italic">{t("selectCreateATemplateToViewOrEditItsDetails")}</p>
         )}
       </div>
     </div>

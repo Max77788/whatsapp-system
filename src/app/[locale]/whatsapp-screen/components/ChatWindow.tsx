@@ -211,7 +211,8 @@ export default function ChatWindow({ chat }: { chat: any }) {
           hover:bg-gray-100 
           w-10 
           h-10
-          mr-2
+          mx-2
+
         "
         title="Upload File"
       >

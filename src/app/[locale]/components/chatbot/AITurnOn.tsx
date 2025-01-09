@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { buttonBigStyle, buttonSmallStyle } from "@styles"
 
 export default function AITurnOn({
   initialInstructions,

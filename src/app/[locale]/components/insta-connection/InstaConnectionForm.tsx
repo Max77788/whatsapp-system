@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useLocale, useTranslations } from "next-intl";
 
+import { buttonSmallStyle } from "@styles";
+
 export default function UserCredentialsForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -152,7 +154,7 @@ export default function UserCredentialsForm() {
         {!connectedUsername && (
           <button
             onClick={handleSave}
-            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full min-w-[150px]"
+            className={buttonSmallStyle()}
         >
             {t("save_credentials")}
         </button>

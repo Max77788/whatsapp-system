@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 
+import { buttonSmallStyle } from "@/lib/classNames";
+
 interface PhoneNumber {
   phoneNumber: string;
   active: boolean;
@@ -205,7 +207,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
                   <td className="border border-gray-300 p-2">
                     <div className="flex flex-wrap gap-2">
                       {tactics.map((tactic) => (
-                        <label key={tactic} className="flex items-center">
+                        <label key={tactic} className="flex items-center gap-1">
                           <input
                             type="checkbox"
                             className="mr-2"
@@ -221,7 +223,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
                     {phoneNumber.active && (
                       <button
                         onClick={() => handleDelete(phoneNumber.phoneNumber)}
-                        className="px-5 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full mx-auto"
+                        className={buttonSmallStyle("red")}
                       >
                         {t("disconnect")}
                       </button>
@@ -233,7 +235,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
           </table>
           <button
             onClick={() => saveData()}
-            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto block"
+              className={buttonSmallStyle()}
           >
             {t("save_tactics")}
           </button>
