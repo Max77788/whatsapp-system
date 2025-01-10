@@ -83,8 +83,8 @@ export const authOptions: NextAuthOptions = {
         }
       }),
       GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        clientId: process.env.AVIV_GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.AVIV_GOOGLE_CLIENT_SECRET!,
       }),
       EmailProvider({
         server: {
