@@ -381,6 +381,8 @@
         "addOption": "הוסף אפשרות",
         "removeOption": "הסר אפשרות",
         "removeRow": "הסר שורה",
+        "removeRule": "הסר כלל",
+        "addRule": "הוסף כלל",
         "set": "מַעֲרֶכֶת",
         "rule": "כְּלָל",
         "type": "אם הודעה",

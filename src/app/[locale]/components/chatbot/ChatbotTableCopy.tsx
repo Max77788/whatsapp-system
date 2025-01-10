@@ -425,7 +425,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                     onClick={() => removeRow(setIndex, rowIndex)}
                                     className={buttonSmallStyle("red")}
                                 >
-                                    {t("removeRow")}
+                                    {t("removeRule")}
                                 </button>
                             </div>
                         ))}
@@ -434,7 +434,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                             onClick={() => addRow(setIndex)}
                             className={buttonSmallStyle()}
                         >
-                            {t("addRow")}
+                            {t("addRule")}
                         </button>
                     </div>
                 </div>
