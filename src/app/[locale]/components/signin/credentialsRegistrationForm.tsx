@@ -47,7 +47,10 @@ export default function CredentialsRegistrationForm() {
         return;
       } else {
         console.log(`User registered successfully`);
-        toast.success("Please check your email for verification.");
+        toast.success(t("pleaseCheckYourEmailForVerificationCode"),
+          {
+            autoClose: 8000
+          });
         return {success: true};
       }
 };

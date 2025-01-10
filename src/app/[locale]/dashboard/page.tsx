@@ -50,6 +50,8 @@ export default async function DashboardPage() {
   if (process.env.NODE_ENV !== "development") {
   
   if (!user?.kbAppBaseUrl) {
+     console.log("Entered retrieve k8s deployment.")
+
     const kbAppBaseUrl = await retrieveK8sDeploymentUrl(user.unique_id);
     console.log(`kbAppBaseUrl: ${kbAppBaseUrl} from ${user.unique_id}`);
     

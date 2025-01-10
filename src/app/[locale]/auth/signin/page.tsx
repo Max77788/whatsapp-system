@@ -39,7 +39,10 @@ const SearchParamsHandler = () => {
         console.log("loggedOut cookie deleted");
         break;
       case "email-verified":
-        toast.success(t('emailVerified'));
+        toast.success(t('emailVerified'),
+      {
+        autoClose: 5000
+      });
         break;
       case "invalid-token":
         toast.error(t('invalidToken'));
