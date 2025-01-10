@@ -33,11 +33,6 @@ export default function CredentialsForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    toast.info(t("signingIn"), {
-      autoClose: 6500,
-      toastId
-    });
-
     const data = new FormData(e.target as HTMLFormElement);
 
     const signInResponse = await signIn('credentials', {
@@ -49,9 +44,14 @@ export default function CredentialsForm() {
     if (signInResponse && !signInResponse.error) {
       router.push(`/${currentLocale}/dashboard`);
     } else {
-        console.log("Error:", signInResponse?.error);
+      console.log("Error:", signInResponse?.error);
       setError(`${signInResponse?.error}`);
     }
+
+    toast.info(t("signingIn"), {
+      autoClose: 6500,
+      toastId
+    });
   }
   return (
     <form 
