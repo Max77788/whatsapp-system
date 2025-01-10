@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
+import { buttonSmallStyle } from "@/lib/classNames";
 
 type GreetingMessageProps = {
     onMessageChange: (message: string) => void;
@@ -123,20 +124,27 @@ const GreetingMessage: React.FC<GreetingMessageProps> = ({
                 <label className="flex items-center">
                     <input
                         type="checkbox"
-                        className="mr-2"
                         checked={isGreetingEnabled}
+                        className="cursor-pointer"
                         onChange={() => handleGreetingMessageEnabledChange(!isGreetingEnabled)}
                     />
-                    {t("enableGreetingMessage")}
+                    <p className="mx-1">{t("enableGreetingMessage")}</p>
                 </label>
             </div>
 
-            {isGreetingEnabled && (
-                <div>
+        
+            <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isGreetingEnabled ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                style={{
+                    transitionProperty: "max-height, opacity", // Ensure both properties transition
+                }}
+            >
                     <div className="mb-4">
-                        <label className="flex items-center gap-1 whitespace-nowrap mr-2">
+                        <label className="flex items-center gap-1 whitespace-nowrap">
                             <input type="checkbox" 
                             checked={useWithInstagram || false} 
+                            className="cursor-pointer"
                             onChange={() => setUseWithInstagram(!useWithInstagram)} /> 
                             {t("useWithInstagram")}
                         </label>
@@ -179,7 +187,7 @@ const GreetingMessage: React.FC<GreetingMessageProps> = ({
                                 />
                                 <button
                                     onClick={() => removeBodyOption(index)}
-                                    className="px-3 py-2 bg-red-600 text-white rounded-full"
+                                    className={buttonSmallStyle("red", "mx-3")}
                                 >
                                     {t("remove")}
                                 </button>
@@ -257,7 +265,6 @@ const GreetingMessage: React.FC<GreetingMessageProps> = ({
                     </div>
                     */}
                 </div>
-            )}
         </div>
     );
 };

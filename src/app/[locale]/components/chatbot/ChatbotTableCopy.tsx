@@ -27,6 +27,7 @@ type TablePopupProps = {
     initialTactics?: InstructionSet[];
     onSelectSet?: (selectedSet: InstructionSet) => void; // <-- add this callback
     onAddRow?: (newRow: any) => void;
+    onRemoveRow?: (rowIndex: number) => void
 };
 
 
@@ -34,7 +35,8 @@ type TablePopupProps = {
 const ChatbotTableCopy: React.FC<TablePopupProps> = ({
     initialTactics = [],
     onSelectSet,
-    onAddRow
+    onAddRow,
+    onRemoveRow
 }) => {
     const { data: session } = useSession();
     const [instructionSets, setInstructionSets] = useState<InstructionSet[]>([]);
@@ -193,6 +195,8 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
         });
         setInstructionSets(updatedSets);
         onSelectSet?.(updatedSets[setIndex]);
+
+
         onAddRow?.(newRow);
     };
 
@@ -212,7 +216,11 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
         updatedSets[setIndex].rows = updatedSets[setIndex].rows.filter((_, i) => i !== rowIndex);
         
         setInstructionSets(updatedSets);
+
+        onRemoveRow?.(rowIndex)
     };
+
+    
 
     const saveData = async () => {
         const userEmail = session?.user?.email;
@@ -252,7 +260,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                 <button onClick={addSet} className={buttonSmallStyle("green")}>
                     {t("addNewSet")}
                 </button>
-                <button onClick={saveData} className={buttonSmallStyle("green", "mx-5")}>
+                <button onClick={saveData} className={buttonSmallStyle("green", "mx-7")}>
                     {t("save")}
                 </button>
                 <p className="mb-4 mt-4 font-bold italic">*{t("scrollDownToSeeNewlyAddedSet")}</p>
@@ -404,7 +412,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                                     }
                                                     className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                                                 />
-                                                <span className="ml-2 capitalize">
+                                                <span className="mx-2 capitalize">
                                                     {platform}
                                                 </span>
                                             </label>
@@ -432,14 +440,14 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                 </div>
             ))}
 
-            {!isLoadingInstructionSets && <div className="">
-                <button onClick={addSet} className={buttonSmallStyle()} >
+            {!isLoadingInstructionSets && <div className="mt-1">
+                <button onClick={addSet} className={buttonSmallStyle("green")}>
                     {t("addNewSet")}
                 </button>
-                <button onClick={saveData} className={buttonSmallStyle("green", "mx-5")}>
+                <button onClick={saveData} className={buttonSmallStyle("green", "mx-7")}>
                     {t("save")}
-                    </button>
-                    </div>
+                </button>
+            </div>
             }
         </div>
     );

@@ -68,7 +68,7 @@ export default function AITurnOn({
 
   return (
     <div className="p-4">
-      <div className="flex items-center space-x-2 mb-4">
+      <div className="flex items-center space-x-2 mb-4 gap-1">
         <input
           type="checkbox"
           checked={isOn}

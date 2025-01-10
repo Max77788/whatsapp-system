@@ -30,7 +30,7 @@
         "signUp": "הירשם",
         "forgotPassword": "שכחת סיסמה?",
         "dontHaveAnAccount": "אין לך חשבון? ",
-        "alreadyHaveAnAccount": "יש לך כבר חשבון? ",
+        "alreadyHaveAnAccount": "כבר יש לך חשבון? ",
         "signInWithGoogle": "היכנס באמצעות גוגל",
         "fullName": "שם מלא",
         "fullNamePlaceholder": "שם מלא",
@@ -281,7 +281,7 @@
         "from": "מִן",
         "selectAPhoneNumber": "בחר מספר טלפון",
         "message": "הוֹדָעָה",
-        "enterYourMessageHere": "הכנס את הודעתך כאן",
+        "enterYourMessageHere": "הזן את הודעתך כאן",
         "includeNameToPersonalizeMessages": "כלול '{{name}}כדי להתאים אישית הודעות",
         "exampleMessage": "שלום'{{name}}', מה שלומך?",
         "loadTemplate": "טען תבנית",
@@ -411,7 +411,16 @@
         "useWithInstagram": "השתמש עם אינסטגרם",
         "enterSearchTerm": "הזן מונח חיפוש",
         "enterMessageToSend": "הזן הודעה לשליחה",
-        "areYouSureYouWantToDeleteThisRule": "האם אתה בטוח שברצונך למחוק את הכלל הזה?"
+        "areYouSureYouWantToDeleteThisRule": "האם אתה בטוח שברצונך למחוק את הכלל הזה?",
+        "ifMessage": "אם הודעה",
+        "delayWaitFor": "עיכוב/חכה ל",
+        "seconds": "שניות",
+        "respondWith": "תגיב עם",
+        "or": "אוֹ",
+        "unnamed": "ללא שם",
+        "selectedTactic": "טקטיקה נבחרה",
+        "yes": "כֵּן",
+        "no": "לֹא"
     },
     "tacticDetails": {
         "tacticDetails": "פרטי טקטיקה",
@@ -422,7 +431,11 @@
         "seconds": "שניות",
         "respondWith": "תגיב עם",
         "or": "אוֹ",
-        "unnamed": "ללא שם"
+        "unnamed": "ללא שם",
+        "selectedTactic": "טקטיקה נבחרה",
+        "useWithInstagram": "השתמש עם אינסטגרם",
+        "yes": "כֵּן",
+        "no": "לֹא"
     },
     "sendMessage": {
         "startCampaign": "התחל מסע פרסום",
@@ -467,7 +480,7 @@
         "from": "מִן",
         "selectAPhoneNumber": "בחר מספר טלפון",
         "message": "הוֹדָעָה",
-        "enterYourMessageHere": "הכנס את הודעתך כאן",
+        "enterYourMessageHere": "הזן את הודעתך כאן",
         "includeNameToPersonalizeMessages": "כלול '{{name}}כדי להתאים אישית הודעות",
         "exampleMessage": "שלום'{{name}}', מה שלומך?",
         "loadTemplate": "טען תבנית",

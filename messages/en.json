@@ -408,7 +408,16 @@
         "useWithInstagram": "Use with Instagram",
         "enterSearchTerm": "Enter search term",
         "enterMessageToSend": "Enter message to send",
-        "areYouSureYouWantToDeleteThisRule": "Are you sure you want to delete this rule?"
+        "areYouSureYouWantToDeleteThisRule": "Are you sure you want to delete this rule?",
+        "ifMessage": "If message",
+        "delayWaitFor": "Delay/Wait for",
+        "seconds": "seconds",
+        "respondWith": "Respond with",
+        "or": "or",
+        "unnamed": "Unnamed",
+        "selectedTactic": "Selected Tactic",
+        "yes": "Yes",
+        "no": "No"
     },
 
     "tacticDetails": {
@@ -420,7 +429,11 @@
         "seconds": "seconds",
         "respondWith": "Respond with",
         "or": "or",
-        "unnamed": "Unnamed" 
+        "unnamed": "Unnamed",
+        "selectedTactic": "Selected Tactic",
+        "useWithInstagram":"Use with Instagram",
+        "yes": "Yes",
+        "no": "No" 
     },
 
     "sendMessage": {

@@ -6,6 +6,7 @@ import ReactFlow, {
   BackgroundVariant,
   Controls,
   PanOnScrollMode,
+  ReactFlowInstance
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useTranslations } from "next-intl";
@@ -29,15 +30,17 @@ type InstructionSet = {
 
 interface TacticDetailProps {
   selectedSet: InstructionSet | null;
+  nodes: any,
+  edges: any
 }
 
-export default function TacticDetail({ selectedSet }: TacticDetailProps) {
+export default function TacticDetail({ selectedSet, nodes, edges }: TacticDetailProps) {
   if (!selectedSet) return null;
 
   const t = useTranslations("tacticDetails"); // Replace "yourNamespace" with your actual namespace
 
-  const [nodes, setNodes] = useState<any[]>([]);
-  const [edges, setEdges] = useState<any[]>([]);
+  // const [nodes, setNodes] = useState<any[]>([]);
+  // const [edges, setEdges] = useState<any[]>([]);
 
   useMemo(() => {
     const generatedNodes = selectedSet.rows.map((row, index) => {
@@ -62,12 +65,12 @@ export default function TacticDetail({ selectedSet }: TacticDetailProps) {
           ),
         },
         style: {
-          border: "1px solid #ccc",
-          padding: 15,
-          borderRadius: 15,
-          background: "#fff",
-          width: 350, // Set the desired width (in pixels)
-          minWidth: 250, // Optional: Ensures a minimum width
+          border: "2px solid #000", // Thicker border for emphasis
+          padding: 25,
+          borderRadius: 20,
+          background: "#f9f9f9", // Slightly lighter background for better contrast
+          width: 400, // Increase width
+          height: 120, // Increase height
         },
       };
     });
@@ -88,17 +91,29 @@ export default function TacticDetail({ selectedSet }: TacticDetailProps) {
     }).filter(Boolean); // Remove nulls
 
     // Update state with new nodes and edges
-    setNodes(generatedNodes);
-    setEdges(generatedEdges);
+    // setNodes(generatedNodes);
+    // setEdges(generatedEdges);
   }, [selectedSet, t]);
+
+  const handleInit = (instance: ReactFlowInstance) => {
+    instance.setViewport({ x: 0, y: 0, zoom: 1 }); // Reset zoom to default
+    instance.fitView({ padding: 0.2 }); // Fit the view dynamically
+  };
+
+  const fitViewOptions = useMemo(() => {
+    return {
+      padding: 0.2, // Adjust this based on node sizes
+    };
+  }, [nodes, edges]);
+
 
   return (
     <div className="p-4 border-l border-gray-300 w-full h-[600px]">
       <h2 className="text-xl font-bold mb-2">
-        Selected Tactic: {selectedSet.name}
+        {t("selectedTactic")}: {selectedSet.name}
       </h2>
       <p className="mb-4">
-        Use with Instagram: {selectedSet.useWithInstagram ? "Yes" : "No"}
+        {t("useWithInstagram")}: {selectedSet.useWithInstagram ? t("yes") : t("no")}
       </p>
 
       <div className="w-full h-full">
@@ -106,8 +121,12 @@ export default function TacticDetail({ selectedSet }: TacticDetailProps) {
           <ReactFlow
             nodes={nodes}
             edges={edges}
+            onInit={handleInit}
+            defaultViewport={{ x: 0, y: 0, zoom: 1 }} // Center at (0, 0) and use a zoom level of 1
+            minZoom={0.5} // Prevents over-shrinking
+            maxZoom={2}   // Optional: Limits zooming in too far
             fitView
-            fitViewOptions={{ padding: 0.2 }}
+            fitViewOptions={fitViewOptions}
             nodesDraggable={false} // Disable node dragging
             nodesConnectable={false} // Disable node connections
             elementsSelectable={true} // Allow nodes to be selectable
