@@ -21,9 +21,9 @@ export async function GET(req, { params }) {
             }   
           }
         );
-        // await createK8sDeployment(userFound.unique_id);
-        return redirect("/auth/signin?notification=email-verified")
+        await createK8sDeployment(userFound.unique_id);
+      return redirect("/en/auth/signin?notification=email-verified")
       } else {
-        return redirect("/auth/signin?notification=invalid-token")
+      return redirect("/en/auth/signin?notification=invalid-token")
       }
 }
