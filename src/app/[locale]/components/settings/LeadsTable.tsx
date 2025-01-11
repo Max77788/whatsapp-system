@@ -256,7 +256,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         <>
           <button
             onClick={exportToCSV}
-            className={buttonSmallStyle("yellow")}
+            className={buttonSmallStyle("yellow", "mb-4")}
           >
             {t("export_as_csv")}
           </button>

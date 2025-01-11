@@ -120,7 +120,7 @@ export async function POST(req) {
     
     
     for (const toNumber of toNumbersValue) {
-      const lead = leads.find((lead) => lead.phone_number === toNumber);
+      const lead = leads?.find((lead) => lead.phone_number === toNumber);
       
       let personalizedMessage = message;
       
@@ -205,7 +205,7 @@ export async function POST(req) {
       let isUpdated = false;
 
       toNumbers.forEach((toNumber) => {
-        const lead = userLeads.find((lead) => lead.phone_number === toNumber);
+        const lead = userLeads?.find((lead) => lead.phone_number === toNumber);
         if (lead) {
           lead.sent_messages = (lead.sent_messages || 0) + 1;
           isUpdated = true;
@@ -218,12 +218,14 @@ export async function POST(req) {
       //   await deleteFile(payload.mediaURL);
       // }
 
+      /*
       if (!isUpdated) {
         return NextResponse.json(
           { error: 'No matching phoneNumber found in userLeads' },
           { status: 404 }
         );
       }
+      */  
 
       const updatedSentMessages = sentMessages;
 
