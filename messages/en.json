@@ -541,7 +541,13 @@
         "scheduledMessages": "Scheduled Messages",
         "noMessagesAreScheduled": "No messages are scheduled",
         "failedToSendMessage": "Failed to send message",
-        "loadingScheduledMessages": "Loading scheduled messages..."
+        "loadingScheduledMessages": "Loading scheduled messages...",
+        "no":"No",
+        "delete":"Delete",
+        "mediaIncluded": "Media Included",
+        "scheduleTime": "Schedule Time",
+        "toNumbers": "To Numbers",
+        "messageUnscheduledSuccessfully": "Message unscheduled successfully"
     },
     "webhooksSetup": {
     "webhooks": "Webhooks",
