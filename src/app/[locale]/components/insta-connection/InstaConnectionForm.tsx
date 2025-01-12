@@ -95,8 +95,8 @@ export default function UserCredentialsForm() {
   if (isLoading) {
     return <div className="max-w-md mx-auto p-6 bg-white shadow-xl rounded text-center">
       <div className="animate-pulse flex flex-col items-center">
-        <div className="h-16 bg-gray-200 rounded w-3/4 mb-4"></div>
-        <div className="h-16 w-12 bg-gray-200 rounded"></div>
+        <div className="h-16 bg-gray-200 rounded w-32 mb-4"></div>
+        <div className="h-20 w-36 bg-gray-200 rounded"></div>
       </div>
     </div>
   }

@@ -97,8 +97,8 @@ export async function POST(req) {
     
     
     const groups = JSON.parse(formData.get('groups') || '[]');
-
-    let toNumbersValue = toNumbers.map((toNumber) => { return checkIsraeliPhoneNumber(toNumber) });
+    
+    let toNumbersValue;
     
     if (groups.length > 0) {
       const leads = user.leads;
@@ -117,6 +117,12 @@ export async function POST(req) {
   } else {
       toNumbersValue = toNumbers;
   }
+
+    toNumbersValue = toNumbersValue.map((toNumber) => {
+      const newNumber = checkIsraeliPhoneNumber(toNumber);
+      console.log(`newNumber after israeli phone`, newNumber)
+      return newNumber
+    });
     
     
     for (const toNumber of toNumbersValue) {

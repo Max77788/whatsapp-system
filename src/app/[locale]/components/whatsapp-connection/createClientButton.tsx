@@ -134,7 +134,7 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
                   }`}
                 />
               ) : (
-                <p>{t("generating_qr_code")}</p>
+                  <p className="text-black text-2xl my-32 font-bold italic">{t("generating_qr_code")}</p>
               )}
             </div>
 

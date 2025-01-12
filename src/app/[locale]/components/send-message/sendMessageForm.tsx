@@ -343,35 +343,43 @@ const handleScheduleMessage = async () => {
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative w-72 mx-auto">
+        {/* Phone Frame Image */}
         <img
-          src="/static/phone-frame.png" // Replace with the actual path to your phone frame image
+          src="/static/phone-frame.png"
           alt="Phone Frame"
-          className="w-72 mx-auto object-contain flex-shrink-0"
+          className="w-full h-auto object-contain"
         />
+
         {/* Phone Content */}
-        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-56 h-[48vh] bg-white rounded-2xl shadow-lg p-4">
-          {isMediaPreviewVisible && mediaAttachment ? (
-            <div className="flex flex-col items-center justify-center">
-              <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm">
-                {t("mediaPreview")}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {/* 
+          For example, make the phone 'screen' occupy 
+          80% width and 70% height of the phone frame 
+        */}
+          <div className="relative w-[75%] h-[80%] bg-white rounded-2xl shadow-lg p-4 overflow-auto">
+            {isMediaPreviewVisible && mediaAttachment ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm">
+                  {t("mediaPreview")}
+                </div>
+                <div className="mt-4 bg-green-600 text-white rounded-lg p-2 w-full break-words">
+                  {message || t("typeACaptionForYourMedia")}
+                </div>
               </div>
-              <div className="mt-4 bg-green-600 text-white rounded-lg p-2 w-full break-words">
-                {message || t("typeACaptionForYourMedia")}
+            ) : (
+              <div className="flex items-start gap-2">
+                <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs p-3">
+                  U
+                </div>
+                <div className="bg-green-800 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
+                  {message || t("typeAMessageToSeeItHere")}
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-start gap-2">
-              <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs p-3">
-                U
-              </div>
-              <div className="bg-green-800 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
-                {message || t("typeAMessageToSeeItHere")}
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-        </div>
+      </div>
 
         {isScheduleModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

@@ -281,22 +281,32 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 
 export const checkIsraeliPhoneNumber = (phoneNumber: string): String => {
     let countryCodeFound = false;
+    let phone_number = phoneNumber.trim();
 
-    let phone_number = phoneNumber;
-
+    // Check if number already starts with +972 or 972
     for (const countryCode of countryCodes) {
-        if (phone_number.startsWith(countryCode) || phone_number.startsWith(countryCode.replace('+', ''))) {
+        // Check with or without the plus sign
+        if (
+            phone_number.startsWith(countryCode) ||
+            phone_number.startsWith(countryCode.replace('+', ''))
+        ) {
             countryCodeFound = true;
             break;
         }
     }
 
     if (!countryCodeFound) {
-        phone_number = phoneNumber.replace(/^0/, "972").replace(/^(?!\+)/, "972");
+        // 1) Strip a leading '0' if present
+        phone_number = phone_number.replace(/^0/, "");
+
+        // 2) If it doesn't start with '+', prepend '972'
+        if (!phone_number.startsWith("+")) {
+            phone_number = "972" + phone_number;
+        }
     }
 
-    return phone_number
-}
+    return phone_number;
+};
 
 export function formatPhoneNumberToChatId(input: string): string {
     if (input.includes('@')) {

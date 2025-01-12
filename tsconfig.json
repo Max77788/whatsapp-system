@@ -42,7 +42,7 @@
     "src/app/api/verify-email/[token_email]/route.js",
     "lib/whatsAppService/whatsAppClient/whatsAppClient.js",
     "test_gsheets.js"
-  ],
+, "phone_test.js"  ],
   "exclude": [
     "node_modules"
   ]
