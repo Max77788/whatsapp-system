@@ -98,7 +98,9 @@ export async function POST(req) {
     
     const groups = JSON.parse(formData.get('groups') || '[]');
     
-    let toNumbersValue;
+    let toNumbersValue = [];
+
+    // console.log("Groups received: ", JSON.stringify(groups))
     
     if (groups.length > 0) {
       const leads = user.leads;
@@ -106,10 +108,10 @@ export async function POST(req) {
       for (const group of groups) {
           console.log(`group: ${group}`);
           for (const lead of leads) {
-              if (lead.group === group) {
+              if (lead?.groups?.includes(group)) {
                   console.log(`lead: ${JSON.stringify(lead)}`);
                   toNumbersValue.push(lead.phone_number);
-              } else if (group === 'other' && (lead.group === null || lead.group === undefined || lead.group === '' || lead.group === 'other')) {
+              } else if (group === 'other' && (lead?.groups === null || lead?.groups === undefined || lead?.groups === '' || lead?.groups === 'other')) {
                   toNumbersValue.push(lead.phone_number);
               }
           }
@@ -210,7 +212,7 @@ export async function POST(req) {
       const userLeads = user?.leads;
       let isUpdated = false;
 
-      toNumbers.forEach((toNumber) => {
+      toNumbersValue.forEach((toNumber) => {
         const lead = userLeads?.find((lead) => lead.phone_number === toNumber);
         if (lead) {
           lead.sent_messages = (lead.sent_messages || 0) + 1;

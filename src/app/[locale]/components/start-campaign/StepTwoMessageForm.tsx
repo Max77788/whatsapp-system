@@ -395,11 +395,16 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
         <div className="absolute inset-0 flex mt-16 justify-center">
           <div className="relative w-[75%] h-[40%] bg-white p-4 rounded-2xl overflow-auto">
             {isMediaPreviewVisible && mediaAttachment ? (
-              <div className="flex flex-col items-center justify-center h-full">
-                <div className="w-40 h-24 flex items-center justify-center bg-blue-100 border border-blue-300 text-blue-800 text-sm rounded-lg">
-                  {t("mediaPreview")}
+              <div className="flex flex-col h-full">
+                <div className="flex items-start gap-2">
+                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs p-3">
+                    U
+                  </div>
+                  <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm">
+                    {t("mediaPreview")}
+                  </div>
                 </div>
-                <div className="mt-4 w-full bg-green-600 text-white rounded-lg p-2 break-words">
+                <div className="mt-4 bg-green-700 text-white rounded-lg p-2 w-full break-words">
                   {message || t("typeACaptionForYourMedia")}
                 </div>
               </div>

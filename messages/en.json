@@ -226,6 +226,8 @@
         "hours": "Hours",
         "days": "Days",
         "weeks": "Weeks",
+        "typeACaptionForYourMedia": "Type a caption for your media",
+        "timeLimit": "Time Limit",
         "waGroups": "WhatsApp Groups",
         "startCampaign": "Start Campaign",
         "leadsSelected": "Leads Selected",
