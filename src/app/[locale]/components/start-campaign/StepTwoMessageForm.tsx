@@ -381,37 +381,43 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
   };
 
   return (
-    <div className="flex gap-8 mt-8 p-4 rounded-lg">
+    <div className="flex gap-8 mt-8S p-4 rounded-lg">
       {/* Phone Frame on the Left */}
-      <div className="relative flex flex-col justify-center items-center w-72" style={{ height: '48vh' }}>
+      <div className="relative w-72 mx-auto">
+        {/* Phone Frame Image */}
         <img
-          src="/static/phone-frame.png" // Replace with the actual path to your phone frame image
+          src="/static/phone-frame.png"
           alt="Phone Frame"
-          className="w-full object-contain flex-shrink-0"
+          className="block w-full h-auto object-contain"
         />
+
         {/* Phone Content */}
-        <div className="absolute w-56 h-[48vh] bg-white rounded-2xl shadow-lg p-4">
-          {isMediaPreviewVisible && mediaAttachment ? (
-            <div className="flex flex-col items-center justify-center">
-              <div className="w-40 h-24 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center text-blue-800 text-sm">
-                {t("mediaPreview")}
+        <div className="absolute inset-0 flex mt-16 justify-center">
+          <div className="relative w-[75%] h-[40%] bg-white p-4 rounded-2xl overflow-auto">
+            {isMediaPreviewVisible && mediaAttachment ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="w-40 h-24 flex items-center justify-center bg-blue-100 border border-blue-300 text-blue-800 text-sm rounded-lg">
+                  {t("mediaPreview")}
+                </div>
+                <div className="mt-4 w-full bg-green-600 text-white rounded-lg p-2 break-words">
+                  {message || t("typeACaptionForYourMedia")}
+                </div>
               </div>
-              <div className="mt-4 bg-green-700 text-white rounded-lg p-2 w-full break-words">
-                {message || "Type a caption for your media..."}
+            ) : (
+              <div className="flex items-start gap-2">
+                <div className="w-8 h-8 p-3 bg-gray-400 text-white text-xs rounded-full flex items-center justify-center">
+                  U
+                </div>
+                <div className="bg-green-800 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
+                  {message || t("typeAMessageToSeeItHere")}
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-start gap-2">
-              <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs p-3">
-                U
-              </div>
-              <div className="bg-green-700 text-white rounded-lg p-2 w-full max-w-[10rem] break-words">
-                {message || t("typeAMessageToSeeItHere")}
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
+
+
 
       {/* Input Fields on the Right */}
       <div className="flex-1">
