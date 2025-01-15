@@ -299,29 +299,35 @@ const Sidebar = () => {
   )}
 
 
-  {phoneNumbers.length >= 1 && <div className="flex flex-row gap-2">
-  <p>{t("exportPhoneNumbers")}:</p>
-  
-  <button
-    onClick={handleExport}
-    disabled={selectedPhones.length === 0}
-    className={`mt-2 px-4 py-2 rounded border-none ${
-      selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black rounded-full' : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
-    }`}
-  >
-    {t("exportToCrm")}
-  </button>
-  <button
-    onClick={handleExportCSV}
-    disabled={selectedPhones.length === 0}
-    className={`mt-2 px-4 py-2 rounded border-none ${
-      selectedPhones.length === 0 ? 'bg-gray-300 cursor-not-allowed text-black rounded-full' : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
-    }`}
-  >
-    {t("exportToCsv")}
-  </button>
-  </div>
-  }
+        {phoneNumbers.length >= 1 && (
+          <div className="flex flex-col gap-2">
+            <p className="mb-2">{t("exportPhoneNumbers")}:</p>
+
+            <div className="flex flex-row gap-2">
+              <button
+                onClick={handleExport}
+                disabled={selectedPhones.length === 0}
+                className={`mt-2 px-4 py-2 rounded border-none ${selectedPhones.length === 0
+                    ? 'bg-gray-300 cursor-not-allowed text-black rounded-full'
+                    : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
+                  }`}
+              >
+                {t("exportToCrm")}
+              </button>
+              <button
+                onClick={handleExportCSV}
+                disabled={selectedPhones.length === 0}
+                className={`mt-2 px-4 py-2 rounded border-none ${selectedPhones.length === 0
+                    ? 'bg-gray-300 cursor-not-allowed text-black rounded-full'
+                    : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
+                  }`}
+              >
+                {t("exportToCsv")}
+              </button>
+            </div>
+          </div>
+        )}
+
 </div>
 
 
