@@ -222,16 +222,15 @@ const Sidebar = () => {
           ))}
         </select>
       </div> : !loading && (
-        <div>
+        <div className="text-xl mb-4">
           {t("noPhoneNumbersFound")}<br></br>
           {t("pleaseConnectYourPhoneNumber")}<br></br>
-          {t("inThe")} <a href="/accounts">{t("accounts")}</a> {t("page")}.<br></br><br></br>
+          {t("inThe")} <a href={`/${currentLocale}/accounts`}>{t("accounts")}</a> {t("page")}.<br></br><br></br>
         </div>
       )}
 
       {/* Selected phone numbers */}
       <div style={{ marginBottom: '1rem' }}>
-  <p>{t("exportPhoneNumbers")}:</p>
   {isContactsLoaded ? (
   <select
   id="selectedPhoneNumbers"
@@ -282,12 +281,27 @@ const Sidebar = () => {
     </optgroup>
   ))}
 </select>
+  ) : loading ? (
+            <div>
+              <img
+                src="/spinner.gif"
+                alt="Loading..."
+                width="50"
+                height="50"
+                style={{
+                  marginTop: 8,
+                  marginBottom: 8
+                }}
+              />
+            </div>
   ) : (
-    <div>{t("loading")}...</div>
+    null
   )}
 
 
-  <div className="flex flex-row gap-2">
+  {phoneNumbers.length >= 1 && <div className="flex flex-row gap-2">
+  <p>{t("exportPhoneNumbers")}:</p>
+  
   <button
     onClick={handleExport}
     disabled={selectedPhones.length === 0}
@@ -307,6 +321,7 @@ const Sidebar = () => {
     {t("exportToCsv")}
   </button>
   </div>
+  }
 </div>
 
 
