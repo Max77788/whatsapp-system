@@ -68,7 +68,7 @@
     "resend": "^4.0.1-alpha.0",
     "swagger-ui-react": "^5.18.2",
     "uuid": "^11.0.2",
-    "whatsapp-web.js": "^1.26.0",
+    "whatsapp-web.js": "github:Max77788/whatsapp-web.js#fix/localauth-logout",
     "wwebjs-mongo": "^1.1.0",
     "xlsx": "^0.18.5",
     "zustand": "^5.0.1"
