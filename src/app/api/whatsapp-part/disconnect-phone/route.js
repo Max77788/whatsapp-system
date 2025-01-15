@@ -27,6 +27,8 @@ export async function POST(req) {
             body: JSON.stringify({ clientId })
         });
 
+        await update_user({ email: user_email }, { [keyThing]: { qrString: null, phoneNumber: null } });
+
         if (response.status === 200) {
             console.log("Successfully disconnected client");
             
