@@ -173,31 +173,17 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
           {templatesList.map((template) => (
             <li key={template.id} className='mb-3'>
               <button
-                style={{
-                  display: 'flex',
-                  width: '100%',
-                  textAlign: 'left',
-                  backgroundColor: selectedTemplate?.id === template.id ? '#e0f7fa' : '#f9f9f9',
-                  color: '#333',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '0.8rem 1rem',
-                  fontSize: '1rem',
-                  fontWeight: '500',
-                  transition: 'all 0.2s ease',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                  minWidth: '150px'
-                }}
+                className={`flex w-full text-left rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-in-out cursor-pointer min-w-[150px] 
+    ${selectedTemplate?.id === template.id
+                    ? 'bg-cyan-50'
+                    : 'bg-gray-50 hover:bg-gray-200'
+                  } 
+    ${selectedTemplate?.id === template.id
+                    ? 'shadow-lg'
+                    : 'shadow-md hover:shadow-lg'
+                  } 
+    border border-gray-300 text-gray-800`}
                 onClick={() => handleTemplateClick(template)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#eaeaea';
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = selectedTemplate?.id === template.id ? '#e0f7fa' : '#f9f9f9';
-                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-                }}
               >
                 <img src="/static/templateIcon.png" alt="template" style={{ width: '40px', marginRight: '0.5rem' }} />
                 <p className="mx-1">{template.template_name}</p>

@@ -301,7 +301,7 @@ const Sidebar = () => {
 
         {phoneNumbers.length >= 1 && (
           <div className="flex flex-col gap-2">
-            <p className="mb-2">{t("exportPhoneNumbers")}:</p>
+            {/* <p className="mb-2">{t("exportPhoneNumbers")}:</p> */}
 
             <div className="flex flex-row gap-2">
               <button
