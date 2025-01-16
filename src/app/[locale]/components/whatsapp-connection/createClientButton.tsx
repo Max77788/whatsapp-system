@@ -14,10 +14,28 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
   const [fadeOut, setFadeOut] = useState(false);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const previousPhonesConnectedRef = useRef<number | null>(null); // Ref to store the previous number of connected phones
-  
+
   const currentLocale = useLocale();
   
   const t = useTranslations("whatsapp_connection");
+
+  let isNotificationActive = false;
+
+  const showNotification = async (message: string, waitTime = 11000) => {
+    if (isNotificationActive) {
+      return; // Exit if a notification is already active
+    }
+
+    isNotificationActive = true; // Set the flag to indicate a notification is active
+
+    toast.success(message, {
+      autoClose: waitTime,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, waitTime));
+
+    isNotificationActive = false; // Reset the flag after the wait time
+  };
   
   const togglePopup = () => {
     setIsOpen(!isOpen);
@@ -53,11 +71,7 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
           
           const waitTime = 11000;
 
-          toast.success(message, {
-            autoClose: waitTime
-          });
-
-          await new Promise((resolve) => setTimeout(resolve, waitTime));
+          await showNotification(message, waitTime)
 
           if (moreNumbers) {
             window.location.href = `/${currentLocale}/whatsapp-screen`;
