@@ -184,182 +184,228 @@ const Sidebar = () => {
   
 
   return (
-    <div style={{ padding: '1rem', backgroundColor: '#141c24' }}>
-      <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{t("chats")}</h2>
+    <div
+      style={{
+        display: 'flex',
+        height: '100vh',
+        backgroundColor: '#141c24',
+        overflow: 'hidden',
+      }}
+    >
+      {/* SIDEBAR CONTAINER */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '450px',
+          height: '100%',
+          backgroundColor: '#141c24',
+          overflowY: 'auto',
+          padding: '1rem', // optional, adjust or remove as you like
+        }}
+      >
+        {/* Sidebar header */}
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+          {t("chats")}
+        </h2>
 
-      {/* Error message 
+        {/* Error message (optional) */}
+        {/* 
       {error && (
         <div style={{ color: 'red', marginBottom: '1rem' }}>
           Please connect your phone number in the settings page.
         </div>
-      )}
-        */}
+      )} 
+      */}
 
-      {/* Loading indicator */}
-      {loading && (
+        {/* Loading indicator */}
+        {loading && (
+          <div style={{ marginBottom: '1rem' }}>
+            {t("loading")}...
+          </div>
+        )}
+
+        {/* Phone number dropdown */}
+        {phoneNumbers.length > 0 ? (
+          <div style={{ marginBottom: '1rem' }}>
+            <label htmlFor="phoneSelect">{t("selectPhoneNumber")}:</label>
+            <select
+              id="phoneSelect"
+              value={selectedPhone}
+              onChange={(e) => handlePhoneSelect(e)}
+              className="block w-full p-2 border border-gray-300 rounded-md text-black text-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+            >
+              {phoneNumbers.map((phoneObj: any, index: number) => (
+                <option
+                  key={index}
+                  value={phoneObj.phoneNumber}
+                  className="text-gray-700 bg-white hover:bg-gray-100"
+                >
+                  {phoneObj.phoneNumber}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          !loading && (
+            <div className="text-xl mb-4">
+              {t("noPhoneNumbersFound")}<br />
+              {t("pleaseConnectYourPhoneNumber")}<br />
+              {t("inThe")}{" "}
+              <a href={`/${currentLocale}/accounts`}>{t("accounts")}</a>{" "}
+              {t("page")}.<br />
+              <br />
+            </div>
+          )
+        )}
+
+        {/* Selected phone numbers */}
         <div style={{ marginBottom: '1rem' }}>
-          {t("loading")}...
-        </div>
-      )}
-
-      {/* Phone number dropdown */}
-      {phoneNumbers.length > 0 ? <div style={{ marginBottom: '1rem' }}>
-        <label htmlFor="phoneSelect">
-          {t("selectPhoneNumber")}:
-        </label>
-        <select
-          id="phoneSelect"
-          value={selectedPhone}
-          onChange={(e) => handlePhoneSelect(e)}
-          className="block w-full p-2 border border-gray-300 rounded-md text-black text-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
-          
-        >
-          {phoneNumbers.map((phoneObj: any, index: number) => (
-            <option key={index} value={phoneObj.phoneNumber}
-              className="text-gray-700 bg-white hover:bg-gray-100">
-              {phoneObj.phoneNumber}
-            </option>
-          ))}
-        </select>
-      </div> : !loading && (
-        <div className="text-xl mb-4">
-          {t("noPhoneNumbersFound")}<br></br>
-          {t("pleaseConnectYourPhoneNumber")}<br></br>
-          {t("inThe")} <a href={`/${currentLocale}/accounts`}>{t("accounts")}</a> {t("page")}.<br></br><br></br>
-        </div>
-      )}
-
-      {/* Selected phone numbers */}
-      <div style={{ marginBottom: '1rem' }}>
-  {isContactsLoaded ? (
-  <select
-  id="selectedPhoneNumbers"
-  multiple
-  value={selectedPhones} // Ensure state reflects selected items
-  onChange={(e) => {
-    const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
-
-    if (selectedValues.includes("select-all")) {
-      // Select all phone numbers
-      const allValues = getPhoneNumbersFromStore();
-      setSelectedPhones(allValues); // Set state to select all
-    } else {
-      setSelectedPhones(selectedValues); // Select specific options
-    }
-  }}
-  style={{
-    padding: '5px',
-    fontSize: '16px',
-    width: '100%',
-    height: '200px', // Adjusted height for better grouping visibility
-    color: '#000000',
-    marginTop: '8px'
-  }}
->
-
-  {phoneGroups.map((group) => (
-    <optgroup label={group.name} key={group.name} style={{ fontWeight: 'bold' }}>
-      <option
-        value={`group-${group.name}`}
-        style={{ fontWeight: 'bold', textDecoration: 'underline' }}
-        onClick={() => {
-          // Select all contacts in this group
-          const groupContacts = getContactsForGroup(group);
-          setSelectedPhones(groupContacts);
-        }}
-      >
-        {t("selectAllIn")} {group.name}
-      </option>
-      {group.contacts.map((contact: Contact) => (
-        (contact.id.split('@')[0].length <= 13 && !contact.id.split('@')[1].includes("g") && !phoneNumbers.some(phone => phone === contact.id.split('@')[0]) && contact.id.split('@')[0] !== selectedPhone) && <option
-          key={contact.id}
-          value={"+".concat(contact.id.split('@')[0]).concat("--").concat(contact.name).concat("--").concat(group.name)}
-        >
-          {"+".concat(contact.id.split('@')[0])}
-        </option>
-      ))}
-    </optgroup>
-  ))}
-</select>
-  ) : loading ? (
+          {isContactsLoaded ? (
+            <select
+              id="selectedPhoneNumbers"
+              multiple
+              value={selectedPhones}
+              onChange={(e) => {
+                const selectedValues = Array.from(
+                  e.target.selectedOptions,
+                  (option) => option.value
+                );
+                if (selectedValues.includes("select-all")) {
+                  // Select all phone numbers
+                  const allValues = getPhoneNumbersFromStore();
+                  setSelectedPhones(allValues);
+                } else {
+                  setSelectedPhones(selectedValues);
+                }
+              }}
+              style={{
+                padding: '5px',
+                fontSize: '16px',
+                width: '100%',
+                height: '200px',
+                color: '#000000',
+                marginTop: '8px'
+              }}
+            >
+              {phoneGroups.map((group) => (
+                <optgroup
+                  label={group.name}
+                  key={group.name}
+                  style={{ fontWeight: 'bold' }}
+                >
+                  <option
+                    value={`group-${group.name}`}
+                    style={{ fontWeight: 'bold', textDecoration: 'underline' }}
+                    onClick={() => {
+                      // Select all contacts in this group
+                      const groupContacts = getContactsForGroup(group);
+                      setSelectedPhones(groupContacts);
+                    }}
+                  >
+                    {t("selectAllIn")} {group.name}
+                  </option>
+                  {group.contacts.map((contact: Contact) => (
+                    contact.id.split('@')[0].length <= 13 &&
+                    !contact.id.split('@')[1].includes("g") &&
+                    !phoneNumbers.some(
+                      (phone) => phone === contact.id.split('@')[0]
+                    ) &&
+                    contact.id.split('@')[0] !== selectedPhone && (
+                      <option
+                        key={contact.id}
+                        value={
+                          "+" +
+                          contact.id.split('@')[0] +
+                          "--" +
+                          contact.name +
+                          "--" +
+                          group.name
+                        }
+                      >
+                        {"+" + contact.id.split('@')[0]}
+                      </option>
+                    )
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          ) : loading ? (
             <div>
               <img
                 src="/spinner.gif"
                 alt="Loading..."
                 width="50"
                 height="50"
-                style={{
-                  marginTop: 8,
-                  marginBottom: 8
-                }}
+                style={{ marginTop: 8, marginBottom: 8 }}
               />
             </div>
-  ) : (
-    null
-  )}
+          ) : null}
 
-
-        {phoneNumbers.length >= 1 && (
-          <div className="flex flex-col gap-2">
-            {/* <p className="mb-2">{t("exportPhoneNumbers")}:</p> */}
-
-            <div className="flex flex-row gap-2">
-              <button
-                onClick={handleExport}
-                disabled={selectedPhones.length === 0}
-                className={`mt-2 px-4 py-2 rounded border-none ${selectedPhones.length === 0
-                    ? 'bg-gray-300 cursor-not-allowed text-black rounded-full'
-                    : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
-                  }`}
-              >
-                {t("exportToCrm")}
-              </button>
-              <button
-                onClick={handleExportCSV}
-                disabled={selectedPhones.length === 0}
-                className={`mt-2 px-4 py-2 rounded border-none ${selectedPhones.length === 0
-                    ? 'bg-gray-300 cursor-not-allowed text-black rounded-full'
-                    : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
-                  }`}
-              >
-                {t("exportToCsv")}
-              </button>
+          {phoneNumbers.length >= 1 && (
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row gap-2">
+                <button
+                  onClick={handleExport}
+                  disabled={selectedPhones.length === 0}
+                  className={`mt-2 px-4 py-2 rounded border-none ${selectedPhones.length === 0
+                      ? 'bg-gray-300 cursor-not-allowed text-black rounded-full'
+                      : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
+                    }`}
+                >
+                  {t("exportToCrm")}
+                </button>
+                <button
+                  onClick={handleExportCSV}
+                  disabled={selectedPhones.length === 0}
+                  className={`mt-2 px-4 py-2 rounded border-none ${selectedPhones.length === 0
+                      ? 'bg-gray-300 cursor-not-allowed text-black rounded-full'
+                      : 'bg-green-600 hover:bg-green-700 cursor-pointer rounded-full'
+                    }`}
+                >
+                  {t("exportToCsv")}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-</div>
-
-
-      {/* Chat list */}
-      <ul style={{ listStyle: 'none', padding: '0' }}>
-        {(useChatStore.getState() as { chats: { chatId: string; name: string }[] }).chats.map((chat: any) => (
-          <li
-            key={chat.chatId}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '10px 5px',
-              cursor: 'pointer',
-              borderBottom: '1px solid #ddd',
-            }}
-            onClick={() => router.push(`/${currentLocale}/whatsapp-screen/${chat.chatId}`)}
-          >
-            <div
+        {/* CHAT LIST BELOW EVERYTHING ELSE */}
+        <ul style={{ listStyle: 'none', padding: '0' }}>
+          {(useChatStore.getState() as {
+            chats: { chatId: string; name: string }[];
+          }).chats.map((chat: any) => (
+            <li
+              key={chat.chatId}
               style={{
-                width: '40px',
-                height: '40px',
-                backgroundColor: '#fff',
-                borderRadius: '50%',
-                flexShrink: 0
+                display: 'flex',
+                alignItems: 'center',
+                padding: '10px 5px',
+                cursor: 'pointer',
+                borderBottom: '1px solid #ddd',
               }}
-            ><img src="/static/default-icon.png" alt="User Icon" /></div>
-            <span className='mx-2'>{chat.name}</span>
-          </li>
-        ))}
-      </ul>
+              onClick={() => router.push(`/${currentLocale}/whatsapp-screen/${chat.chatId}`)}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  backgroundColor: '#fff',
+                  borderRadius: '50%',
+                  flexShrink: 0
+                }}
+              >
+                <img src="/static/default-icon.png" alt="User Icon" />
+              </div>
+              <span className="mx-2">{chat.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
+
+
 };
 
 export default Sidebar;
