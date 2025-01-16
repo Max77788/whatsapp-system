@@ -146,7 +146,7 @@
         "disconnect": "Disconnect",
         "save_tactics": "Save Tactics",
         "phone_number_disconnected_successfully": "Phone number disconnected successfully!",
-        "PLEASE_WAIT_FOR_A_MINUTE_BEFORE_CONNECTING_A_NEW_NUMBER": "PLEASE WAIT FOR A MINUTE BEFORE_CONNECTING A NEW NUMBER",
+        "PLEASE_WAIT_FOR_A_MINUTE_BEFORE_CONNECTING_A_NEW_NUMBER": "PLEASE WAIT FOR A MINUTE BEFORE CONNECTING A NEW NUMBER",
         "failed_to_disconnect_phone_number": "Failed to disconnect phone number.",
         "an_error_occurred_while_disconnecting_the_phone_number": "An error occurred while disconnecting the phone number.",
         "tactics_saved_successfully": "Tactics saved successfully!",

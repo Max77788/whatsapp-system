@@ -21,13 +21,13 @@ export async function POST(req) {
         // That's how we usually get kb base app url
         const kbBaseAppUrl = user?.kbAppBaseUrl;
 
+        await update_user({ email: user_email }, { [keyThing]: { qrString: null, phoneNumber: null } });
+
         const response = await fetch(`${kbBaseAppUrl}/disconnect-phone`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clientId })
         });
-
-        await update_user({ email: user_email }, { [keyThing]: { qrString: null, phoneNumber: null } });
 
         if (response.status === 200) {
             console.log("Successfully disconnected client");
