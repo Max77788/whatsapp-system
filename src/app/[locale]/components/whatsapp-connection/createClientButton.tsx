@@ -51,11 +51,13 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
               ? t("phone_connected_successfully")
               : t("phone_detached_successfully");
           
+          const waitTime = 11000;
+
           toast.success(message, {
-            autoClose: 8000
+            autoClose: waitTime
           });
 
-          await new Promise((resolve) => setTimeout(resolve, 8000));
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
 
           if (moreNumbers) {
             window.location.href = `/${currentLocale}/whatsapp-screen`;
