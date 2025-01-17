@@ -231,6 +231,7 @@
         "timeLimit": "Time Limit",
         "waGroups": "WhatsApp Groups",
         "startCampaign": "Start Campaign",
+        "pleaseSelectBothNameAndPhoneNumberColumns": "Please, select both 'name' and 'phone number' columns",
         "settingUpCampaign": "Setting Up Campaign",
         "leadsSelected": "Leads Selected",
         "confirmScheduleCampaign": "Confirm Schedule Campaign",
