@@ -546,7 +546,7 @@ const StepTwoMessageForm: React.FC<Props> = ({ leads, goBack, goForwardStartCamp
           <label className="block font-semibold mb-2">{t("mediaAttachment")}</label>
           <input
             type="file"
-            accept="image/*,.pdf"
+            accept="image/*,video/*,.pdf"
             onChange={(e) => {
               const file = e.target.files?.[0] || null;
               if (file) {
