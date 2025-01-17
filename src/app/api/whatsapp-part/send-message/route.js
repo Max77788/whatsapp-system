@@ -128,7 +128,9 @@ export async function POST(req) {
     
     
     for (const toNumber of toNumbersValue) {
-      const lead = leads?.find((lead) => lead.phone_number === toNumber);
+      const lead = leads?.find((lead) =>
+        lead.phone_number === toNumber || lead.phone_number.includes(toNumber.replace(/^0/, ''))
+      );
       
       let personalizedMessage = message;
       

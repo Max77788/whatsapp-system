@@ -151,7 +151,10 @@ export async function POST(req) {
         }
       }
 
-      const lead = leads.find((l) => l.phone_number === toNumber);
+      const lead = leads?.find((lead) =>
+        lead.phone_number === toNumber || lead.phone_number.includes(toNumber.replace(/^0/, ''))
+      );
+      
       console.log(`[POST] Found lead: ${JSON.stringify(lead)}`);
 
       let personalizedMessage = message;

@@ -569,7 +569,7 @@ const StartCampaign = () => {
 {leads?.length > 0 && (
   <div className="mt-6">
     <h3 className="text-lg font-semibold mb-4">{t("importedLeads")}</h3>
-    <div className="flex items-center mb-2">
+    <div className="flex items-center mb-2 gap-1">
       <input
         type="checkbox"
         checked={selectAll}
@@ -582,14 +582,14 @@ const StartCampaign = () => {
     <h3 className="text-lg font-semibold mb-2">{t("filterByGroups")}:</h3>
 <div className="flex flex-wrap gap-4 mb-4">
   {groups.map((group, index) => (
-    <label key={index} className="flex items-center space-x-2">
+    <label key={index} className="flex items-center space-x-2 gap-1">
       <input
         type="checkbox"
         checked={selectedGroups.includes(group)}
         onChange={() => toggleGroupSelection(group)}
         className="form-checkbox"
       />
-      <span>{group === "all" ? "All Groups" : group}</span>
+      <span className="mx-2">{group === "all" ? "All Groups" : group}</span>
     </label>
   ))}
 </div>
@@ -617,7 +617,7 @@ const StartCampaign = () => {
         onClick={() => toggleLeadSelection(lead.phone_number)}
       >
         <td className="p-2 border">
-          <label className="flex items-center">
+          <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={selectedLeads.some(
