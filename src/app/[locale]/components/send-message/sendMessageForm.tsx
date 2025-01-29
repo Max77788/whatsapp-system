@@ -325,7 +325,7 @@ const handleScheduleMessage = async () => {
           onClick={openTemplateModal}
           className="px-5 py-3 mx-auto bg-purple-700 hover:bg-purple-800 text-white rounded-full"
         >
-          {t("loadTemplate")}
+          {t("loadTemplate")}⬆️
         </button>
 
         <button
@@ -338,7 +338,7 @@ const handleScheduleMessage = async () => {
   }}
   className="px-5 py-3 mx-auto bg-yellow-600 hover:bg-yellow-700 text-white rounded-full"
 >
-          {t("saveAsTemplate")}
+            {t("saveAsTemplate")}💾
         </button>
         </div>
       </div>
@@ -519,7 +519,7 @@ const handleScheduleMessage = async () => {
           onClick={handleSendMessage}
           className="px-5 py-3 mx-auto bg-green-600 hover:bg-green-700 text-white rounded-full"
         >
-          {t("sendMessage")}
+          {t("sendMessage")}📩
         </button>
         <button
           onClick={() => {
@@ -531,7 +531,7 @@ const handleScheduleMessage = async () => {
           }}
           className="px-5 py-3 mx-auto bg-blue-600 hover:bg-blue-700 text-white rounded-full"
         >
-          {t("scheduleMessage")}
+          {t("scheduleMessage")}⏱️
         </button>
 
       </div>

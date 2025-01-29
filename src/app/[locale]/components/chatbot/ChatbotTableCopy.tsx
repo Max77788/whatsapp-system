@@ -254,14 +254,14 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
 
     return (
         <div className="p-4 h-screen flex flex-col overflow-y-auto">
-            {!isLoadingInstructionSets && <h3 className="text-lg font-medium leading-6 text-gray-900">{t("messageConfiguration")}</h3>}
+            { /* {!isLoadingInstructionSets && <h3 className="text-lg font-medium leading-6 text-gray-900">{t("messageConfiguration")}</h3>} */}
             
             {!isLoadingInstructionSets && <div className="mt-1">
                 <button onClick={addSet} className={buttonSmallStyle("green")}>
-                    {t("addNewSet")}
+                    {t("addNewSet")} ➕
                 </button>
                 <button onClick={saveData} className={buttonSmallStyle("green", "mx-7")}>
-                    {t("save")}
+                    {t("save")} 👆
                 </button>
                 <p className="mb-4 mt-4 font-bold italic">*{t("scrollDownToSeeNewlyAddedSet")}</p>
             </div>
@@ -290,7 +290,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                     checked={set?.useWithInstagram || false}
                                     onChange={(e) => handleUseWithInstagramChange(setIndex, e.target.checked)}
                                 /> 
-                                {t("useWithInstagram")}
+                                {t("useWithInstagram")} <img src="/insta-logo.webp" alt="Insta Logo" className="w-5 h-5" />
                             </label>
                         </div>
                         <div>
@@ -298,7 +298,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                 onClick={() => deleteSet(setIndex)}
                                 className={buttonSmallStyle("red")}
                             >
-                                {t("deleteSet")}
+                                {t("deleteSet")}❌
                             </button>
                         </div>
                     </div>
@@ -310,7 +310,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                 {/* Type Field */}
                                 <div className="mb-2">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        {t("type")}
+                                        {t("type")} 💬
                                     </label>
                                     <select
                                         value={row.type}
@@ -333,7 +333,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                 {/* Search Term Field */}
                                 <div className="mb-2">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        {t("searchTerm")}
+                                        {t("searchTerm")} 
                                     </label>
                                     <input
                                         type="text"
@@ -354,7 +354,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                 {/* Message to Send Field */}
                                 <div className="mb-2">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        {t("messageToSend")}
+                                        {t("messageToSend")}✍️
                                     </label>
                                     <textarea
                                         value={row.message_to_send}
@@ -367,14 +367,14 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                             )
                                         }
                                         className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                                        placeholder={t("enterMessageToSend")}
+                                        placeholder={`${t("enterMessageToSend")}✍️`} 
                                     />
                                 </div>
 
                                 {/* Delay Field */}
                                 <div className="mb-2">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        {t("delayInSeconds")}
+                                        {t("delayInSeconds")} ⏲️
                                     </label>
                                     <input
                                         type="number"
@@ -412,8 +412,13 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                                     }
                                                     className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                                                 />
-                                                <span className="mx-2 capitalize">
+                                                <span className="mx-2 capitalize flex items-center gap-2">
                                                     {platform}
+                                                    <img
+                                                        src={`/${platform}_logo.png`}
+                                                        alt={`${platform} Logo`}
+                                                        className="w-5 h-5"
+                                                    />
                                                 </span>
                                             </label>
                                         ))}
@@ -425,7 +430,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                     onClick={() => removeRow(setIndex, rowIndex)}
                                     className={buttonSmallStyle("red")}
                                 >
-                                    {t("removeRule")}
+                                    {t("removeRule")} ➖
                                 </button>
                             </div>
                         ))}
@@ -434,7 +439,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                             onClick={() => addRow(setIndex)}
                             className={buttonSmallStyle()}
                         >
-                            {t("addRule")}
+                            {t("addRule")} ➕
                         </button>
                     </div>
                 </div>
@@ -442,10 +447,10 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
 
             {!isLoadingInstructionSets && <div className="mt-1">
                 <button onClick={addSet} className={buttonSmallStyle("green")}>
-                    {t("addNewSet")}
+                    {t("addNewSet")} ➕
                 </button>
                 <button onClick={saveData} className={buttonSmallStyle("green", "mx-7")}>
-                    {t("save")}
+                    {t("save")} 👆
                 </button>
             </div>
             }

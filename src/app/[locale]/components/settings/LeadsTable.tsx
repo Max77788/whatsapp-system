@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver'; // Import file-saver for exporting files
 import { useTranslations } from "next-intl";
 
 import { buttonSmallStyle } from "@styles";
+import { set } from "lodash";
 
 interface Lead {
   name: string;
@@ -51,6 +52,22 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
   const [newGroup, setNewGroup] = useState<string>("");
 
   const { data: session } = useSession();
+
+  // Track if there are unsaved changes
+  const [isDirty, setIsDirty] = useState(false);
+
+  // Add the beforeunload listener
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
 
   useEffect(() => {
     fetchGroups();
@@ -131,6 +148,12 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     alert(`${newLeads.length} ${t("phone_numbers_added_successfully")}`);
   };
 
+  // Whenever lead data changes, set isDirty
+  const handleLeadDataChange = (updatedLeads: Lead[]) => {
+    setLeadData(updatedLeads);
+    setIsDirty(true);
+  };
+
   const handleAddGroup = async () => {
     if (!newGroup.trim()) {
       alert(t("please_enter_a_group_name"));
@@ -188,6 +211,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
   };
 
   const saveData = async () => {
+
     try {
       const userEmail = session?.user?.email;
       if (!userEmail) {
@@ -215,6 +239,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       });
 
       if (response.ok) {
+        setIsDirty(false);
         toast.success(t("leads_data_saved_successfully"));
         await new Promise(resolve => setTimeout(resolve, 1000));
         location.reload();
@@ -258,9 +283,10 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             onClick={exportToCSV}
             className={buttonSmallStyle("yellow", "mb-4")}
           >
-            {t("export_as_csv")}
+            {t("export_as_csv")} 📊
           </button>
-          <table className="min-w-full border border-gray-300 mb-4">
+            <div className="rounded-lg border border-gray-300 overflow-hidden mb-4">
+              <table className="min-w-full border-separate border-spacing-0">
             <thead>
               <tr className="bg-green-600 text-white">
                 <th className="border border-gray-300 p-2 text-left">{t("name")}</th>
@@ -282,6 +308,9 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                     suppressContentEditableWarning={true}
                     onBlur={(e) => {
                       const updatedName = e.currentTarget.textContent || "";
+                      
+                      setIsDirty(true);
+                      
                       setLeadData((prevData) =>
                         prevData.map((item, i) =>
                           i === index ? { ...item, name: updatedName } : item
@@ -297,6 +326,9 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                     suppressContentEditableWarning={true}
                     onBlur={(e) => {
                       const updatedPhoneNumber = e.currentTarget.textContent || "";
+                      
+                      setIsDirty(true);
+                      
                       setLeadData((prevData) =>
                         prevData.map((item, i) =>
                           i === index ? { ...item, phone_number: updatedPhoneNumber } : item
@@ -310,17 +342,20 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                     <select
                       value={lead.source}
                       onChange={(e) => {
-                        const updatedGroup = e.target.value;
+                        setIsDirty(true);
+                        const updatedSource = e.target.value;
+                        console.log(updatedSource);
+
                         setLeadData((prevData) =>
                           prevData.map((item, i) =>
-                            i === index ? { ...item, group: updatedGroup } : item
+                            i === index ? { ...item, source: updatedSource } : item
                           )
                         );
                       }}
-                      className="border border-gray-300 rounded p-1"
+                      className="border border-gray-300 bg-blue-500 text-white rounded-full p-1"
                     >
                       {sourcesList.map((source) => (
-                        <option key={source} value={source}>
+                        <option key={source} value={source} className="text-white">
                           {source}
                         </option>
                       ))}
@@ -337,6 +372,9 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                               const updatedGroups = e.target.checked
                                 ? [...(lead.groups || []), group] // Add group if checked
                                 : (lead.groups || []).filter((g) => g !== group); // Remove group if unchecked
+                              
+                              setIsDirty(true);
+
                               setLeadData((prevData) =>
                                 prevData.map((item, i) =>
                                   i === index ? { ...item, groups: updatedGroups } : item
@@ -355,22 +393,29 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                       value={lead.handled ? t("yes") : t("no")}
                       onChange={(e) => {
                         const updatedHandled = e.target.value === t("yes");
+                        
+                        setIsDirty(true);
+                        
                         setLeadData((prevData) =>
                           prevData.map((item, i) =>
                             i === index ? { ...item, handled: updatedHandled } : item
                           )
                         );
                       }}
-                      className="border border-gray-300 rounded p-1"
+                      className="border border-gray-300 rounded-full bg-blue-500 text-white p-1"
                     >
-                      <option value={t("yes")}>{t("yes")}</option>
-                      <option value={t("no")}>{t("no")}</option>
+                      <option value={t("yes")}>{`${t("yes")}🟢`}</option>
+                      <option value={t("no")}>{`${t("no")}🔴`}</option>
                     </select>
                   </td>
                   <td className="border border-gray-300 p-2">
                     <textarea
                       value={lead.extra_notes || ""}
-                      onChange={(e) => setLeadData((prevData) => prevData.map((item, i) => i === index ? { ...item, extra_notes: e.target.value } : item))}
+                      onChange={(e) => { 
+                        setIsDirty(true);
+                        setLeadData((prevData) => 
+                        prevData.map((item, i) => i === index ? { ...item, extra_notes: e.target.value } : item)
+                       )}}
                       className="border border-gray-300 rounded p-1 w-full h-10 resize-none"
                     />
                   </td>
@@ -379,18 +424,19 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                       onClick={() => handleDeleteLead(index)}
                       className={buttonSmallStyle("red")}
                     >
-                      {t("delete")}
+                      {`${t("delete")}❌`}
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
           <button
             onClick={saveData}
             className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
-            {t("save_data")}
+            {t("save_data")}💾
           </button>
         </>
       )}
@@ -402,15 +448,21 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
           <input
             type="text"
             value={newLead.name}
-            onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
+            onChange={(e) => {
+              setIsDirty(true);
+              setNewLead({ ...newLead, name: e.target.value })}
+            }
             placeholder={t("name")}
             className="border text-black border-gray-300 p-2 rounded"
           />
           <input
             type="number"
             value={newLead.phone_number}
-            onChange={(e) =>
+            onChange={(e) => {
+              setIsDirty(true);
+
               setNewLead({ ...newLead, phone_number: e.target.value })
+            }
             }
             placeholder={t("phone_number")}
             className="border text-black border-gray-300 p-2 rounded"
@@ -418,7 +470,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
           <select
             value={newLead.source}
             onChange={(e) => setNewLead({ ...newLead, source: e.target.value })}
-            className="border text-black border-gray-300 p-2 rounded"
+            className="border text-black border-gray-300 p-2 bg-blue-500 text-white rounded"
           >
             <option value="" disabled hidden>{t("choose_source")}</option>
             {sourcesList.map((source) => (
@@ -469,7 +521,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
           onClick={handleAddLead}
           className={buttonSmallStyle()}
         >
-          {t("add_lead")}
+          {`${t("add_lead")}➕`}
         </button>
       </div>
 
@@ -480,19 +532,21 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     value={bulkPhoneNumbers}
     onChange={(e) => setBulkPhoneNumbers(e.target.value)}
     placeholder={t("paste_phone_numbers_here_separated_by_commas_or_new_lines")}
-    className="w-full border text-black border-gray-300 p-2 rounded h-32 resize-none"
+    className="w-full border text-black border-gray-300 p-1 rounded h-32 resize-none"
   />
   <button
     onClick={handleBulkAdd}
           className={buttonSmallStyle()}
   >
-    {t("add_bulk_phone_numbers")}
+          {`${t("add_bulk_phone_numbers")}➕`}
         </button>
       </div>
 
       {/* Import CSV */}
 <div className="mt-6 p-4 border border-gray-300 rounded">
-  <h2 className="text-xl font-semibold mb-4">{t("import_leads_from_csv")}</h2>
+        <div className="flex items-center space-x-4">
+          <h2 className="text-xl font-semibold mb-4">{t("import_leads_from_csv")}</h2> <a href="/static/sample-files/sample_leads.csv" download><u>{t("clickHereToDownloadTheSampleFile")}</u>💾</a>
+        </div>  
   <input
     type="file"
     accept=".csv"

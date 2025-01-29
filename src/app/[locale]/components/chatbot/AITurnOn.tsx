@@ -75,7 +75,7 @@ export default function AITurnOn({
           onChange={(e) => setIsOn(e.target.checked)}
           className="cursor-pointer"
         />
-        <label className="text-lg font-semibold">{t("aiSystemOn")}</label>
+        {isOn ? <label className="text-lg font-semibold">{t("aiSystemOn")}✅</label> : <label className="text-lg font-semibold">{t("aiSystemOff")}❌</label>}
       </div>
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${

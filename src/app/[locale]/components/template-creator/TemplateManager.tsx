@@ -197,7 +197,7 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
           onClick={handleAddNewTemplate}
           className="bg-blue-500 text-white p-2 cursor-pointer rounded-full"
         >
-          + {t("addNewTemplate")}
+          ➕ {t("addNewTemplate")}
         </button>
       </div>
 
@@ -246,13 +246,13 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
                 onClick={handleDeleteTemplate}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full"
               >
-                {t("deleteTemplate")}
+                {t("deleteTemplate")}❌
               </button>
               <button
                 onClick={handleSaveTemplate}
                 className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full"
               >
-                {t("saveTemplate")}
+                {t("saveTemplate")}💾
               </button>
             </div>
           </>

@@ -188,7 +188,8 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
       ) : (
         <>
           <h1 className="text-2xl font-semibold mb-4">{t("phone_number_tactics")}</h1>
-          <table className="min-w-full border border-gray-300 mb-4">
+            <div className="rounded-lg border border-gray-300 overflow-hidden mb-4">
+              <table className="min-w-full border-separate border-spacing-0">
             <thead>
               <tr className="bg-green-600 text-white">
                 <th className="border border-gray-300 p-2 text-left">{t("phone_number")}</th>
@@ -233,12 +234,15 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
               ))}
             </tbody>
           </table>
+          </div>
+          <div className="flex justify-center gap-4">
           <button
             onClick={() => saveData()}
-              className={buttonSmallStyle()}
+            className={buttonSmallStyle()}
           >
-            {t("save_tactics")}
+            {t("save_tactics")}💾
           </button>
+          </div>
         </>
       )}
     </div>

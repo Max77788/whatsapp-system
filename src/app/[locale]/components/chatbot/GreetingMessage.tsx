@@ -128,7 +128,7 @@ const GreetingMessage: React.FC<GreetingMessageProps> = ({
                         className="cursor-pointer"
                         onChange={() => handleGreetingMessageEnabledChange(!isGreetingEnabled)}
                     />
-                    <p className="mx-1">{t("enableGreetingMessage")}</p>
+                    {isGreetingEnabled ? <p className="mx-1">{t("disableGreetingMessage")} ❌</p> : <p className="mx-1">{t("enableGreetingMessage")} ✅</p>}
                 </label>
             </div>
 
@@ -146,13 +146,13 @@ const GreetingMessage: React.FC<GreetingMessageProps> = ({
                             checked={useWithInstagram || false} 
                             className="cursor-pointer"
                             onChange={() => setUseWithInstagram(!useWithInstagram)} /> 
-                            {t("useWithInstagram")}
+                        {t("useWithInstagram")} <img src="/instagram_logo.png" alt="Insta Logo" className="w-5 h-5" />
                         </label>
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            {t("header")}
+                            {t("header")}💬
                         </label>
                         <textarea
                             className="w-full border border-gray-300 rounded-md p-2"
@@ -189,16 +189,16 @@ const GreetingMessage: React.FC<GreetingMessageProps> = ({
                                     onClick={() => removeBodyOption(index)}
                                     className={buttonSmallStyle("red", "mx-3")}
                                 >
-                                    {t("remove")}
+                                    {t("remove")}➖
                                 </button>
                             </div>
                         ))}
 
                         <button
                             onClick={addBodyOption}
-                            className="px-5 py-3 bg-green-600 text-white rounded-full mt-2"
+                            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mt-2"
                         >
-                            {t("addOption")}
+                            {t("addOption")}➕
                         </button>
                     </div>
 
@@ -241,9 +241,9 @@ const GreetingMessage: React.FC<GreetingMessageProps> = ({
                     <div className="mt-4">
                         <button
                             onClick={saveGreetingMessage}
-                            className="px-5 py-3 bg-green-600 text-white rounded-full"
+                            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full"
                         >
-                            {t("saveGreetingMessage")}
+                            {t("saveGreetingMessage")}👆
                         </button>
                     </div>
 

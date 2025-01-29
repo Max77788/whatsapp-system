@@ -104,7 +104,7 @@ export default function UserCredentialsForm() {
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-xl rounded text-center">
       <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4 flex items-center justify-center gap-2">
-        {t("manage_connection")} <img src="/insta-logo.webp" alt="Insta Logo" className="w-8 h-8" />
+        {t("manage_connection")} <img src="/instagram_logo.png" alt="Insta Logo" className="w-8 h-8" />
       </h3>
 
       {connectedUsername ? (
@@ -156,7 +156,7 @@ export default function UserCredentialsForm() {
             onClick={handleSave}
             className={buttonSmallStyle()}
         >
-            {t("save_credentials")}
+            {`${t("save_credentials")}💾`}
         </button>
         )}
         {connectedUsername && (
