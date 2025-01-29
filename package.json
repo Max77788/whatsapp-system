@@ -67,6 +67,7 @@
     "reactflow": "^11.11.4",
     "resend": "^4.0.1-alpha.0",
     "swagger-ui-react": "^5.18.2",
+    "tailwind-scrollbar": "^3.1.0",
     "uuid": "^11.0.2",
     "whatsapp-web.js": "github:Max77788/whatsapp-web.js#fix/localauth-logout",
     "wwebjs-mongo": "^1.1.0",

@@ -253,7 +253,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
     };
 
     return (
-        <div className="p-4 h-screen flex flex-col overflow-y-auto">
+        <div className="p-4 h-screen flex flex-col overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
             { /* {!isLoadingInstructionSets && <h3 className="text-lg font-medium leading-6 text-gray-900">{t("messageConfiguration")}</h3>} */}
             
             {!isLoadingInstructionSets && <div className="mt-1">
@@ -290,7 +290,7 @@ const ChatbotTableCopy: React.FC<TablePopupProps> = ({
                                     checked={set?.useWithInstagram || false}
                                     onChange={(e) => handleUseWithInstagramChange(setIndex, e.target.checked)}
                                 /> 
-                                {t("useWithInstagram")} <img src="/insta-logo.webp" alt="Insta Logo" className="w-5 h-5" />
+                                {t("useWithInstagram")} <img src="/instagram_logo.png" alt="Insta Logo" className="w-5 h-5" />
                             </label>
                         </div>
                         <div>

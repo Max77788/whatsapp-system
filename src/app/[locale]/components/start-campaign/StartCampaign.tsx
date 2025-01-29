@@ -676,7 +676,7 @@ const StartCampaign = () => {
               </button>
             ) : (
               <p className="text-red-500 mb-4"><a className="text-red-500 underline hover:text-red-700" href={`/${currentLocale}/accounts`}>
-                {t("pleaseConnectYourAccountToProceed")}
+                    <b>{t("pleaseConnectYourAccountToProceed")}</b>
                 </a></p>
             )}
           </div>
