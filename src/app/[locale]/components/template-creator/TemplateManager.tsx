@@ -241,7 +241,7 @@ const TemplateManager: NextPage<TemplateManagerProps> = ({ userEmail }) => {
             />
 
             {/* Save and Delete Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '100px', marginTop: '1rem', marginBottom: '20px' }}>
               <button
                 onClick={handleDeleteTemplate}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full"

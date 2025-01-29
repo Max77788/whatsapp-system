@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import ContactForm7Tab from "@/src/app/[locale]/components/webhooks-setup/ContactForm7Tab";
 import FacebookTab from "@/src/app/[locale]/components/webhooks-setup/FacebookTab";
 import WPFormsTab from "@/src/app/[locale]/components/webhooks-setup/WPFormsTab";
+import { log } from "console";
 
 const tabs = [
-  { id: "facebook", label: "Facebook" },
-  { id: "contact-form-7", label: "Contact Form 7" },
-  { id: "wpforms", label: "WPForms" },
+  { id: "facebook", label: "Facebook", logo: "/facebook_logo.png" },
+  { id: "contact-form-7", label: "Contact Form 7", logo: "/contact-form7.png" },
+  { id: "wpforms", label: "WPForms", logo: "/wpforms_logo.png" },
 ];
 
 export default function Tabs({ uniqueId }: { uniqueId: string | null }) {
@@ -28,7 +29,11 @@ export default function Tabs({ uniqueId }: { uniqueId: string | null }) {
             }`}
             onClick={() => setActiveTab(tab.id)}
           >
-            {tab.label}
+            <div className="flex items-center gap-2">
+              {tab.label}
+              <img src={tab.logo} className="w-4 h-4" />
+            </div>
+
           </button>
         ))}
       </nav>

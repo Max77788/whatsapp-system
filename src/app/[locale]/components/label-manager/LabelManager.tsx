@@ -395,20 +395,21 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
       <div style={{ width: '75%', padding: '1rem', overflowY: 'auto' }}>
         
         {/* Save or Delete Label */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', marginBottom: '20px' }}>
-          <button
-            onClick={handleDeleteLabel}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full"
-          >
-            {t("deleteLabel")} ❌
-          </button>
-          <button
-            onClick={handleSaveLabel}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full"
-          >
-            {t("saveLabel")} 💾
-          </button>
-        </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '100px', marginTop: '1rem', marginBottom: '20px' }}>
+            <button
+              onClick={handleDeleteLabel}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full"
+            >
+              {t("deleteLabel")} ❌
+            </button>
+            <button
+              onClick={handleSaveLabel}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full"
+            >
+              {t("saveLabel")} 💾
+            </button>
+          </div>
+
 
 
         {/* Label Name */}
@@ -448,7 +449,8 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
         <h4 className='font-bold text-2xl mb-2'>{t("leadsForLabel")}: {selectedLabel || 'None'}</h4>
         <div style={{ maxWidth: '100%', overflowX: 'auto', maxHeight: '50vh', overflowY: 'auto' }}>
           {labelLeads.length > 0 ? (
-              <table className="w-full border-collapse mb-8 rounded-lg overflow-hidden">
+              <div className="rounded-lg border border-gray-300 overflow-hidden mb-4">
+                <table className="min-w-full border-separate border-spacing-0">
               <thead>
                 <tr>
                   <th style={{ border: '1px solid #ccc', padding: '0.5rem' }}>
@@ -472,6 +474,7 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
                 ))}
               </tbody>
             </table>
+            </div>
           ) : (
             <p>{t("noLeadsInLabel")}</p>
           )
@@ -482,7 +485,8 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
         {/* Existing Leads Section: you can add them to the label */}
         <h4 className='font-bold text-2xl mb-2'>{t("existingLeads")}</h4>
         {existingLeads.length > 0 ? (
-            <table className="w-full border-collapse mb-8 rounded-lg overflow-hidden">
+            <div className="rounded-lg border border-gray-300 overflow-hidden mb-4">
+              <table className="min-w-full border-separate border-spacing-0">
 
             <thead>
               <tr>
@@ -503,6 +507,7 @@ const LabelManager: NextPage<LabelManagerProps> = ({ userEmail }) => {
               ))}
             </tbody>
           </table>
+          </div>
         ) : (
             <p>{t("noMoreLeadsAvailable")}</p>
         )}
