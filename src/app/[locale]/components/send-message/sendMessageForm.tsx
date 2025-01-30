@@ -224,6 +224,10 @@ const handleScheduleMessage = async () => {
   
 
   return (
+    <div className="bg-white shadow-2xl rounded-lg mb-16 p-4">
+      <p className="text-center animate-pulse text-2xl mb-4 font-semibold text-gray-700 tracking-wide italic relative">
+        {t("sendMessage")}
+      </p>
     <div className="mt-8 p-4 border border-gray-300 rounded-lg">
       <div className="flex justify-between mb-4">
         <div className="flex-1 mr-2">
@@ -507,6 +511,7 @@ const handleScheduleMessage = async () => {
         </button>
       </div>
     </div>
+    
   </div>
 )}
 
@@ -533,7 +538,7 @@ const handleScheduleMessage = async () => {
         >
           {t("scheduleMessage")}⏱️
         </button>
-
+        </div>
       </div>
     </div>
   );

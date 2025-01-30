@@ -279,24 +279,30 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
         <p>{t("no_leads_available_add_some_data")}</p>
       ) : (
         <>
-          <button
-            onClick={exportToCSV}
-            className={buttonSmallStyle("yellow", "mb-4")}
-          >
-            {t("export_as_csv")} 📊
-          </button>
+            <div className="text-right mx-2">
+              <button
+                onClick={exportToCSV}
+                className={buttonSmallStyle("yellow", "mb-4")}
+              >
+                {t("export_as_csv")} 📊
+              </button>
+            </div>
+            <div className="bg-white shadow-2xl rounded-lg mb-16 p-4">
+              <p className="text-center animate-pulse text-2xl mb-4 font-semibold text-gray-700 tracking-wide italic relative">
+                {t("yourLeads")}
+              </p>
             <div className="rounded-lg border border-gray-300 overflow-hidden mb-4">
               <table className="min-w-full border-separate border-spacing-0">
             <thead>
               <tr className="bg-green-600 text-white">
-                <th className="border border-gray-300 p-2 text-left">{t("name")}</th>
-                <th className="border border-gray-300 p-2 text-left">{t("phone_number")}</th>
-                <th className="border border-gray-300 p-2 text-left">{t("source")}</th>
-                <th className="border border-gray-300 p-2 text-left">{t("label")}</th>
-                <th className="border border-gray-300 p-2 text-left">{t("sent_messages")}</th>
-                <th className="border border-gray-300 p-2 text-left">{t("handled")}</th>
-                <th className="border border-gray-300 p-2 text-left">{t("extra_notes")}</th>
-                <th className="border border-gray-300 p-2 text-left">{t("actions")}</th>
+                    <th className="border border-gray-300 p-2 text-left">{t("name")}🤵</th>
+                <th className="border border-gray-300 p-2 text-left">{t("phone_number")}📱</th>
+                <th className="border border-gray-300 p-2 text-left">{t("source")}🔈</th>
+                <th className="border border-gray-300 p-2 text-left">{t("label")}🏷️</th>
+                <th className="border border-gray-300 p-2 text-left">{t("sent_messages")}📩</th>
+                <th className="border border-gray-300 p-2 text-left">{t("handled")}🤝</th>
+                <th className="border border-gray-300 p-2 text-left">{t("extra_notes")}📝</th>
+                <th className="border border-gray-300 p-2 text-left">{t("actions")}🎬</th>
               </tr>
             </thead>
             <tbody>
@@ -362,19 +368,27 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                     </select>
                   </td>
                   <td className="border border-gray-300 p-2">
-                    <div className="border border-gray-300 rounded p-1 min-h-[100px]">
+                    <div className="border border-gray-300 rounded p-2 bg-blue-500">
+
                       {groups.map((group) => (
-                        <label key={group} className="block flex items-center space-x-2 gap-1">
+                        <label
+                          key={group}
+                          className="flex items-center space-x-2 py-1"
+                        >
                           <input
                             type="checkbox"
+                            className="text-blue-600 rounded"
                             checked={lead.groups?.includes(group) || false}
                             onChange={(e) => {
+                              // If the user checks, add the group; otherwise remove it
                               const updatedGroups = e.target.checked
-                                ? [...(lead.groups || []), group] // Add group if checked
-                                : (lead.groups || []).filter((g) => g !== group); // Remove group if unchecked
-                              
+                                ? [...(lead.groups || []), group]
+                                : (lead.groups || []).filter((g) => g !== group);
+
+                              // Mark form as dirty so we know a change occurred
                               setIsDirty(true);
 
+                              // Update state for this lead while preserving other leads
                               setLeadData((prevData) =>
                                 prevData.map((item, i) =>
                                   i === index ? { ...item, groups: updatedGroups } : item
@@ -382,7 +396,8 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                               );
                             }}
                           />
-                          {group}
+                          {/* Display group name in a readable style */}
+                          <span className="text-white text-sm">{group}</span>
                         </label>
                       ))}
                     </div>
@@ -402,10 +417,10 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                           )
                         );
                       }}
-                      className="border border-gray-300 rounded-full bg-blue-500 text-white p-1"
+                      className={`border border-gray-300 rounded-full p-1 text-white ${lead.handled ? "bg-green-500" : "bg-red-500"}`}
                     >
-                      <option value={t("yes")}>{`${t("yes")}🟢`}</option>
-                      <option value={t("no")}>{`${t("no")}🔴`}</option>
+                      <option value={t("yes")} className="bg-green-500">{`${t("yes")}`}</option>
+                      <option value={t("no")} className="bg-red-500">{`${t("no")}`}</option>
                     </select>
                   </td>
                   <td className="border border-gray-300 p-2">
@@ -430,21 +445,24 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                 </tr>
               ))}
             </tbody>
-          </table>
-          </div>
+                </table>
+              </div>
+            
           <button
             onClick={saveData}
             className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full mx-auto"
           >
             {t("save_data")}💾
           </button>
+          </div>
         </>
       )}
 
       {/* Add New Lead */}
+      <div className="bg-white shadow-2xl rounded-lg mb-16 p-4">
       <div className="mt-6 p-4 border border-gray-300 rounded">
-        <h2 className="text-xl font-semibold mb-4">{t("add_new_lead")}</h2>
-        <div className="grid grid-cols-4 gap-4">
+          <p className="text-center animate-pulse text-2xl mb-4 font-semibold text-gray-700 tracking-wide italic relative">{t("add_new_lead")}</p>
+        <div className="grid grid-cols-3 gap-4">
           <input
             type="text"
             value={newLead.name}
@@ -453,7 +471,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
               setNewLead({ ...newLead, name: e.target.value })}
             }
             placeholder={t("name")}
-            className="border text-black border-gray-300 p-2 rounded"
+              className="border border-gray-300 bg-blue-500 text-white p-2 rounded placeholder-white"
           />
           <input
             type="number"
@@ -465,12 +483,12 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
             }
             }
             placeholder={t("phone_number")}
-            className="border text-black border-gray-300 p-2 rounded"
+              className="border bg-blue-500 text-white border-gray-300 p-2 rounded placeholder-white"
           />
           <select
             value={newLead.source}
             onChange={(e) => setNewLead({ ...newLead, source: e.target.value })}
-            className="border text-black border-gray-300 p-2 bg-blue-500 text-white rounded"
+            className="border border-gray-300 p-2 bg-blue-500 text-white rounded"
           >
             <option value="" disabled hidden>{t("choose_source")}</option>
             {sourcesList.map((source) => (
@@ -479,6 +497,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
               </option>
             ))}
           </select>
+            <div></div>
             {/* Replace your <select multiple> with something like this */}
             <div className="border text-black border-gray-300 p-2 rounded min-h-[65px]" style={{ maxHeight: "65px", overflowY: "auto" }}>
               <p>{t("choose_label")}</p>
@@ -517,32 +536,41 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
 
 
         </div>
-        <button
-          onClick={handleAddLead}
-          className={buttonSmallStyle()}
-        >
-          {`${t("add_lead")}➕`}
-        </button>
+          <div className="flex justify-center items-center h-full">
+            <button
+              onClick={handleAddLead}
+              className={buttonSmallStyle()}
+            >
+              {`${t("add_lead")}➕`}
+            </button>
+          </div>
+      </div>
       </div>
 
       {/* Bulk Add Phone Numbers */}
+      <div className="bg-white shadow-2xl rounded-lg mb-16 p-4">
      <div className="mt-6 p-4 border border-gray-300 rounded">
-  <h2 className="text-xl font-semibold mb-4">{t("bulk_add_phone_numbers")}</h2>
+          <p className="text-center animate-pulse text-2xl mb-4 font-semibold text-gray-700 tracking-wide italic relative">{t("bulk_add_phone_numbers")}</p>
   <textarea
     value={bulkPhoneNumbers}
     onChange={(e) => setBulkPhoneNumbers(e.target.value)}
     placeholder={t("paste_phone_numbers_here_separated_by_commas_or_new_lines")}
     className="w-full border text-black border-gray-300 p-1 rounded h-32 resize-none"
   />
+          <div className="flex justify-center items-center h-full">
   <button
     onClick={handleBulkAdd}
           className={buttonSmallStyle()}
   >
           {`${t("add_bulk_phone_numbers")}➕`}
         </button>
+        </div>
       </div>
+    </div>
+    
 
       {/* Import CSV */}
+      <div className="bg-white shadow-2xl rounded-lg mb-16 p-4">
 <div className="mt-6 p-4 border border-gray-300 rounded">
         <div className="flex items-center space-x-4">
           <h2 className="text-xl font-semibold mb-4">{t("import_leads_from_csv")}</h2> <a href="/static/sample-files/sample_leads.csv" download><u>{t("clickHereToDownloadTheSampleFile")}</u>💾</a>
@@ -575,7 +603,8 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     }}
     className="w-full border text-black border-gray-300 p-2 rounded"
   />
-      </div>  
+      </div> 
+      </div>
 
       {/*
       <div className="mt-6 p-4 border border-gray-300 rounded">

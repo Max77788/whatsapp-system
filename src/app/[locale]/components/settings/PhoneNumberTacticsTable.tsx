@@ -182,12 +182,15 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
   }
 
   return (
+    <div className="bg-white shadow-2xl rounded-lg mb-16 p-4">
     <div className="mt-8 p-4 flex flex-col gap-3 items-left justify-left">
       {phoneNumbers.length === 0 ? (
         <p>{t("no_numbers_connect_one")}</p>
       ) : (
         <>
-          <h1 className="text-2xl font-semibold mb-4">{t("phone_number_tactics")}</h1>
+              <p className="text-center animate-pulse text-2xl mb-4 font-semibold text-gray-700 tracking-wide italic relative">
+                {t("phone_number_tactics")}
+              </p>
             <div className="rounded-lg border border-gray-300 overflow-hidden mb-4">
               <table className="min-w-full border-separate border-spacing-0">
             <thead>
@@ -246,6 +249,7 @@ const PhoneNumberTacticsTable: React.FC<PhoneNumberTacticsTableProps> = ({ initi
         </>
       )}
     </div>
+  </div>
   );
 };
 
