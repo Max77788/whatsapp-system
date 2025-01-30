@@ -29,7 +29,7 @@ export default async function WebhooksSetupPage() {
       <Sidebar />
       <div className="main-content flex-1">
         <Header userName={"Webhooks"} />
-        <p className="font-bold text-center text-2xl mt-4 mb-4">{t("important")}</p>
+        <p className="font-bold text-center text-2xl mt-10 mb-4">{t("important")}</p>
         <p className="text-center text-lg mb-4">{t("includeTheHeaderXApiKeyWithTheValueOfYourApiKeyInTheWebhookRequest")}</p>
         <p className="text-center text-lg mb-8">
         {t('videoTutorialsTitle')}{' '}

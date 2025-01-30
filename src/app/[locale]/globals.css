@@ -73,3 +73,7 @@ a:hover {
   /* Darker on hover */
 }
 
+button {
+  font-weight: bold;
+}
+

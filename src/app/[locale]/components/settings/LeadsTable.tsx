@@ -284,7 +284,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
                 onClick={exportToCSV}
                 className={buttonSmallStyle("yellow", "mb-4")}
               >
-                {t("export_as_csv")} 📊
+                <b>{t("export_as_csv")}</b> 📊
               </button>
             </div>
             <div className="bg-white shadow-2xl rounded-lg mb-16 p-4">
@@ -541,7 +541,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
               onClick={handleAddLead}
               className={buttonSmallStyle()}
             >
-              {`${t("add_lead")}➕`}
+              <b>{`${t("add_lead")}➕`}</b>
             </button>
           </div>
       </div>
@@ -562,7 +562,7 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
     onClick={handleBulkAdd}
           className={buttonSmallStyle()}
   >
-          {`${t("add_bulk_phone_numbers")}➕`}
+          <b>{`${t("add_bulk_phone_numbers")}➕`}</b>
         </button>
         </div>
       </div>

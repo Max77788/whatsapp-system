@@ -15,7 +15,7 @@ const Sidebar = ({ withKbBaseUrlLink = true, isPaused = false }: { withKbBaseUrl
   const currentLocale = useLocale();
 
   return (
-    <div className="w-200 p-5 bg-black mb-2 mt-2 rounded-lg">
+    <div className="w-200 p-5 bg-black mb-2 mt-2 mx-4 rounded-lg shadow-[10px_20px_18px_rgba(0,0,0,0.8)]">
       <div className="flex items-center mb-8">
         <svg
           className="w-8 h-8 mr-2"
