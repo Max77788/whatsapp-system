@@ -573,7 +573,9 @@ const LeadsTable: React.FC<Props> = ({ leads = [] }: Props) => {
       <div className="bg-white shadow-2xl rounded-lg mb-16 p-4">
 <div className="mt-6 p-4 border border-gray-300 rounded">
         <div className="flex items-center space-x-4">
-          <h2 className="text-xl font-semibold mb-4">{t("import_leads_from_csv")}</h2> <a href="/static/sample-files/sample_leads.csv" download><u>{t("clickHereToDownloadTheSampleFile")}</u>💾</a>
+            <p className="text-center animate-pulse text-2xl mb-4 font-semibold text-gray-700 tracking-wide italic relative">
+              {t("import_leads_from_csv")}
+            </p> <a href="/static/sample-files/sample_leads.csv" download><u>{t("clickHereToDownloadTheSampleFile")}</u>💾</a>
         </div>  
   <input
     type="file"
