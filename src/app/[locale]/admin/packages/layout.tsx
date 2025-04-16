@@ -5,7 +5,7 @@ import Header from "../../components/dashboard/Header";
 import { SessionProvider } from "next-auth/react";
 import "./settings.css"; // Optional: Use a CSS file to customize dashboard styling.
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;

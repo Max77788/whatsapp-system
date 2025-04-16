@@ -8,162 +8,175 @@ import { useTranslations, useLocale } from "next-intl";
 
 export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConnected: number}) {
   const { data: session } = useSession();
-  const [qrCode, setQrCode] = useState<string | null>(null);
-  const [numberOfPhonesConnected, setNumberOfPhonesConnected] = useState<number>(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [fadeOut, setFadeOut] = useState(false);
-  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  const previousPhonesConnectedRef = useRef<number | null>(null); // Ref to store the previous number of connected phones
+  const [isLoading, setIsLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [showVerificationInput, setShowVerificationInput] = useState(false);
+  const [numberOfPhonesConnected, setNumberOfPhonesConnected] = useState<number>(0);
 
   const currentLocale = useLocale();
-  
   const t = useTranslations("whatsapp_connection");
 
-  let isNotificationActive = false;
-
-  const showNotification = async (message: string, waitTime = 11000) => {
-    if (isNotificationActive) {
-      return; // Exit if a notification is already active
-    }
-
-    isNotificationActive = true; // Set the flag to indicate a notification is active
-
-    toast.success(message, {
-      autoClose: waitTime,
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, waitTime));
-
-    isNotificationActive = false; // Reset the flag after the wait time
-  };
-  
   const togglePopup = () => {
     setIsOpen(!isOpen);
-
-    // Clear interval when closing the dialog
-    if (!isOpen && intervalIdRef.current) {
-      clearInterval(intervalIdRef.current);
-      intervalIdRef.current = null;
-    }
   };
 
-  
-
-  const fetchQRCode = async () => {
-    try {
-      const response = await fetch("/api/whatsapp-part/generate-qr");
-      const data = await response.json();
-  
-      if (response.ok) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-        const newNumberOfPhonesConnected = data.numberOfPhonesConnected;
-   
-        setNumberOfPhonesConnected(newNumberOfPhonesConnected);
-
-        // Compare with the previous value stored in the ref
-        if (previousPhonesConnectedRef.current !== null && newNumberOfPhonesConnected !== previousPhonesConnectedRef.current) {
-          const moreNumbers = newNumberOfPhonesConnected > previousPhonesConnectedRef.current;
-          
-          const message = moreNumbers  
-              ? t("phone_connected_successfully")
-              : t("phone_detached_successfully");
-          
-          const waitTime = 11000;
-
-          await showNotification(message, waitTime)
-
-          if (moreNumbers) {
-            window.location.href = `/${currentLocale}/whatsapp-screen`;
-            return;
-          }
-  
-          // Reload the page after the toast notification
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500); // Delay for toast visibility
-        }
-  
-        // Update the ref with the new value
-        previousPhonesConnectedRef.current = newNumberOfPhonesConnected;
-  
-        // Smooth fade effect before updating QR code
-        setFadeOut(true);
-        setTimeout(() => {
-          setQrCode(data.qrCodeString);
-          setFadeOut(false);
-        }, 300);
-      } else {
-        console.error(`Error on generate QR code endpoint: ${data.error}`);
-        // toast.error("Failed to generate QR code. Please try again.");
-      }
-    } catch (error) {
-      console.error("Failed to fetch QR code:", error);
-      //toast.error("An error occurred while fetching the QR code.");
-    }
-  };
-
-  const handleGenerateQRCode = async () => {
-    if (!session) {
-      toast.error(t("you_need_to_be_logged_in_to_generate_a_qr_code"));
+  const handleConnectPhone = async () => {
+    if (!phoneNumber) {
+      toast.error(t("please_enter_phone_number"));
       return;
     }
 
-    await fetchQRCode();
-    togglePopup();
+    setIsLoading(true);
+    try {
+      // Call the API to connect the phone number
+      const response = await fetch("/api/whatsapp-part/connect-phone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
 
-    // Start polling every 7 seconds to refresh the QR code
-    intervalIdRef.current = setInterval(fetchQRCode, 7000);
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(t("phone_connected_successfully"));
+        setNumberOfPhonesConnected(prev => prev + 1);
+        setPhoneNumber("");
+        setIsOpen(false);
+      } else {
+        toast.error(data.error || t("failed_to_connect_phone"));
+      }
+    } catch (error) {
+      console.error("Error connecting phone:", error);
+      toast.error(t("an_error_occurred"));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  useEffect(() => {
-    // Clear interval on component unmount
-    return () => {
-      if (intervalIdRef.current) {
-        clearInterval(intervalIdRef.current);
+  const handleVerifyCode = async () => {
+    if (!verificationCode) {
+      toast.error(t("please_enter_verification_code"));
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Call the API to verify the code
+      const response = await fetch("/api/whatsapp-part/verify-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          phoneNumber,
+          verificationCode 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(t("phone_verified_successfully"));
+        setNumberOfPhonesConnected(prev => prev + 1);
+        setPhoneNumber("");
+        setVerificationCode("");
+        setShowVerificationInput(false);
+        setIsOpen(false);
+      } else {
+        toast.error(data.error || t("failed_to_verify_code"));
       }
-    };
-  }, []);
+    } catch (error) {
+      console.error("Error verifying code:", error);
+      toast.error(t("an_error_occurred"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div>
-      <button onClick={handleGenerateQRCode} className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full flex items-center gap-2">
-        {t("connect_a_new_phone")} <img src="/WhatsAppLogo.png" alt="Whatsapp Logo" className="w-8 h-8" />
+      <button
+        onClick={togglePopup}
+        disabled={numberOfPhonesConnected >= maxPhonesConnected}
+        className={`px-4 py-2 text-white rounded-md ${
+          numberOfPhonesConnected >= maxPhonesConnected
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
+        }`}
+      >
+        {t("connect_a_new_phone")}
       </button>
 
-      <Dialog open={isOpen} onClose={togglePopup} className="fixed inset-0 z-10 overflow-y-auto">
-        <div className="min-h-screen px-4 text-center">
-          <div className="fixed inset-0 bg-black opacity-30" onClick={togglePopup} />
-          <span className="inline-block h-screen align-middle" aria-hidden="true">
-            &#8203;
-          </span>
-          <div className="inline-block w-full max-w-sm p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded">
-            <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 text-center">
-              {t("scan_this_qr_code_to_connect_your_phone")}
-              <br />
-              {t("you_have_out_of_phones_connected", {numberOfPhonesConnected, maxPhonesConnected})}
+      <Dialog
+        open={isOpen}
+        onClose={togglePopup}
+        className="fixed inset-0 z-10 overflow-y-auto"
+      >
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="fixed inset-0 bg-black opacity-30" />
+
+          <div className="relative bg-white rounded-md p-6 max-w-md w-full mx-4">
+            <Dialog.Title className="text-lg font-medium mb-4">
+              {t("connect_whatsapp_phone")}
             </Dialog.Title>
 
-            <div className="mt-4 flex justify-center">
-              {qrCode ? (
-                <img
-                  src={qrCode}
-                  alt="QR Code"
-                  className={`w-full h-auto transition-opacity duration-300 ${
-                    fadeOut ? "opacity-0" : "opacity-100"
-                  }`}
-                />
-              ) : (
-                  <p className="text-black text-2xl my-32 font-bold italic">{t("generating_qr_code")}</p>
-              )}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t("phone_number")}
+              </label>
+              <input
+                type="text"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder={t("enter_phone_number")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                disabled={showVerificationInput}
+              />
             </div>
 
-            <p className="text-black text-center font-bold italic">*{t("please_wait_a_bit_after_successfully_scanning_the_code")}</p>
+            {showVerificationInput && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("verification_code")}
+                </label>
+                <input
+                  type="text"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  placeholder={t("enter_verification_code")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+            )}
 
-            <div className="mt-4">
-              <button onClick={togglePopup} className="px-4 py-2 bg-red-500 text-white rounded-full mx-auto block text-center">
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={togglePopup}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+              >
                 {t("close")}
               </button>
+              {!showVerificationInput ? (
+                <button
+                  onClick={handleConnectPhone}
+                  disabled={isLoading}
+                  className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-green-400"
+                >
+                  {isLoading ? t("connecting") : t("connect")}
+                </button>
+              ) : (
+                <button
+                  onClick={handleVerifyCode}
+                  disabled={isLoading}
+                  className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-green-400"
+                >
+                  {isLoading ? t("verifying") : t("verify")}
+                </button>
+              )}
             </div>
           </div>
         </div>
