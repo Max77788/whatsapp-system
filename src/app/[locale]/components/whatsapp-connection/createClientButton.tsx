@@ -43,9 +43,7 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
 
       if (response.ok) {
         toast.success(t("phone_connected_successfully"));
-        setNumberOfPhonesConnected(prev => prev + 1);
-        setPhoneNumber("");
-        setIsOpen(false);
+        setShowVerificationInput(true);
       } else {
         toast.error(data.error || t("failed_to_connect_phone"));
       }
@@ -133,7 +131,7 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder={t("enter_phone_number")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 text-black border border-gray-300 rounded-md"
                 disabled={showVerificationInput}
               />
             </div>
