@@ -169,7 +169,22 @@
         "you_need_to_be_logged_in_to_connect_a_phone": "You need to be logged in to connect a phone",
         "you_need_to_be_logged_in_to_generate_a_qr_code": "You need to be logged in to generate a QR code",
         "your_plan_is_expired": "Your plan is expired",
-        "please_wait_a_bit_after_successfully_scanning_the_code": "Please, wait a bit after successfully scanning the code"
+        "please_wait_a_bit_after_successfully_scanning_the_code": "Please, wait a bit after successfully scanning the code",
+        "please_enter_phone_number": "Please enter a phone number",
+        "failed_to_connect_phone": "Failed to connect phone",
+        "an_error_occurred": "An error occurred",
+        "please_enter_verification_code": "Please enter verification code",
+        "phone_verified_successfully": "Phone verified successfully",
+        "failed_to_verify_code": "Failed to verify code",
+        "connect_whatsapp_phone": "Connect WhatsApp Phone",
+        "phone_number": "Phone Number",
+        "enter_phone_number": "Enter phone number",
+        "verification_code": "Verification Code",
+        "enter_verification_code": "Enter verification code",
+        "connecting": "Connecting...",
+        "connect": "Connect",
+        "verifying": "Verifying...",
+        "verify": "Verify"
     },
     "templateManager": {
        "selectCreateATemplateToViewOrEditItsDetails": "Select/create a template to view or edit its details",
