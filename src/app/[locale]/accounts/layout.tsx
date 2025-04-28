@@ -7,7 +7,7 @@ import "./settings.css"; // Optional: Use a CSS file to customize dashboard styl
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;

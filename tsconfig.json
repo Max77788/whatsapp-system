@@ -8,10 +8,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "types": [
-      "react",
-      "react-dom"
-    ],
+    "types": ["node"],
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -41,8 +38,9 @@
     ".next/types/**/*.ts",
     "src/app/api/verify-email/[token_email]/route.js",
     "lib/whatsAppService/whatsAppClient/whatsAppClient.js",
-    "test_gsheets.js"
-, "phone_test.js"  ],
+    "test_gsheets.js",
+    "phone_test.js"
+  ],
   "exclude": [
     "node_modules"
   ]

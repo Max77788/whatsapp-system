@@ -253,7 +253,7 @@ const handleScheduleMessage = async () => {
           <select
             multiple
             size={toPhones?.length || 5}
-            value={toNumbers}
+            value={toNumbers || []}
             onChange={(e) => {
               const values = Array.from(e.target.selectedOptions, (option) => option.value);
               setToNumbers(values);
@@ -274,7 +274,7 @@ const handleScheduleMessage = async () => {
               <option disabled>{t("noPhones")}</option>
             )}
           </select>
-          <div className="mt-1 text-gray-400 italic">{`${toNumbers.length} ${t("numbersSelected")}`}</div>
+          <div className="mt-1 text-gray-400 italic">{`${(toNumbers || []).length} ${t("numbersSelected")}`}</div>
         </div>
       </div>
 

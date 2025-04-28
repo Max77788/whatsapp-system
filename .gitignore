@@ -61,3 +61,5 @@ all-capturing-acc-credentials.json
 aviv*
 
 createK8sDeployment.mjs
+whatsapp_system_testing_checklist.md
+/dist
