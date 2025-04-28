@@ -23,7 +23,7 @@ export async function POST(req) {
         }
 
         // Initialize WhatsApp Business API service
-        const whatsappService = await initializeWhatsAppService(user);
+        const whatsappService = await initializeWhatsAppService();
 
         // Format the chat ID
         const formattedChatId = formatPhoneNumberToChatId(chatId);

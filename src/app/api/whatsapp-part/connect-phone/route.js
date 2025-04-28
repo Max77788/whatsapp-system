@@ -17,39 +17,26 @@ export async function POST(req) {
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+    console.log("🚀 ~ POST ~ user:", user)
 
     const { phoneNumber } = await req.json();
     if (!phoneNumber) {
       return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
     }
 
-    // Check if the user has reached the maximum number of connected phones
-    let numberOfConnectedPhones = 0;
+    // Find the first available slot for a new phone number
+    let keyThing = null;
     for (let i = 1; i <= 5; i++) {
-      const keyThing = `qrCode${i}`;
-      if (user[keyThing] && user[keyThing].phoneNumber) {
-        numberOfConnectedPhones++;
-      }
-    }
-
-    // Find an available slot for the new phone number
-    let availableSlot = -1;
-    for (let i = 1; i <= 5; i++) {
-      const keyThing = `qrCode${i}`;
-      if (!user[keyThing] || !user[keyThing].phoneNumber) {
-        availableSlot = i;
+      const attr = `qrCode${i}`;
+      if (!user[attr] || !user[attr].phoneNumber) {
+        keyThing = attr;
         break;
       }
     }
 
-    if (availableSlot === -1) {
-      return NextResponse.json({ error: 'Maximum number of phones already connected' }, { status: 400 });
+    if (!keyThing) {
+      return NextResponse.json({ error: 'Maximum number of phones reached' }, { status: 400 });
     }
-
-    const keyThing = `qrCode${availableSlot}`;
-    
-    // Initialize WhatsApp Business API service
-    const whatsappService = await initializeWhatsAppService(user);
     
     try {
       // In the WhatsApp Business API (Cloud API), connecting a phone number
@@ -63,19 +50,16 @@ export async function POST(req) {
         { 
           [keyThing]: { 
             phoneNumber: phoneNumber,
-            isVerified: false,
+            isVerified: true,
             connectedAt: new Date().toISOString()
           } 
         }
       );
       
       if (success) {
-        console.log(`Successfully initiated connection for phone number ${phoneNumber}`);
+        console.log(`Successfully connected phone number ${phoneNumber}`);
         return NextResponse.json(
-          { 
-            message: `Connection initiated for phone number ${phoneNumber}`,
-            requiresVerification: true
-          },
+          { message: `Phone number ${phoneNumber} connected successfully` },
           { status: 200 }
         );
       } else {

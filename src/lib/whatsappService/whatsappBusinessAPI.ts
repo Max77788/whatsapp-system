@@ -334,13 +334,19 @@ export class WhatsAppBusinessService {
 /**
  * Initialize the WhatsApp Business API service
  * 
- * @param user - User object
  * @returns WhatsAppBusinessService instance
  */
-export async function initializeWhatsAppService(user: any) {
+export async function initializeWhatsAppService() {
+    // Access environment variables directly
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
     const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
     const apiVersion = process.env.WHATSAPP_API_VERSION || 'v21.0';
+
+    console.log('WhatsApp API Config:', {
+        phoneNumberId: phoneNumberId ? 'Set' : 'Not set',
+        accessToken: accessToken ? 'Set' : 'Not set',
+        apiVersion
+    });
 
     if (!phoneNumberId || !accessToken) {
         throw new Error('WhatsApp Business API credentials not configured');
