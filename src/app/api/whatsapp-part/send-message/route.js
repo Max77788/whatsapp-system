@@ -109,7 +109,7 @@ export async function POST(req) {
     });
 
     // Initialize WhatsApp Business API service
-    const whatsappService = await initializeWhatsAppService(user);
+    const whatsappService = await initializeWhatsAppService();
     let mediaUrl = null;
 
     if (media !== null) {

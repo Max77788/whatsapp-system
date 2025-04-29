@@ -32,7 +32,7 @@ export async function POST(req) {
     }
 
     // Initialize WhatsApp Business API service
-    const whatsappService = await initializeWhatsAppService(user);
+    const whatsappService = await initializeWhatsAppService();
     
     // Update campaign status to running
     await update_user(

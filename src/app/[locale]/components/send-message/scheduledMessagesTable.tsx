@@ -27,10 +27,17 @@ const ScheduledMessagesListTable: React.FC = () => {
         const response = await fetch("/api/whatsapp-part/schedule-message/get");
         if (!response.ok) throw new Error("Failed to fetch scheduled messages");
         const { scheduledMessages } = await response.json();
-        scheduledMessages.sort((a: ScheduledMessage, b: ScheduledMessage) => new Date(a.scheduleTime).getTime() - new Date(b.scheduleTime).getTime());
         
-        
-        setScheduledMessages(scheduledMessages);
+        // Check if scheduledMessages exists and is an array before sorting
+        if (scheduledMessages && Array.isArray(scheduledMessages)) {
+          scheduledMessages.sort((a: ScheduledMessage, b: ScheduledMessage) => 
+            new Date(a.scheduleTime).getTime() - new Date(b.scheduleTime).getTime()
+          );
+          setScheduledMessages(scheduledMessages);
+        } else {
+          console.warn("No scheduled messages found or invalid data format");
+          setScheduledMessages([]);
+        }
       } catch (error) {
         console.error("Error fetching scheduled messages:", error);
       } finally {

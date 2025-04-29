@@ -40,7 +40,7 @@ export async function POST(req) {
         const keyThing = `qrCode${phoneIndex}`;
         
         // Initialize WhatsApp Business API service
-        const whatsappService = await initializeWhatsAppService(user);
+        const whatsappService = await initializeWhatsAppService();
         
         try {
             // Note: The WhatsApp Business API (Cloud API) is a cloud-based service
