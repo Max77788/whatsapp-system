@@ -26,7 +26,7 @@ const TEST_PHONE_NUMBER = process.env.TEST_PHONE_NUMBER || '1234567890';
 async function runTests() {
   try {
     console.log('Initializing WhatsApp Business API service...');
-    const whatsappService = await initializeWhatsAppService(mockUser);
+    const whatsappService = await initializeWhatsAppService();
     
     // Test 1: Send a text message
     console.log('\n--- Test 1: Sending a text message ---');

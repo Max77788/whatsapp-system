@@ -22,7 +22,7 @@ export async function POST(req) {
         }
 
         // Initialize WhatsApp Business API service
-        const whatsappService = await initializeWhatsAppService(user);
+        const whatsappService = await initializeWhatsAppService();
 
         // Get chats using the Business API
         const chats = await whatsappService.getChats();

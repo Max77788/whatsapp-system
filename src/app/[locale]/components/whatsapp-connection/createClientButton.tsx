@@ -11,8 +11,6 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
-  const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [numberOfPhonesConnected, setNumberOfPhonesConnected] = useState<number>(0);
 
   const currentLocale = useLocale();
@@ -43,52 +41,14 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
 
       if (response.ok) {
         toast.success(t("phone_connected_successfully"));
-        setShowVerificationInput(true);
+        setNumberOfPhonesConnected(prev => prev + 1);
+        setPhoneNumber("");
+        setIsOpen(false);
       } else {
         toast.error(data.error || t("failed_to_connect_phone"));
       }
     } catch (error) {
       console.error("Error connecting phone:", error);
-      toast.error(t("an_error_occurred"));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    if (!verificationCode) {
-      toast.error(t("please_enter_verification_code"));
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      // Call the API to verify the code
-      const response = await fetch("/api/whatsapp-part/verify-code", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          phoneNumber,
-          verificationCode 
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success(t("phone_verified_successfully"));
-        setNumberOfPhonesConnected(prev => prev + 1);
-        setPhoneNumber("");
-        setVerificationCode("");
-        setShowVerificationInput(false);
-        setIsOpen(false);
-      } else {
-        toast.error(data.error || t("failed_to_verify_code"));
-      }
-    } catch (error) {
-      console.error("Error verifying code:", error);
       toast.error(t("an_error_occurred"));
     } finally {
       setIsLoading(false);
@@ -132,24 +92,8 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder={t("enter_phone_number")}
                 className="w-full px-3 py-2 text-black border border-gray-300 rounded-md"
-                disabled={showVerificationInput}
               />
             </div>
-
-            {showVerificationInput && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("verification_code")}
-                </label>
-                <input
-                  type="text"
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
-                  placeholder={t("enter_verification_code")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            )}
 
             <div className="flex justify-end space-x-2">
               <button
@@ -158,23 +102,13 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
               >
                 {t("close")}
               </button>
-              {!showVerificationInput ? (
-                <button
-                  onClick={handleConnectPhone}
-                  disabled={isLoading}
-                  className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-green-400"
-                >
-                  {isLoading ? t("connecting") : t("connect")}
-                </button>
-              ) : (
-                <button
-                  onClick={handleVerifyCode}
-                  disabled={isLoading}
-                  className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-green-400"
-                >
-                  {isLoading ? t("verifying") : t("verify")}
-                </button>
-              )}
+              <button
+                onClick={handleConnectPhone}
+                disabled={isLoading}
+                className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 disabled:bg-green-400"
+              >
+                {isLoading ? t("connecting") : t("connect")}
+              </button>
             </div>
           </div>
         </div>

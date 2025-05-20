@@ -3,7 +3,8 @@ import { find_user, find_qr_id_by_phone, update_user, findPlanById, checkIsraeli
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/serverStuff';
 import { uploadFile, deleteFile } from '@/lib/google_storage/google_storage';
-import { initializeWhatsAppService } from '@/lib/whatsappService/whatsappBusinessAPI';
+// import { initializeWhatsAppService } from '@/lib/whatsappService/whatsappBusinessAPI';
+import { initializeWhatsAppService } from '../../../../lib/whatsappService/whatsappBusinessAPI';
 import axios from 'axios';
 
 /**
@@ -74,6 +75,7 @@ export async function POST(req) {
     const formData = await req.formData();
 
     const fromNumber = formData.get('fromNumber');
+    console.log("🚀 ~ POST ~ fromNumber:", fromNumber)
     let toNumbers = JSON.parse(formData.get('toNumbers') || '[]');
     let message = formData.get('message');
     const media = formData.get('media') || null;
@@ -109,7 +111,7 @@ export async function POST(req) {
     });
 
     // Initialize WhatsApp Business API service
-    const whatsappService = await initializeWhatsAppService(user);
+    const whatsappService = await initializeWhatsAppService();
     let mediaUrl = null;
 
     if (media !== null) {

@@ -17,6 +17,7 @@ export async function POST(req) {
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+    console.log("🚀 ~ POST ~ user:", user)
 
     const { phoneNumber } = await req.json();
     if (!phoneNumber) {
@@ -49,7 +50,8 @@ export async function POST(req) {
     const keyThing = `qrCode${availableSlot}`;
     
     // Initialize WhatsApp Business API service
-    const whatsappService = await initializeWhatsAppService(user);
+    const whatsappService = await initializeWhatsAppService();
+
     
     try {
       // In the WhatsApp Business API (Cloud API), connecting a phone number
@@ -63,18 +65,17 @@ export async function POST(req) {
         { 
           [keyThing]: { 
             phoneNumber: phoneNumber,
-            isVerified: false,
+            isVerified: true,
             connectedAt: new Date().toISOString()
           } 
         }
       );
       
       if (success) {
-        console.log(`Successfully initiated connection for phone number ${phoneNumber}`);
+        console.log(`Successfully connected phone number ${phoneNumber}`);
         return NextResponse.json(
           { 
-            message: `Connection initiated for phone number ${phoneNumber}`,
-            requiresVerification: true
+            message: `Phone number ${phoneNumber} connected successfully`
           },
           { status: 200 }
         );

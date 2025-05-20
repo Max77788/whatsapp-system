@@ -274,7 +274,7 @@ const handleScheduleMessage = async () => {
               <option disabled>{t("noPhones")}</option>
             )}
           </select>
-          <div className="mt-1 text-gray-400 italic">{`${toNumbers.length} ${t("numbersSelected")}`}</div>
+          <div className="mt-1 text-gray-400 italic">{`${toNumbers?.length || 0} ${t("numbersSelected")}`}</div>
         </div>
       </div>
 
