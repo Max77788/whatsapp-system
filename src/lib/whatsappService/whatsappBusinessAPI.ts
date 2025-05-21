@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { find_user } from '@/lib/utils';
 
 /**
  * WhatsApp Business Cloud API Service
@@ -36,6 +35,7 @@ export class WhatsAppBusinessService {
             let messageData: any = {
                 messaging_product: 'whatsapp',
                 to,
+                recipient_type: 'individual',
             };
 
             if (templateName) {
@@ -59,7 +59,7 @@ export class WhatsAppBusinessService {
             } else {
                 // Text message
                 messageData.type = 'text';
-                messageData.text = { 
+                messageData.text = {
                     body: message,
                     preview_url: false // Disable link previews by default
                 };
@@ -75,7 +75,7 @@ export class WhatsAppBusinessService {
                     }
                 }
             );
-            
+
             return response.data;
         } catch (error: any) {
             console.error('Error sending WhatsApp message:', error.response?.data || error);
@@ -90,104 +90,52 @@ export class WhatsAppBusinessService {
      * @param limit - Maximum number of messages to return (default: 50)
      * @returns API response
      */
-    async getMessages(phoneNumber: string, limit: number = 50) {
-        try {
-            const response = await axios.get(
-                `${this.baseUrl}/${this.phoneNumberId}/messages`,
-                {
-                    params: {
-                        phone_number: phoneNumber,
-                        limit
-                    },
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`
-                    }
-                }
-            );
-            
-            return response.data;
-        } catch (error: any) {
-            console.error('Error fetching WhatsApp messages:', error.response?.data || error);
-            throw new Error(error.response?.data?.error?.message || 'Failed to fetch messages');
-        }
-    }
+    // TODO this functionality can only be used through webhooks
+    // async getMessages(phoneNumber: string, limit: number = 50) {
+    //     try {
+    //         const response = await axios.get(
+    //             `${this.baseUrl}/${this.phoneNumberId}/messages`,
+    //             {
+    //                 params: {
+    //                     phone_number: phoneNumber,
+    //                     limit
+    //                 },
+    //                 headers: {
+    //                     'Authorization': `Bearer ${this.accessToken}`
+    //                 }
+    //             }
+    //         );
 
-    /**
-     * Get conversations
-     * 
-     * @param limit - Maximum number of conversations to return (default: 50)
-     * @returns API response
-     */
-    async getChats(limit: number = 50) {
-        try {
-            const response = await axios.get(
-                `${this.baseUrl}/${this.phoneNumberId}/conversations`,
-                {
-                    params: {
-                        limit
-                    },
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`
-                    }
-                }
-            );
-            
-            return response.data;
-        } catch (error: any) {
-            console.error('Error fetching WhatsApp chats:', error.response?.data || error);
-            throw new Error(error.response?.data?.error?.message || 'Failed to fetch chats');
-        }
-    }
+    //         return response.data;
+    //     } catch (error: any) {
+    //         console.error('Error fetching WhatsApp messages:', error.response?.data || error);
+    //         throw new Error(error.response?.data?.error?.message || 'Failed to fetch messages');
+    //     }
+    // }
 
-    /**
-     * Get contact information for a phone number
-     * 
-     * @param phoneNumber - Phone number to get contact info for
-     * @returns API response
-     */
-    async getContactInfo(phoneNumber: string) {
-        try {
-            const response = await axios.get(
-                `${this.baseUrl}/${this.phoneNumberId}/contacts`,
-                {
-                    params: {
-                        phone_number: phoneNumber
-                    },
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`
-                    }
-                }
-            );
-            
-            return response.data;
-        } catch (error: any) {
-            console.error('Error fetching contact info:', error.response?.data || error);
-            throw new Error(error.response?.data?.error?.message || 'Failed to fetch contact info');
-        }
-    }
 
     /**
      * Get message templates
      * 
      * @returns API response
      */
-    async getMessageTemplates() {
-        try {
-            const response = await axios.get(
-                `${this.baseUrl}/${this.phoneNumberId}/message_templates`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`
-                    }
-                }
-            );
-            
-            return response.data;
-        } catch (error: any) {
-            console.error('Error fetching message templates:', error.response?.data || error);
-            throw new Error(error.response?.data?.error?.message || 'Failed to fetch message templates');
-        }
-    }
+    // async getMessageTemplates() {
+    //     try {
+    //         const response = await axios.get(
+    //             `${this.baseUrl}/${this.phoneNumberId}/message_templates`,
+    //             {
+    //                 headers: {
+    //                     'Authorization': `Bearer ${this.accessToken}`
+    //                 }
+    //             }
+    //         );
+
+    //         return response.data;
+    //     } catch (error: any) {
+    //         console.error('Error fetching message templates:', error.response?.data || error);
+    //         throw new Error(error.response?.data?.error?.message || 'Failed to fetch message templates');
+    //     }
+    // }
 
     /**
      * Create a message template
@@ -198,6 +146,7 @@ export class WhatsAppBusinessService {
      * @param components - Template components
      * @returns API response
      */
+    // ⚠️ available only via WhatsApp Business Manager UI or Meta Graph API with special permissions.
     async createMessageTemplate(name: string, language: string, category: string, components: any[]) {
         try {
             const response = await axios.post(
@@ -215,7 +164,7 @@ export class WhatsAppBusinessService {
                     }
                 }
             );
-            
+
             return response.data;
         } catch (error: any) {
             console.error('Error creating message template:', error.response?.data || error);
@@ -229,6 +178,8 @@ export class WhatsAppBusinessService {
      * @param name - Template name to delete
      * @returns API response
      */
+    // ⚠️ available only via WhatsApp Business Manager UI or Meta Graph API with special permissions.
+    // 
     async deleteMessageTemplate(name: string) {
         try {
             const response = await axios.delete(
@@ -243,7 +194,7 @@ export class WhatsAppBusinessService {
                     }
                 }
             );
-            
+
             return response.data;
         } catch (error: any) {
             console.error('Error deleting message template:', error.response?.data || error);
@@ -251,84 +202,7 @@ export class WhatsAppBusinessService {
         }
     }
 
-    /**
-     * Block a user
-     * 
-     * @param phoneNumber - Phone number to block
-     * @returns API response
-     */
-    async blockUser(phoneNumber: string) {
-        try {
-            const response = await axios.post(
-                `${this.baseUrl}/${this.phoneNumberId}/blocked`,
-                {
-                    phone_number: phoneNumber
-                },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            
-            return response.data;
-        } catch (error: any) {
-            console.error('Error blocking user:', error.response?.data || error);
-            throw new Error(error.response?.data?.error?.message || 'Failed to block user');
-        }
-    }
 
-    /**
-     * Unblock a user
-     * 
-     * @param phoneNumber - Phone number to unblock
-     * @returns API response
-     */
-    async unblockUser(phoneNumber: string) {
-        try {
-            const response = await axios.delete(
-                `${this.baseUrl}/${this.phoneNumberId}/blocked`,
-                {
-                    data: {
-                        phone_number: phoneNumber
-                    },
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            
-            return response.data;
-        } catch (error: any) {
-            console.error('Error unblocking user:', error.response?.data || error);
-            throw new Error(error.response?.data?.error?.message || 'Failed to unblock user');
-        }
-    }
-
-    /**
-     * Get blocked users
-     * 
-     * @returns API response
-     */
-    async getBlockedUsers() {
-        try {
-            const response = await axios.get(
-                `${this.baseUrl}/${this.phoneNumberId}/blocked`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`
-                    }
-                }
-            );
-            
-            return response.data;
-        } catch (error: any) {
-            console.error('Error fetching blocked users:', error.response?.data || error);
-            throw new Error(error.response?.data?.error?.message || 'Failed to fetch blocked users');
-        }
-    }
 }
 
 /**
@@ -336,17 +210,10 @@ export class WhatsAppBusinessService {
  * 
  * @returns WhatsAppBusinessService instance
  */
-export async function initializeWhatsAppService() {
-    // Access environment variables directly
+export async function initializeWhatsAppService(user: any) {
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
     const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
     const apiVersion = process.env.WHATSAPP_API_VERSION || 'v21.0';
-
-    console.log('WhatsApp API Config:', {
-        phoneNumberId: phoneNumberId ? 'Set' : 'Not set',
-        accessToken: accessToken ? 'Set' : 'Not set',
-        apiVersion
-    });
 
     if (!phoneNumberId || !accessToken) {
         throw new Error('WhatsApp Business API credentials not configured');

@@ -18,6 +18,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     console.log("🚀 ~ POST ~ user:", user)
+    console.log("🚀 ~ POST ~ user:", user)
 
     const { phoneNumber } = await req.json();
     if (!phoneNumber) {
@@ -51,12 +52,14 @@ export async function POST(req) {
           [keyThing]: { 
             phoneNumber: phoneNumber,
             isVerified: true,
+            isVerified: true,
             connectedAt: new Date().toISOString()
           } 
         }
       );
       
       if (success) {
+        console.log(`Successfully connected phone number ${phoneNumber}`);
         console.log(`Successfully connected phone number ${phoneNumber}`);
         return NextResponse.json(
           { message: `Phone number ${phoneNumber} connected successfully` },
