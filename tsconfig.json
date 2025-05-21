@@ -10,7 +10,8 @@
     "skipLibCheck": true,
     "types": [
       "react",
-      "react-dom"
+      "react-dom",
+      "jest"
     ],
     "strict": true,
     "noEmit": true,

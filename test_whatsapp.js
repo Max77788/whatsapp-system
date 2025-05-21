@@ -1,165 +1,78 @@
-const qrcode = require('qrcode-terminal');
 require('dotenv').config();
-
-const { MessageMedia } = require('whatsapp-web.js');
-const { MongoStore } = require('wwebjs-mongo');
-const mongoose = require('mongoose');
-const QRCode = require('qrcode');
-const fs = require('fs');
 const axios = require('axios');
+const { initializeWhatsAppService } = require('./src/lib/whatsappService/whatsappBusinessAPI');
 
-const { Client, RemoteAuth, LocalAuth } = require('whatsapp-web.js');
+/**
+ * Test script for WhatsApp Business API
+ * 
+ * This script demonstrates how to use the WhatsApp Business API to:
+ * 1. Send text messages
+ * 2. Send media messages
+ * 3. Fetch messages from a chat
+ * 4. Get chat information
+ * 5. Get contact information
+ */
 
-const UNIQUE_ID = process.env.ACCOUNT_UNIQUE_ID;
-const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:3000';
+// Mock user object with necessary credentials
+const mockUser = {
+  phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
+  accessToken: process.env.WHATSAPP_ACCESS_TOKEN,
+  email: 'test@example.com'
+};
 
-const customMessageHandler = (msg) => {
-    // pulled from user's acc in production
-    if (msg.body === 'Hey!') {
-        return 'Yo, amigo!';
-    } else if (msg.body.toLowerCase().includes("piu!")) {
-        return 'Pau!';
-    } else {
-        return null;
+// Test phone number to send messages to
+const TEST_PHONE_NUMBER = process.env.TEST_PHONE_NUMBER || '1234567890';
+
+async function runTests() {
+  try {
+    console.log('Initializing WhatsApp Business API service...');
+    const whatsappService = await initializeWhatsAppService();
+    
+    // Test 1: Send a text message
+    console.log('\n--- Test 1: Sending a text message ---');
+    const messageText = 'Hello from WhatsApp Business API test!';
+    const messageResult = await whatsappService.sendMessage(TEST_PHONE_NUMBER, messageText);
+    console.log('Message sent successfully:', messageResult);
+    
+    // Test 2: Send a media message (if media URL is provided)
+    if (process.env.TEST_MEDIA_URL) {
+      console.log('\n--- Test 2: Sending a media message ---');
+      const mediaMessage = 'Check out this media!';
+      const mediaResult = await whatsappService.sendMessage(
+        TEST_PHONE_NUMBER, 
+        mediaMessage, 
+        process.env.TEST_MEDIA_URL
+      );
+      console.log('Media message sent successfully:', mediaResult);
     }
+    
+    // Test 3: Get messages from a chat
+    console.log('\n--- Test 3: Getting messages from a chat ---');
+    const messages = await whatsappService.getMessages(TEST_PHONE_NUMBER);
+    console.log('Messages retrieved:', messages);
+    
+    // Test 4: Get chat information
+    console.log('\n--- Test 4: Getting chat information ---');
+    const chats = await whatsappService.getChats();
+    console.log('Chats retrieved:', chats);
+    
+    // Test 5: Get contact information
+    console.log('\n--- Test 5: Getting contact information ---');
+    const contactInfo = await whatsappService.getContactInfo(TEST_PHONE_NUMBER);
+    console.log('Contact information retrieved:', contactInfo);
+    
+    // Test 6: Get message templates
+    console.log('\n--- Test 6: Getting message templates ---');
+    const templates = await whatsappService.getMessageTemplates();
+    console.log('Message templates retrieved:', templates);
+    
+    console.log('\nAll tests completed successfully!');
+    
+  } catch (error) {
+    console.error('Error during testing:', error);
+    process.exit(1);
+  }
 }
 
-
-const client1 = new Client({
-    authStrategy: new LocalAuth({
-        clientId: "client-one"
-    }),
-    puppeteer: {
-        // executablePath: '/usr/bin/chromium-browser',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    }
-});
-
-const client2 = new Client({
-    authStrategy: new LocalAuth({
-        clientId: "client-two"
-    }),
-    puppeteer: {
-        // executablePath: '/usr/bin/chromium-browser',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    }
-});
-
-const client3 = new Client({
-    authStrategy: new LocalAuth({
-        clientId: "client-three"
-    }),
-    puppeteer: {
-        // executablePath: '/usr/bin/chromium-browser',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    }
-});
-
-const client4 = new Client({
-    authStrategy: new LocalAuth({
-        clientId: "client-four"
-    }),
-    puppeteer: {
-        // executablePath: '/usr/bin/chromium-browser',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    }
-});
-
-const client5 = new Client({
-    authStrategy: new LocalAuth({
-        clientId: "client-five"
-    }),
-    puppeteer: {
-        // executablePath: '/usr/bin/chromium-browser',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    }
-});
-
-client1.initialize();
-client2.initialize();
-client3.initialize();
-client4.initialize();
-client5.initialize();
-
-function setupClientEventHandlers(client, order, UNIQUE_ID=null) {
-    client.on('ready', () => {
-        axios.post(`${APP_BASE_URL}/api/whatsapp-part/attach-phone`, {
-            unique_id: UNIQUE_ID,
-            phone_number: client.info.wid.user
-        }).then((res) => {
-            console.log(res.data);
-        }).catch((err) => {
-            console.log(err);
-        });
-        console.log(`Client ${order} is ready!`);
-    });
-
-    client.on('qr', (qr) => {
-        // Generate and scan this code with your phone
-        console.log(`QR code for client ${order}: ${qr}`);
-        
-        const filePath = `qr_code_${order}.png`;
-        const imageName = `QR Code for Client ${order}`;
-
-        // REMOVE THE IMAGE GENERATION AND SIMPLY DYNAMICALLY SEND QR CODE IN DATABASE
-        axios.post(`${APP_BASE_URL}/api/whatsapp-part/qr-code-update`, {
-            qrCode: qr,
-            uniqueId: UNIQUE_ID,
-            clientId: order
-        }).then((res) => {
-            console.log(res.data);
-        }).catch((err) => {
-            console.log(err);
-        });
-
-        QRCode.toFile(filePath, qr, async (err) => {
-            if (err) throw err;
-            axios
-        });
-        
-        console.log(`QR code image name: ${filePath}`);
-    });
-
-    client.on('message', async (msg) => {
-        console.log("Message received:", msg.body);
-        const replyContent = customMessageHandler(msg);
-        if (replyContent) {
-            // msg.reply(replyContent);
-            client.sendMessage(msg.from, replyContent);
-        } else {
-            client.sendMessage(msg.from, 'I don\'t know what to say');
-        }
-    });
-
-    client.on('auth_failure', (message) => {
-        console.error(`Authentication failed for client ${order}:`, message);
-    });
-
-    client.on('disconnected', (reason) => {
-        console.log(`Client ${order} was disconnected:`, reason);
-        const filePath = `qr_code_${order}.png`;
-        if (fs.existsSync(filePath)) {
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    console.error(`Error deleting QR code image for client ${order}:`, err);
-                } else {
-                    console.log(`QR code image for client ${order} deleted successfully`);
-                }
-            });
-        }
-    });
-
-    client.on('reconnecting', () => {
-        console.log(`Client ${order} is reconnecting...`);
-    });
-
-    client.on('remote_session_saved', () => {
-        console.log(`Session data for client ${order} has been updated and saved to MongoDB`);
-    });
-}
-
-setupClientEventHandlers(client1, 1);
-setupClientEventHandlers(client2, 2);
-setupClientEventHandlers(client3, 3);
-setupClientEventHandlers(client4, 4);
-setupClientEventHandlers(client5, 5);
+// Run the tests
+runTests(); 

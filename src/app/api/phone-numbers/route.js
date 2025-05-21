@@ -48,19 +48,21 @@ export async function GET(req) {
   const apiKey = req.headers.get('x-api-key');
 
   const user = userEmail ? await find_user({ email: userEmail }) : await find_user({ apiKey });
+  console.log("🚀 ~ GET ~ user:", user)
 
   // Assuming the user object has properties qrCode1, qrCode2, qrCode3, qrCode4, qrCode5
     const phoneNumbers = [];
-
+    
     // Iterate over each property in the user object
     for (let i = 1; i <= 5; i++) {
-        const qrCodeKey = `qrCode${i}`;
-        
+      const qrCodeKey = `qrCode${i}`;
+      
         if (user[qrCodeKey] && user[qrCodeKey].phoneNumber) {
-            phoneNumbers.push(user[qrCodeKey].phoneNumber.toString());
+          phoneNumbers.push(user[qrCodeKey].phoneNumber.toString());
         }
-    }
-
+      }
+      
+  console.log("🚀 ~ GET ~ phoneNumbers:", phoneNumbers)
   let phoneNumbersList = [];
 
   const ever_attached_numbers_list = user.ever_attached_numbers || [];
