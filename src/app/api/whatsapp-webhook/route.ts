@@ -1,36 +1,34 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest } from "next/server";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    // For webhook verification challenge
-    if (req.method === 'GET') {
-        const VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN;
-        const mode = req.query['hub.mode'];
-        const token = req.query['hub.verify_token'];
-        const challenge = req.query['hub.challenge'];
+export async function GET(request: NextRequest) {
+  const VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN;
+  const searchParams = request.nextUrl.searchParams;
+  const mode = searchParams.get("hub.mode");
+  const token = searchParams.get("hub.verify_token");
+  const challenge = searchParams.get("hub.challenge");
 
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-            console.log('WEBHOOK_VERIFIED');
-            res.status(200).send(challenge);
-        } else {
-            res.status(403).end();
-        }
-        return;
-    }
+  if (mode === "subscribe" && token === VERIFY_TOKEN) {
+    console.log("WEBHOOK_VERIFIED");
+    return new Response(challenge, {
+      status: 200,
+      headers: { "Content-Type": "text/plain" },
+    });
+  } else {
+    return new Response("Forbidden", { status: 400 });
+  }
+}
 
-    // Handle incoming message
-    if (req.method === 'POST') {
-        try {
-            const data = req.body;
-            console.log('📩 Incoming Message:', JSON.stringify(data, null, 2));
+export async function POST(request: Request) {
+  // Handle incoming message
+  try {
+    const body = await request.json();
+    console.log("📩 Incoming Message:", JSON.stringify(body, null, 2));
 
-            // Store message in your database here
+    // Store message in your database here
 
-            res.status(200).send('EVENT_RECEIVED');
-        } catch (error) {
-            console.error('Error handling incoming WhatsApp message:', error);
-            res.status(500).send('Error');
-        }
-    } else {
-        res.status(405).end(); // Method Not Allowed
-    }
+    return new Response("EVENT_RECEIVED", { status: 200 });
+  } catch (error) {
+    console.error("Error handling incoming WhatsApp message:", error);
+    return new Response("Error", { status: 500 });
+  }
 }
