@@ -19,4 +19,3 @@ export default function ChatLayout({ children, params }: { children: React.React
     </div>
   );
 }
-  
