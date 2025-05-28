@@ -110,7 +110,8 @@ export class WhatsAppBusinessService {
           from,
           to,
           direction: "outbound",
-          content: message,
+          type: "text",
+          text: message,
           timestamp,
         });
       }

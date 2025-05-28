@@ -21,6 +21,11 @@ export interface Contact {
   user_id: string;
   wa_id: string;
 }
+export interface Status {
+  recipient_id: string;
+  status: "delivered" | "read" | "sent";
+  id: string;
+}
 export interface WAWebhookPayload {
   object: "whatsapp_business_account";
   entry: {
@@ -43,11 +48,7 @@ export interface WAWebhookPayload {
           };
         }[];
         messages?: Message[];
-        statuses?: {
-          recipient_id: string;
-          status: "delivered" | "read" | "sent";
-          id: string;
-        }[];
+        statuses?: Status[];
       };
     }[];
   }[];

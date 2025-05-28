@@ -121,7 +121,7 @@ export default function ChatWindow({ chat }: { chat: any }) {
                   wordWrap: "break-word",
                 }}
               >
-                {message.content || (
+                {message.text || (
                   <span style={{ color: "#888" }}>{t("noContent")}</span>
                 )}
               </p>

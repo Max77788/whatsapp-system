@@ -1,11 +1,19 @@
 import dbConnect from "@/lib/mongoose";
 import { NextRequest } from "next/server";
-import type { WAWebhookPayload } from "@/lib/interfaces/whatsapp";
+import type { Status, WAWebhookPayload } from "@/lib/interfaces/whatsapp";
 import { Contact, Message } from "@/lib/interfaces/whatsapp";
 import ChatModel from "@/lib/models/Chat";
 import MessageModel from "@/lib/models/Message";
 
-export async function saveMessages(
+async function updateStatuses(statuses: Status[]) {
+  for (const status of statuses) {
+    await MessageModel.updateOne(
+      { wa_id: status.id },
+      { $set: { status: status.status } },
+    );
+  }
+}
+async function saveMessages(
   to: string,
   messages: Message[],
   contacts: Contact[],
@@ -31,7 +39,7 @@ export async function saveMessages(
       from: msg.from,
       to,
       direction: "inbound",
-      content: text,
+      text,
       timestamp,
     });
   }
@@ -62,12 +70,13 @@ export async function POST(request: Request) {
     for (const entry of body.entry) {
       for (const change of entry.changes) {
         if (change.field !== "messages") continue;
-        const { messages = [], contacts = [] } = change.value;
+        const { messages = [], contacts = [], statuses = [] } = change.value;
         await saveMessages(
           change.value.metadata.display_phone_number,
           messages,
           contacts,
         );
+        await updateStatuses(statuses);
       }
     }
 
