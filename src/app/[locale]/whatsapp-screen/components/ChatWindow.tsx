@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 export default function ChatWindow({ chat }: { chat: any }) {
   const t = useTranslations("waScreen");
   const senderPhoneNumber = useCurrentPhoneNumberStore(
-    (state) => state.senderPhoneNumber
+    (state) => state.senderPhoneNumber,
   );
 
   // State for text input
@@ -94,7 +94,7 @@ export default function ChatWindow({ chat }: { chat: any }) {
       >
         {chat.messages.map((message: any) => (
           <div
-            key={message.id}
+            key={message._id}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -121,7 +121,7 @@ export default function ChatWindow({ chat }: { chat: any }) {
                   wordWrap: "break-word",
                 }}
               >
-                {message.body || (
+                {message.text || (
                   <span style={{ color: "#888" }}>{t("noContent")}</span>
                 )}
               </p>
@@ -134,7 +134,7 @@ export default function ChatWindow({ chat }: { chat: any }) {
                   textAlign: "right",
                 }}
               >
-                {new Date(message.timestamp * 1000).toLocaleTimeString([], {
+                {new Date(message.timestamp).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}

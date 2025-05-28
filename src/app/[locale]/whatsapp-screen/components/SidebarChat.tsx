@@ -1,16 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useChatStore, useContactStore, useAllContactsStore, getPhoneNumbersFromStore,
-  getPhoneGroupsFromStore, getContactsForGroup,
-  useCurrentPhoneNumberStore, CurrentSenderPhoneNumberState } from '@/lib/store/chatStore'; // Example of Zustand global store
-import { ChatStore, ContactStore, AllContactsStore } from '@/lib/store/chatStore';
-import { civicinfo } from 'googleapis/build/src/apis/civicinfo';
-import { toast } from 'react-toastify';
-import Papa from 'papaparse';
-import { saveAs } from 'file-saver';
-import { useTranslations, useLocale } from 'next-intl';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  useChatStore,
+  useContactStore,
+  useAllContactsStore,
+  getPhoneNumbersFromStore,
+  getPhoneGroupsFromStore,
+  getContactsForGroup,
+  useCurrentPhoneNumberStore,
+  CurrentSenderPhoneNumberState,
+} from "@/lib/store/chatStore"; // Example of Zustand global store
+import {
+  ChatStore,
+  ContactStore,
+  AllContactsStore,
+} from "@/lib/store/chatStore";
+import { civicinfo } from "googleapis/build/src/apis/civicinfo";
+import { toast } from "react-toastify";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
+import { useTranslations, useLocale } from "next-intl";
 
 // Define a type for the contact
 interface Contact {
@@ -25,21 +36,20 @@ const Sidebar = () => {
   const currentLocale = useLocale();
 
   const senderPhoneNumber = useCurrentPhoneNumberStore(
-    (state) => state.senderPhoneNumber
+    (state) => state.senderPhoneNumber,
   );
 
   console.log("Sender phone number on Sidebar:", senderPhoneNumber);
-  
+
   // States
   const [selectedPhone, setSelectedPhone] = useState(senderPhoneNumber);
-  
-  const [selectedPhones, setSelectedPhones] = useState<string[]>([]);
 
+  const [selectedPhones, setSelectedPhones] = useState<string[]>([]);
 
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
   const [phoneGroups, setPhoneGroups] = useState<any[]>([]);
   const [isContactsLoaded, setIsContactsLoaded] = useState(false);
 
@@ -47,20 +57,20 @@ const Sidebar = () => {
   const { setChats } = useChatStore() as ChatStore; // Type assertion
   const { setContacts } = useContactStore() as ContactStore; // Type assertion
   const { setAllContacts } = useAllContactsStore() as AllContactsStore; // Type assertion
-  const { setSenderPhoneNumber } = useCurrentPhoneNumberStore() as CurrentSenderPhoneNumberState; // Type assertion
-  
+  const { setSenderPhoneNumber } =
+    useCurrentPhoneNumberStore() as CurrentSenderPhoneNumberState; // Type assertion
 
   const handlePhoneSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedPhone(e.target.value);
     setSenderPhoneNumber(e.target.value);
-  }
+  };
 
   // Fetch phone numbers on component mount
   useEffect(() => {
     const fetchPhoneNumbers = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/phone-numbers');
+        const response = await fetch("/api/phone-numbers");
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
@@ -70,18 +80,17 @@ const Sidebar = () => {
 
         if (filteredPhoneData.length > 0) {
           setPhoneNumbers(filteredPhoneData);
-          
 
           console.log("Sender phone number on Sidebar:", senderPhoneNumber);
           if (!senderPhoneNumber) {
-          setSelectedPhone(filteredPhoneData[0].phoneNumber); // Set the first phone number as the default
-          setSenderPhoneNumber(filteredPhoneData[0].phoneNumber); // Set the first phone number as the default
+            setSelectedPhone(filteredPhoneData[0].phoneNumber); // Set the first phone number as the default
+            setSenderPhoneNumber(filteredPhoneData[0].phoneNumber); // Set the first phone number as the default
           } else {
             setSelectedPhone(senderPhoneNumber);
             setSenderPhoneNumber(senderPhoneNumber); // Set the first phone number as the default
           }
         } else {
-          throw new Error('No active phone numbers found.');
+          throw new Error("No active phone numbers found.");
         }
       } catch (err: any) {
         setError(err.message);
@@ -100,10 +109,10 @@ const Sidebar = () => {
 
       try {
         setLoading(true);
-        const response = await fetch('/api/whatsapp-part/get-chats-of-number', {
-          method: 'POST',
+        const response = await fetch("/api/whatsapp-part/get-chats-of-number", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ phoneNumber: selectedPhone }),
         });
@@ -113,18 +122,12 @@ const Sidebar = () => {
         }
 
         const { chats, contacts, all_contacts } = await response.json();
-        
-
-        
 
         setChats(chats); // Save chats to global state
         setContacts(contacts); // Save contacts to global state
         setAllContacts(all_contacts); // Save all contacts to global state
 
-        // Update phone groups and mark contacts as loaded
-        const groups = getPhoneGroupsFromStore();
-    setPhoneGroups(groups);
-    setIsContactsLoaded(true);
+        setIsContactsLoaded(true);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -141,22 +144,22 @@ const Sidebar = () => {
         alert(t("noPhoneNumbersSelectedForExport"));
         return;
       }
-  
-      const response = await fetch('/api/leads/register', {
-        method: 'POST',
+
+      const response = await fetch("/api/leads/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ phoneNumbersList: selectedPhones }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
-  
+
       toast.success(t("numbersExportedSuccessfully"));
     } catch (error) {
-      console.error('Export error:', error);
+      console.error("Export error:", error);
       toast.error(t("failedToExportPhoneNumbers"));
     }
   };
@@ -170,42 +173,41 @@ const Sidebar = () => {
 
       const csvContent = selectedPhones.map((element) => ({
         phone_number: element.split("--")[0].toString(),
-        name: element.split("--")[1]
+        name: element.split("--")[1],
       }));
 
       const csv = Papa.unparse(csvContent);
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       saveAs(blob, "leads.csv");
     } catch (error) {
-      console.error('Export error:', error);
+      console.error("Export error:", error);
       toast.error(t("failedToExportPhoneNumbers"));
     }
   };
-  
 
   return (
     <div
       style={{
-        display: 'flex',
-        height: '100vh',
-        backgroundColor: '#141c24',
-        overflow: 'hidden',
+        display: "flex",
+        height: "100vh",
+        backgroundColor: "#141c24",
+        overflow: "hidden",
       }}
     >
       {/* SIDEBAR CONTAINER */}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          width: '450px',
-          height: '100%',
-          backgroundColor: '#141c24',
-          overflowY: 'auto',
-          padding: '1rem', // optional, adjust or remove as you like
+          display: "flex",
+          flexDirection: "column",
+          width: "450px",
+          height: "100%",
+          backgroundColor: "#141c24",
+          overflowY: "auto",
+          padding: "1rem", // optional, adjust or remove as you like
         }}
       >
         {/* Sidebar header */}
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>
           {t("chats")}
         </h2>
 
@@ -220,14 +222,12 @@ const Sidebar = () => {
 
         {/* Loading indicator */}
         {loading && (
-          <div style={{ marginBottom: '1rem' }}>
-            {t("loading")}...
-          </div>
+          <div style={{ marginBottom: "1rem" }}>{t("loading")}...</div>
         )}
 
         {/* Phone number dropdown */}
         {phoneNumbers.length > 0 ? (
-          <div style={{ marginBottom: '1rem' }}>
+          <div style={{ marginBottom: "1rem" }}>
             <label htmlFor="phoneSelect">{t("selectPhoneNumber")}:</label>
             <select
               id="phoneSelect"
@@ -249,8 +249,10 @@ const Sidebar = () => {
         ) : (
           !loading && (
             <div className="text-xl mb-4">
-              {t("noPhoneNumbersFound")}<br />
-              {t("pleaseConnectYourPhoneNumber")}<br />
+              {t("noPhoneNumbersFound")}
+              <br />
+              {t("pleaseConnectYourPhoneNumber")}
+              <br />
               {t("inThe")}{" "}
               <a href={`/${currentLocale}/accounts`}>{t("accounts")}</a>{" "}
               {t("page")}.<br />
@@ -259,7 +261,8 @@ const Sidebar = () => {
           )
         )}
 
-        {/* Selected phone numbers */}
+        {/* Selected phone numbers 
+
         <div style={{ marginBottom: '1rem' }}>
           {isContactsLoaded ? (
             <select
@@ -369,30 +372,35 @@ const Sidebar = () => {
             </div>
           )}
         </div>
+        */}
 
         {/* CHAT LIST BELOW EVERYTHING ELSE */}
-        <ul style={{ listStyle: 'none', padding: '0' }}>
-          {(useChatStore.getState() as {
-            chats: { chatId: string; name: string }[];
-          }).chats.map((chat: any) => (
+        <ul style={{ listStyle: "none", padding: "0" }}>
+          {(
+            useChatStore.getState() as {
+              chats: { chatId: string; name: string }[];
+            }
+          ).chats.map((chat: any) => (
             <li
               key={chat.chatId}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '10px 5px',
-                cursor: 'pointer',
-                borderBottom: '1px solid #ddd',
+                display: "flex",
+                alignItems: "center",
+                padding: "10px 5px",
+                cursor: "pointer",
+                borderBottom: "1px solid #ddd",
               }}
-              onClick={() => router.push(`/${currentLocale}/whatsapp-screen/${chat.chatId}`)}
+              onClick={() =>
+                router.push(`/${currentLocale}/whatsapp-screen/${chat.chatId}`)
+              }
             >
               <div
                 style={{
-                  width: '40px',
-                  height: '40px',
-                  backgroundColor: '#fff',
-                  borderRadius: '50%',
-                  flexShrink: 0
+                  width: "40px",
+                  height: "40px",
+                  backgroundColor: "#fff",
+                  borderRadius: "50%",
+                  flexShrink: 0,
                 }}
               >
                 <img src="/static/default-icon.png" alt="User Icon" />
@@ -404,8 +412,6 @@ const Sidebar = () => {
       </div>
     </div>
   );
-
-
 };
 
 export default Sidebar;
