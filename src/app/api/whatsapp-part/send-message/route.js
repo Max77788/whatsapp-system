@@ -130,7 +130,6 @@ export async function POST(req) {
     const whatsappService = await initializeWhatsAppService();
     let mediaUrl = null;
 
-    console.log(`MEDIA: ${media}`);
     if (media !== null) {
       const buffer = Buffer.from(await media.arrayBuffer());
       const base64Content = buffer.toString("base64");
@@ -159,6 +158,7 @@ export async function POST(req) {
       try {
         await whatsappService.sendMessage(
           toNumber,
+          fromNumber,
           personalizedMessage,
           mediaUrl,
         );

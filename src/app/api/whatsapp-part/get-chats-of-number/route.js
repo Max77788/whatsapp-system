@@ -35,26 +35,13 @@ export async function POST(req) {
 
     // Format the response to match the existing structure
     const formattedChats = chats.map((chat) => ({
-      chatId: chat.wa_id,
-      name: chat.name || chat.phone_number,
-      messages: messages||[]
+      chatId: chat.client_id,
+      name: chat.name || chat.client_id,
+      messages: messages || [],
     }));
-    // TODO: this is wrong
-    const contacts = [{ name: "hi", id: "hi@hi" }];
 
-
-        console.log(`GETTING CHATS: ${chats}`)
     return NextResponse.json({
       chats: formattedChats,
-      contacts,
-      all_contacts: [
-        {
-          id: "all_contacts@gg.us",
-          name: "All Contacts",
-          contacts: contacts,
-        },
-      ],
-      group_contacts: [], // Business API doesn't support groups in the same way
     });
   } catch (error) {
     console.error("Error fetching chats:", error);

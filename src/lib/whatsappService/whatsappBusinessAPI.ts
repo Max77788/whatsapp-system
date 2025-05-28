@@ -39,6 +39,7 @@ export class WhatsAppBusinessService {
    */
   async sendMessage(
     to: string,
+    from: string,
     message: string,
     mediaUrl?: string,
     templateName?: string,
@@ -89,7 +90,30 @@ export class WhatsAppBusinessService {
           },
         },
       );
+      await dbConnect();
 
+      for (const msg of response.data.messages) {
+        const timestamp = Date.now();
+
+        // Upsert chat
+        await ChatModel.findOneAndUpdate(
+          { phone_id: from, client_id: to },
+          {
+            last_updated: timestamp,
+          },
+          { upsert: true, new: true },
+        );
+
+        // Insert message
+        await MessageModel.create({
+          wa_id: msg.id,
+          from,
+          to,
+          direction: "outbound",
+          content: message,
+          timestamp,
+        });
+      }
       return response.data;
     } catch (error: any) {
       console.error(
@@ -239,13 +263,18 @@ export class WhatsAppBusinessService {
   async getChats(wa_id: string): Promise<ChatDocument[]> {
     await dbConnect();
 
-    const chats = await ChatModel.find({ wa_id });
+    const chats = await ChatModel.find({ phone_id: wa_id });
     return chats;
   }
   async getMessages(chat_wa_id: string): Promise<MessageDocument[]> {
     await dbConnect();
 
-    const messages = await MessageModel.find({ chat_wa_id });
+    const messages = await MessageModel.find({
+      $or: [
+        { direction: "outbound", from: chat_wa_id },
+        { direction: "inbound", to: chat_wa_id },
+      ],
+    });
     return messages;
   }
 }
