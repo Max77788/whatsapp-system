@@ -77,8 +77,8 @@ export default function CreateClientButton({maxPhonesConnected}: {maxPhonesConne
         <div className="flex items-center justify-center min-h-screen">
           <div className="fixed inset-0 bg-black opacity-30" />
 
-          <div className="relative bg-white rounded-md p-6 max-w-md w-full mx-4">
-            <Dialog.Title className="text-lg font-medium mb-4">
+          <div className="relative bg-white text-black rounded-md p-6 max-w-md w-full mx-4">
+            <Dialog.Title className="text-lg font-bold mb-4">
               {t("connect_whatsapp_phone")}
             </Dialog.Title>
 

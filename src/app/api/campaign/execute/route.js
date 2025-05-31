@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { find_user, update_user } from '@/lib/db';
-import { initializeWhatsAppService } from '@/src/lib/whatsappService/whatsappBusinessAPI';
+import { authOptions } from '@/lib/auth/serverStuff';
+import { find_user, update_user } from '@/lib/utils';
+import { initializeWhatsAppService } from '@/lib/whatsappService/whatsappBusinessAPI';
 
 export async function POST(req) {
   try {
