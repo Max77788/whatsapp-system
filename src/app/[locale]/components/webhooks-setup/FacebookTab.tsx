@@ -53,7 +53,7 @@ export default function FacebookTab({ uniqueId }: FacebookTabProps) {
         {t("grabTheWebhookUrlBelowAndInsertInSetMultipleVariablesModule")}
       </p>
       <p>
-        <code>{`https://mom-ai-restaurant.lat/api/leads/register?unique_id=${uniqueId}&source=facebook`}</code>
+        <code>{`https://bumby.app/api/leads/register?unique_id=${uniqueId}&source=facebook`}</code>
       </p>
       <p className="text-center">
         {t("linkTheFieldsWhichReturnNameAndPhoneNumberOfYourLeadToTheRespectiveVariablesInTheSameSetMultipleVariablesModule")}

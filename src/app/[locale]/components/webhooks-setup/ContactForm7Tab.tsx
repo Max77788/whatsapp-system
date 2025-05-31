@@ -49,7 +49,7 @@ export default function ContactForm7Tab({ uniqueId }: ContactForm7TabProps) {
         3. {t("grabTheWebhookUrlBelowAndInsertInWebhookUrlFieldOfWebhookSection")}
       </p>
       <p>
-        <code>{`https://mom-ai-restaurant.lat/api/leads/register?unique_id=${uniqueId}&source=contact-forms7`}</code>
+        <code>{`https://bumby.app/api/leads/register?unique_id=${uniqueId}&source=contact-forms7`}</code>
       </p>
       <p className="text-center">{t("saveTheChangesAndInsertTheFormInYourPage")}</p>
       <p className="text-center text-xl font-bold">✅{t("done")}✅</p>

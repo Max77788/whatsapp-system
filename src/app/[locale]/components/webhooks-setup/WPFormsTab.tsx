@@ -42,7 +42,7 @@ export default function WPFormsTab({ uniqueId }: WPFormsTabProps) {
         {t("module")} ({t("thePenultimateModule")}):
       </p>
       <p>
-        <code>{`https://mom-ai-restaurant.lat/api/leads/register?unique_id=${uniqueId}&source=wpforms`}</code>
+        <code>{`https://bumby.app/api/leads/register?unique_id=${uniqueId}&source=wpforms`}</code>
       </p>
       <p>3. {t("goOnWPFormsAndInEmailNotificationsInsert")}<br></br><br></br>
                     - {t("theMailhookCreatedInMakecomAsEmailRecipient")}<br></br><br></br>
